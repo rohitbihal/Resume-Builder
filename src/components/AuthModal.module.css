@@ -1,0 +1,86 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(5, 5, 8, 0.85);
+  backdrop-filter: blur(10px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--cr-space-md);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modalContent {
+  background: var(--cr-bg-card);
+  border: 1px solid var(--cr-border);
+  border-radius: var(--cr-radius-xl);
+  padding: var(--cr-space-2xl);
+  width: 100%;
+  max-width: 440px;
+  position: relative;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.closeBtn {
+  position: absolute;
+  top: var(--cr-space-md);
+  right: var(--cr-space-md);
+  background: none;
+  border: none;
+  color: var(--cr-text-muted);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: color var(--cr-transition-fast);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--cr-radius-full);
+}
+
+.closeBtn:hover {
+  color: var(--cr-text-primary);
+  background: var(--cr-bg-elevated);
+}
+
+.authContainer {
+  margin-top: var(--cr-space-sm);
+}
+
+.authTitle {
+  font-family: var(--cr-font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: var(--cr-space-xs);
+  color: var(--cr-text-primary);
+  text-align: center;
+}
+
+.authDesc {
+  font-size: 0.9rem;
+  color: var(--cr-text-secondary);
+  text-align: center;
+  margin-bottom: var(--cr-space-xl);
+  line-height: 1.5;
+}
+
+/* Supabase UI overrides */
+.supabaseButton {
+  font-family: var(--cr-font-body) !important;
+  font-weight: 600 !important;
+  border-radius: var(--cr-radius-md) !important;
+  text-transform: none !important;
+}
+
+.supabaseInput {
+  font-family: var(--cr-font-body) !important;
+  border-radius: var(--cr-radius-md) !important;
+  padding: 0.75rem 1rem !important;
+}

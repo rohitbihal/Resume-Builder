@@ -1,0 +1,215 @@
+.formSection {
+  background: var(--cr-bg-card);
+  border: 1px solid var(--cr-border);
+  border-radius: var(--cr-radius-lg);
+  padding: var(--cr-space-xl);
+  animation: fadeIn 0.4s ease-out;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--cr-space-md);
+  margin-bottom: var(--cr-space-xl);
+  padding-bottom: var(--cr-space-md);
+  border-bottom: 1px solid var(--cr-border);
+}
+
+.sectionIcon {
+  font-size: 1.5rem;
+}
+
+.sectionMeta {
+  flex: 1;
+}
+
+.sectionName {
+  font-family: var(--cr-font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--cr-text-primary);
+}
+
+.sectionDesc {
+  font-size: 0.8rem;
+  color: var(--cr-text-muted);
+  margin-top: 2px;
+}
+
+.optionalBadge {
+  padding: 3px 10px;
+  background: rgba(253, 203, 110, 0.1);
+  border: 1px solid rgba(253, 203, 110, 0.3);
+  border-radius: var(--cr-radius-full);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--cr-warning);
+}
+
+.fieldGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--cr-space-md);
+}
+
+.fieldFull {
+  grid-column: 1 / -1;
+}
+
+.entryCard {
+  background: var(--cr-bg-elevated);
+  border: 1px solid var(--cr-border);
+  border-radius: var(--cr-radius-md);
+  padding: var(--cr-space-lg);
+  margin-bottom: var(--cr-space-md);
+  position: relative;
+  animation: scaleIn 0.3s ease-out;
+}
+
+.entryHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--cr-space-md);
+}
+
+.entryTitle {
+  font-family: var(--cr-font-display);
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--cr-text-secondary);
+}
+
+.removeBtn {
+  background: transparent;
+  border: none;
+  color: var(--cr-text-muted);
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all var(--cr-transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+}
+
+.removeBtn:hover {
+  color: var(--cr-danger);
+  background: rgba(225, 112, 85, 0.1);
+}
+
+.addBtn {
+  display: flex;
+  align-items: center;
+  gap: var(--cr-space-sm);
+  padding: var(--cr-space-sm) var(--cr-space-md);
+  background: transparent;
+  border: 1px dashed var(--cr-border);
+  border-radius: var(--cr-radius-md);
+  color: var(--cr-text-muted);
+  font-family: var(--cr-font-body);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all var(--cr-transition-fast);
+  width: 100%;
+  justify-content: center;
+  height: 44px;
+}
+
+.addBtn:hover {
+  border-color: var(--cr-accent-primary);
+  color: var(--cr-accent-secondary);
+  background: rgba(108, 92, 231, 0.05);
+}
+
+.dateRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--cr-space-md);
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: var(--cr-space-sm);
+  margin-top: var(--cr-space-xs);
+}
+
+.checkboxRow input[type="checkbox"] {
+  accent-color: var(--cr-accent-primary);
+  width: 16px;
+  height: 16px;
+}
+
+.checkboxRow label {
+  font-size: 0.8rem;
+  color: var(--cr-text-secondary);
+  cursor: pointer;
+}
+
+.levelSelect {
+  background: var(--cr-bg-input);
+  border: 1px solid var(--cr-border);
+  border-radius: var(--cr-radius-sm);
+  padding: 8px var(--cr-space-md);
+  font-family: var(--cr-font-body);
+  font-size: 0.85rem;
+  color: var(--cr-text-primary);
+  cursor: pointer;
+  height: 44px;
+}
+
+.levelSelect:focus {
+  border-color: var(--cr-accent-primary);
+  outline: none;
+}
+
+.skillGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr auto;
+  gap: var(--cr-space-sm);
+  align-items: start;
+  margin-bottom: var(--cr-space-sm);
+  animation: scaleIn 0.3s ease-out;
+}
+
+/* Custom section styles */
+.customTitleInput {
+  background: transparent;
+  border: none;
+  border-bottom: 2px dashed var(--cr-border);
+  font-family: var(--cr-font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--cr-text-primary);
+  padding: var(--cr-space-xs) 0;
+  width: 100%;
+  outline: none;
+  transition: border-color var(--cr-transition-fast);
+}
+
+.customTitleInput:focus {
+  border-color: var(--cr-accent-primary);
+}
+
+.customSectionActions {
+  display: flex;
+  gap: var(--cr-space-sm);
+}
+
+@media (max-width: 640px) {
+  .fieldGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .dateRow {
+    grid-template-columns: 1fr;
+  }
+
+  .skillGrid {
+    grid-template-columns: 1fr;
+  }
+}

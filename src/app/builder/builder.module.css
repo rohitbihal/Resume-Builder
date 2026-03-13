@@ -1,0 +1,118 @@
+.builderLayout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--cr-space-xl);
+  min-height: 100vh;
+}
+
+.builderNav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10, 10, 15, 0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--cr-border);
+  padding: var(--cr-space-md) var(--cr-space-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navLogo {
+  font-family: var(--cr-font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  background: var(--cr-accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.navLinks {
+  display: flex;
+  gap: var(--cr-space-md);
+  align-items: center;
+}
+
+.navLink {
+  font-size: 0.85rem;
+  color: var(--cr-text-secondary);
+  font-weight: 500;
+  transition: color var(--cr-transition-fast);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--cr-font-body);
+}
+
+.navLink:hover {
+  color: var(--cr-text-primary);
+}
+
+.builderContent {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: var(--cr-space-xl) var(--cr-space-lg);
+}
+
+.formColumn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cr-space-lg);
+  padding-bottom: var(--cr-space-3xl);
+}
+
+.previewColumn {
+  position: relative;
+}
+
+.builderTitle {
+  font-family: var(--cr-font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  background: var(--cr-accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: var(--cr-space-xs);
+}
+
+.builderSubtitle {
+  color: var(--cr-text-muted);
+  font-size: 0.95rem;
+  margin-bottom: var(--cr-space-xl);
+}
+
+.sectionDivider {
+  display: flex;
+  align-items: center;
+  gap: var(--cr-space-md);
+  margin: var(--cr-space-sm) 0;
+}
+
+.sectionDivider::before,
+.sectionDivider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--cr-border);
+}
+
+.sectionDividerText {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--cr-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+@media (max-width: 1024px) {
+  .builderLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .previewColumn {
+    order: -1;
+  }
+}

@@ -5,7 +5,7 @@ export async function GET(request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get('code');
   // if "next" is in search params, use it as the redirect URL
-  const next = requestUrl.searchParams.get('next') ?? '/builder';
+  const next = requestUrl.searchParams.get('next') ?? '/dashboard';
   
   // Robust origin detection for Vercel/Production
   const forwardedProto = request.headers.get('x-forwarded-proto') || 'http';

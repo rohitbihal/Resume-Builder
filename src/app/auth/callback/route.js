@@ -4,9 +4,13 @@ import { NextResponse } from 'next/server';
 export async function GET(request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get('code');
-  const origin = requestUrl.origin;
   // if "next" is in search params, use it as the redirect URL
   const next = requestUrl.searchParams.get('next') ?? '/builder';
+  
+  // Robust origin detection for Vercel/Production
+  const forwardedProto = request.headers.get('x-forwarded-proto') || 'http';
+  const host = request.headers.get('host');
+  const origin = `${forwardedProto}://${host}`;
 
   if (code) {
     const supabase = createServerClient(

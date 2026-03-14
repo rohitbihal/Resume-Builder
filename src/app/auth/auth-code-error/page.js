@@ -1,12 +1,31 @@
 'use client';
 
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-import { Suspense } from 'react';
+import { supabase } from '@/lib/supabase';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, Suspense } from 'react';
 
 function ErrorContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const error = searchParams.get('error');
+
+  useEffect(() => {
+    // FALLBACK: If we land here but have session tokens in the fragment (#...), 
+    // it means the login succeeded via implicit flow. Try to handle it.
+    const checkFragment = async () => {
+      if (typeof window !== 'undefined' && window.location.hash) {
+        // Supabase-js automatically picks up fragment tokens on global instances,
+        // but we can be explicit or just check if we have a session now.
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          console.log('OAuth Fallback: Found session in fragment, redirecting to dashboard...');
+          router.push('/dashboard');
+        }
+      }
+    };
+    checkFragment();
+  }, [router]);
 
   return (
     <div style={{ 

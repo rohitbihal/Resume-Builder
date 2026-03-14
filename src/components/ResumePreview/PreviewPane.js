@@ -70,7 +70,10 @@ export default function PreviewPane() {
         body: JSON.stringify({ html: htmlString, css: cssString }),
       });
 
-      if (!response.ok) throw new Error('Failed to generate PDF');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.details || 'Failed to generate PDF');
+      }
 
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
@@ -84,7 +87,9 @@ export default function PreviewPane() {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Error generating PDF:', error);
-      alert('Failed to generate PDF. Please try again.');
+      if (confirm(`Server-side PDF generation failed: ${error.message}\n\nWould you like to use your browser's print function instead? (Select 'Save as PDF' in the print dialog)`)) {
+        window.print();
+      }
     } finally {
       setIsGeneratingPdf(false);
     }

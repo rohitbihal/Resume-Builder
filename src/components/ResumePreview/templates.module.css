@@ -2,14 +2,15 @@
 /* Page base — A4-ish ratio */
 .resumePage {
   width: 100%;
-  min-height: 842px;
+  min-height: 1123px; /* Exact A4 height at 96dpi */
   background: #ffffff;
   color: #1a1a1a;
   font-family: 'Inter', sans-serif;
-  font-size: 9.5pt;
-  line-height: 1.5;
+  font-size: 11pt; /* Increased from 9.5pt */
+  line-height: 1.6;
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 /* ===== BOLD NEO ===== */
@@ -38,19 +39,19 @@
 
 .bnName {
   font-family: 'Space Grotesk', 'Inter', sans-serif;
-  font-size: 26pt;
+  font-size: 32pt; /* Increased from 26pt */
   font-weight: 900;
   color: #0a0a0a;
   letter-spacing: -0.02em;
   line-height: 1.1;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .bnContact {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px 6px;
-  font-size: 8pt;
+  gap: 6px 12px;
+  font-size: 10pt; /* Increased from 8pt */
   color: #555;
 }
 
@@ -60,13 +61,14 @@
 
 .bnSectionTitle {
   font-family: 'Space Grotesk', 'Inter', sans-serif;
-  font-size: 10pt;
+  font-size: 12pt; /* Increased from 10pt */
   font-weight: 700;
   letter-spacing: 0.15em;
   color: #0a0a0a;
-  border-bottom: 1px solid #e0e0e0;
-  padding-bottom: 3px;
-  margin-bottom: 8px;
+  border-bottom: 2px solid #1a1a1a; /* Thicker line */
+  padding-bottom: 4px;
+  margin-bottom: 12px;
+  margin-top: 10px;
 }
 
 .bnEntry {
@@ -91,9 +93,9 @@
 }
 
 .bnText {
-  margin-top: 3px;
+  margin-top: 5px;
   color: #333;
-  font-size: 9pt;
+  font-size: 10.5pt; /* Increased from 9pt */
   white-space: pre-line;
 }
 
@@ -141,8 +143,8 @@
 }
 
 .bnBullets li {
-  margin-bottom: 3px;
-  font-size: 9pt;
+  margin-bottom: 5px;
+  font-size: 10.5pt; /* Increased from 9pt */
   color: #333;
 }
 
@@ -164,15 +166,15 @@
 
 .gmName {
   font-family: 'Space Grotesk', 'Inter', sans-serif;
-  font-size: 22pt;
+  font-size: 26pt; /* Increased from 22pt */
   font-weight: 700;
   color: #2D1B69;
   line-height: 1.15;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .gmSubtitle {
-  font-size: 9pt;
+  font-size: 10pt; /* Increased from 9pt */
   color: #7C6BB5;
   margin-bottom: 18px;
 }
@@ -183,13 +185,13 @@
 
 .gmSideTitle {
   font-family: 'Space Grotesk', 'Inter', sans-serif;
-  font-size: 8pt;
+  font-size: 9.5pt; /* Increased from 8pt */
   font-weight: 700;
   letter-spacing: 0.12em;
   color: #2D1B69;
   text-transform: uppercase;
-  margin-bottom: 8px;
-  padding-bottom: 4px;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
   border-bottom: 2px solid #D4C8F0;
 }
 
@@ -221,11 +223,11 @@
 
 .gmMainTitle {
   font-family: 'Space Grotesk', 'Inter', sans-serif;
-  font-size: 10pt;
+  font-size: 12pt; /* Increased from 10pt */
   font-weight: 700;
   color: #2D1B69;
-  margin-bottom: 8px;
-  padding-bottom: 3px;
+  margin-bottom: 12px;
+  padding-bottom: 4px;
   border-bottom: 2px solid #E8DEFF;
 }
 
@@ -270,9 +272,9 @@
 }
 
 .gmEntryText {
-  font-size: 8.5pt;
+  font-size: 10pt; /* Increased from 8.5pt */
   color: #444;
-  margin-top: 3px;
+  margin-top: 5px;
   white-space: pre-line;
 }
 
@@ -370,10 +372,10 @@
 
 .vcMainName {
   font-family: 'Space Grotesk', 'Inter', sans-serif;
-  font-size: 22pt;
+  font-size: 28pt; /* Increased from 22pt */
   font-weight: 700;
   color: #FF6B6B;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   line-height: 1.15;
 }
 
@@ -382,11 +384,11 @@
 }
 
 .vcMainTitle {
-  font-size: 10pt;
+  font-size: 12pt; /* Increased from 10pt */
   font-weight: 700;
   color: #FF6B6B;
-  margin-bottom: 8px;
-  padding-bottom: 3px;
+  margin-bottom: 12px;
+  padding-bottom: 4px;
   border-bottom: 2px solid #FFE0E0;
 }
 
@@ -440,7 +442,7 @@
 
 .tfName {
   font-family: 'Space Grotesk', 'Inter', sans-serif;
-  font-size: 42pt;
+  font-size: 48pt; /* Increased from 42pt */
   font-weight: 700;
   color: #1a1a1a;
   letter-spacing: -0.03em;
@@ -560,11 +562,11 @@
 
 .isName {
   font-family: Georgia, 'Times New Roman', serif;
-  font-size: 28pt;
+  font-size: 34pt; /* Increased from 28pt */
   font-weight: 700;
   color: #2D2D2D;
   letter-spacing: -0.01em;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 .isNameUnderline {
@@ -590,11 +592,11 @@
 
 .isSectionTitle {
   font-family: Georgia, 'Times New Roman', serif;
-  font-size: 11pt;
+  font-size: 13pt; /* Increased from 11pt */
   font-weight: 700;
   color: #2D2D2D;
-  margin-bottom: 8px;
-  padding-bottom: 4px;
+  margin-bottom: 12px;
+  padding-bottom: 6px;
   border-bottom: 2px solid;
   border-image: linear-gradient(90deg, #5BBFB5, #C9B037, #D4A5A5) 1;
 }

@@ -28,44 +28,58 @@ export async function POST(req) {
       </html>
     `;
 
-    // Launch puppeteer
+    // Launch puppeteer with timeout and better error handling
     const browser = await puppeteer.launch({
       headless: 'new',
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
     });
 
-    const page = await browser.newPage();
-    
-    // Set viewport matching A4 size at 96 DPI roughly
-    await page.setViewport({ width: 794, height: 1123, deviceScaleFactor: 2 });
-    
-    // Set the HTML content
-    await page.setContent(fullHtml, { waitUntil: 'networkidle0' });
+    try {
+      const page = await browser.newPage();
+      
+      // Set timeout for all operations
+      page.setDefaultNavigationTimeout(10000); // 10s
+      page.setDefaultTimeout(10000); // 10s
 
-    // Generate PDF
-    const pdfBuffer = await page.pdf({
-      format: 'A4',
-      printBackground: true,
-      margin: {
-        top: '0',
-        right: '0',
-        bottom: '0',
-        left: '0',
-      },
-    });
+      // Set viewport matching A4 size at 96 DPI roughly
+      await page.setViewport({ width: 794, height: 1123, deviceScaleFactor: 2 });
+      
+      // Set the HTML content
+      await page.setContent(fullHtml, { waitUntil: 'networkidle0' });
 
-    await browser.close();
+      // Generate PDF
+      const pdfBuffer = await page.pdf({
+        format: 'A4',
+        printBackground: true,
+        margin: {
+          top: '0',
+          right: '0',
+          bottom: '0',
+          left: '0',
+        },
+      });
 
-    // Return the PDF buffer directly
-    return new Response(pdfBuffer, {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/pdf',
-        'Content-Disposition': 'attachment; filename="resume.pdf"',
-      },
-    });
+      await browser.close();
+
+      // Return the PDF buffer directly
+      return new Response(pdfBuffer, {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/pdf',
+          'Content-Disposition': 'attachment; filename="resume.pdf"',
+        },
+      });
+    } catch (innerError) {
+      console.error('Inner PDF Error:', innerError);
+      await browser.close();
+      throw innerError;
+    }
   } catch (error) {
-    console.error('PDF Generation Error:', error);
-    return NextResponse.json({ error: 'Failed to generate PDF' }, { status: 500 });
+    console.error('Critical PDF Generation Error:', error);
+    return NextResponse.json({ 
+      error: 'Failed to generate PDF', 
+      details: error.message,
+      suggestion: 'Try using the browser print function if this continues.'
+    }, { status: 500 });
   }
 }

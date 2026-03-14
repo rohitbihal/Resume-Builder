@@ -32,10 +32,16 @@ export async function GET(request) {
     );
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      console.log('OAuth: Session exchanged successfully');
       return response;
+    } else {
+      console.error('OAuth: Code exchange error:', error.message);
     }
+  } else {
+    console.warn('OAuth: No code found in query parameters');
   }
 
   // return the user to an error page with instructions
+  console.log('OAuth: Redirecting to error page');
   return NextResponse.redirect(`${origin}/auth/auth-code-error`);
 }

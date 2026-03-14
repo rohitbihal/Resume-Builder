@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createServerClient } from '@supabase/ssr';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -9,12 +9,39 @@ const supabase = (supabaseUrl && supabaseKey)
   : null;
 
 export async function GET(req, { params }) {
-  if (!supabase) {
-    return NextResponse.json({ error: 'Database not initialized' }, { status: 500 });
-  }
   const { id: resumeId } = params;
+  const res = new NextResponse();
+  
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    {
+      cookies: {
+        getAll() { return req.cookies.getAll(); },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            req.cookies.set(name, value, options)
+          );
+        },
+      },
+    }
+  );
 
   try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    // Verify ownership
+    const { data: resume, error: authError } = await supabase
+      .from('resumes')
+      .select('user_id')
+      .eq('id', resumeId)
+      .single();
+
+    if (authError || !resume || resume.user_id !== user.id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const { data, error } = await supabase
       .from('resume_versions')
       .select('*')
@@ -31,12 +58,39 @@ export async function GET(req, { params }) {
 }
 
 export async function POST(req, { params }) {
-  if (!supabase) {
-    return NextResponse.json({ error: 'Database not initialized' }, { status: 500 });
-  }
   const { id: resumeId } = params;
+  const res = new NextResponse();
+  
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    {
+      cookies: {
+        getAll() { return req.cookies.getAll(); },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            req.cookies.set(name, value, options)
+          );
+        },
+      },
+    }
+  );
 
   try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    // Verify ownership
+    const { data: resume, error: authError } = await supabase
+      .from('resumes')
+      .select('user_id')
+      .eq('id', resumeId)
+      .single();
+
+    if (authError || !resume || resume.user_id !== user.id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const { versionName, resumeData } = await req.json();
 
     if (!resumeData) {

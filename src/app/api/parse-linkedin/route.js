@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import * as pdf from 'pdf-parse';
+import pdf from 'pdf-parse';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -17,7 +17,8 @@ export async function POST(req) {
     const buffer = Buffer.from(bytes);
 
     // Extract text from PDF
-    const pdfData = await pdf(buffer);
+    const pdfParser = pdf.default || pdf;
+    const pdfData = await pdfParser(buffer);
     const rawText = pdfData.text;
 
     if (!rawText || rawText.trim().length === 0) {

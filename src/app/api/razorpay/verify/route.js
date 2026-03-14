@@ -19,7 +19,10 @@ export async function POST(req) {
       .update(body.toString())
       .digest('hex');
 
-    const isAuthentic = expectedSignature === razorpay_signature;
+    const isAuthentic = crypto.timingSafeEqual(
+      Buffer.from(expectedSignature, 'utf-8'),
+      Buffer.from(razorpay_signature, 'utf-8')
+    );
 
     if (isAuthentic) {
       // Initialize Supabase Admin (or just regular client if using service role for updates)

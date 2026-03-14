@@ -23,7 +23,12 @@ export async function POST(req) {
       .update(body)
       .digest('hex');
 
-    if (expectedSignature !== signature) {
+    const signatureMatch = crypto.timingSafeEqual(
+      Buffer.from(expectedSignature, 'utf-8'),
+      Buffer.from(signature, 'utf-8')
+    );
+
+    if (!signatureMatch) {
       console.warn('Invalid Razorpay Webhook Signature');
       return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
     }

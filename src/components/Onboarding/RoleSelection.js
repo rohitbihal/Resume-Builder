@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useResume, useResumeDispatch } from '@/context/ResumeContext';
 import { supabase } from '@/lib/supabase';
 import styles from './RoleSelection.module.css';

@@ -13,6 +13,7 @@ export async function GET(request) {
   const origin = `${forwardedProto}://${host}`;
 
   if (code) {
+    const response = NextResponse.redirect(`${origin}${next}`);
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
@@ -23,7 +24,7 @@ export async function GET(request) {
           },
           setAll(cookiesToSet) {
             cookiesToSet.forEach(({ name, value, options }) =>
-              request.cookies.set(name, value)
+              response.cookies.set(name, value, options)
             );
           },
         },
@@ -31,7 +32,7 @@ export async function GET(request) {
     );
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      return NextResponse.redirect(`${origin}${next}`);
+      return response;
     }
   }
 

@@ -35,17 +35,14 @@ export default function PreviewPane() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
       
-      const { data: subs } = await supabase
-        .from('subscriptions')
-        .select('status')
-        .eq('user_id', session.user.id)
-        .eq('status', 'active')
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('subscription_tier')
+        .eq('id', session.user.id)
         .single();
         
-      if (subs) {
+      if (profile && profile.subscription_tier === 'pro') {
         setHasPremiumAccess(true);
-      } else {
-        // optionally check for single purchase
       }
     };
     checkAccess();
@@ -79,7 +76,8 @@ export default function PreviewPane() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${personalInfo?.firstName || 'My'}_CreativeResume.pdf`;
+      const fileName = `${resumeData.personalInfo?.fullName?.replace(/\s+/g, '_') || 'My'}_CreativeResume.pdf`;
+      a.download = fileName;
       document.body.appendChild(a);
       a.click();
       a.remove();

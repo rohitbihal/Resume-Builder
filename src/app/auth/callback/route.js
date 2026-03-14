@@ -4,6 +4,13 @@ import { NextResponse } from 'next/server';
 export async function GET(request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get('code');
+  const next = requestUrl.searchParams.get('next') ?? '/dashboard';
+  
+  // Robust origin detection for Vercel/Production
+  const forwardedProto = request.headers.get('x-forwarded-proto') || 'http';
+  const host = request.headers.get('host');
+  const origin = `${forwardedProto}://${host}`;
+
   const errorParam = requestUrl.searchParams.get('error');
   const errorDescription = requestUrl.searchParams.get('error_description');
 

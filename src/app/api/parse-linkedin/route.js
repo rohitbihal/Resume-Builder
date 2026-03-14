@@ -1,10 +1,8 @@
 import { NextResponse } from 'next/server';
 import * as pdf from 'pdf-parse';
-import Anthropic from '@anthropic-ai/sdk';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 export async function POST(req) {
   try {
@@ -26,7 +24,7 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Could not extract text from PDF' }, { status: 422 });
     }
 
-    // Call Claude to parse the text into our schema
+    // Call Gemini to parse the text into our schema
     const prompt = `
       You are an expert resume parser. I will provide you with raw text extracted from a LinkedIn PDF resume.
       Your goal is to extract the information and return it in a strictly valid JSON format that matches the following schema:
@@ -80,7 +78,7 @@ export async function POST(req) {
       }
 
       Rules:
-      1. Return ONLY the JSON object. No preamble, no explanation.
+      1. Return ONLY the JSON object. No preamble, no explanation, no markdown backticks like \`\`\`json.
       2. Generate unique IDs (short strings) for each item in arrays.
       3. If a field is not found, leave it as an empty string or empty array.
       4. Ensure dates are in a readable format (e.g., "Jan 2020").
@@ -90,20 +88,20 @@ export async function POST(req) {
       ${rawText}
     `;
 
-    const response = await anthropic.messages.create({
-      model: 'claude-3-5-sonnet-20240620',
-      max_tokens: 4000,
-      messages: [{ role: 'user', content: prompt }],
-    });
-
-    const content = response.content[0].text;
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const content = response.text();
     
     // Attempt to parse the JSON
     try {
-      const parsedData = JSON.parse(content.trim());
+      // Clean possible markdown wrapper if Gemini adds it
+      const jsonString = content.replace(/```json/g, '').replace(/```/g, '').trim();
+      const parsedData = JSON.parse(jsonString);
       return NextResponse.json(parsedData);
     } catch (parseError) {
-      console.error('Claude JSON Parse Error:', parseError, content);
+      console.error('Gemini JSON Parse Error:', parseError, content);
       return NextResponse.json({ 
         error: 'Failed to parse AI response into JSON',
         raw: content 

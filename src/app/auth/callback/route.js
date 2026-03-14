@@ -47,6 +47,6 @@ export async function GET(request) {
     }
   } else {
     console.warn('OAuth: No code found in query parameters. URL:', request.url);
-    return NextResponse.redirect(`${origin}/auth/auth-code-error?error=No+authentication+code+received`);
+    return NextResponse.redirect(`${origin}/auth/auth-code-error?error=No+authentication+code+received+at+${encodeURIComponent(request.url)}`);
   }
 }

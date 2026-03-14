@@ -6,8 +6,10 @@ const ResumeContext = createContext(null);
 const ResumeDispatchContext = createContext(null);
 
 const initialState = {
-  track: 'fresher', // 'fresher' | 'experienced'
+  track: null, // 'fresher' | 'professional' | 'freelancer' | 'academic' | 'designer' | 'career-switcher'
   activeTemplate: 'bold-neo',
+  layoutOrder: [], // Will store the order of active sections
+  onboardingComplete: false,
   personalInfo: {
     fullName: '',
     email: '',
@@ -36,6 +38,15 @@ const initialState = {
   certifications: [
     { id: crypto.randomUUID(), name: '', issuer: '', date: '', link: '' }
   ],
+  clientProjects: [
+    { id: crypto.randomUUID(), client: '', role: '', duration: '', description: '', link: '' }
+  ],
+  researchPapers: [
+    { id: crypto.randomUUID(), title: '', publication: '', date: '', link: '', abstract: '' }
+  ],
+  portfolio: [
+    { id: crypto.randomUUID(), title: '', image: null, link: '', description: '' }
+  ],
   customSections: [],
 };
 
@@ -46,6 +57,9 @@ function resumeReducer(state, action) {
 
     case 'SET_TEMPLATE':
       return { ...state, activeTemplate: action.payload };
+
+    case 'SET_LAYOUT_ORDER':
+      return { ...state, layoutOrder: action.payload };
 
     case 'UPDATE_PERSONAL_INFO':
       return { ...state, personalInfo: { ...state.personalInfo, ...action.payload } };

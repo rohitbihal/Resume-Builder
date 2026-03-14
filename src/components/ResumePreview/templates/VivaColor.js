@@ -69,89 +69,140 @@ export default function VivaColor() {
       <div className={styles.vcMain}>
         <h1 className={styles.vcMainName}>{personalInfo.fullName || 'Your Name'}</h1>
 
-        {track === 'experienced' && executiveSummary && (
-          <div className={styles.vcMainSection}>
-            <h2 className={styles.vcMainTitle}>Summary</h2>
-            <p className={styles.vcEntryText}>{executiveSummary}</p>
-          </div>
-        )}
-
-        {track === 'experienced' && workExperience.some(e => e.company) && (
-          <div className={styles.vcMainSection}>
-            <h2 className={styles.vcMainTitle}>Experience</h2>
-            {workExperience.filter(e => e.company).map(exp => (
-              <div key={exp.id} className={styles.vcEntry}>
-                <div className={styles.vcEntryHead}>
-                  <span className={styles.vcEntryTitle}>{exp.title}</span>
-                  <span className={styles.vcEntryDate}>{formatDate(exp.startDate)} — {exp.current ? 'Present' : formatDate(exp.endDate)}</span>
+        {layoutOrder.map(sectionId => {
+          switch (sectionId) {
+            case 'executiveSummary':
+              return executiveSummary && (
+                <div key="execSum" className={styles.vcMainSection}>
+                  <h2 className={styles.vcMainTitle}>Summary</h2>
+                  <p className={styles.vcEntryText}>{executiveSummary}</p>
                 </div>
-                <div className={styles.vcEntryCompany}>{exp.company}</div>
-                {exp.description && <p className={styles.vcEntryText}>{exp.description}</p>}
-              </div>
-            ))}
-          </div>
-        )}
-
-        {track === 'fresher' && internships.some(i => i.company) && (
-          <div className={styles.vcMainSection}>
-            <h2 className={styles.vcMainTitle}>Internships</h2>
-            {internships.filter(i => i.company).map(intern => (
-              <div key={intern.id} className={styles.vcEntry}>
-                <div className={styles.vcEntryHead}>
-                  <span className={styles.vcEntryTitle}>{intern.role}</span>
-                  <span className={styles.vcEntryDate}>{formatDate(intern.startDate)} — {formatDate(intern.endDate)}</span>
+              );
+            case 'workExperience':
+              return workExperience.some(e => e.company) && (
+                <div key="workExp" className={styles.vcMainSection}>
+                  <h2 className={styles.vcMainTitle}>Experience</h2>
+                  {workExperience.filter(e => e.company).map(exp => (
+                    <div key={exp.id} className={styles.vcEntry}>
+                      <div className={styles.vcEntryHead}>
+                        <span className={styles.vcEntryTitle}>{exp.title}</span>
+                        <span className={styles.vcEntryDate}>{formatDate(exp.startDate)} — {exp.current ? 'Present' : formatDate(exp.endDate)}</span>
+                      </div>
+                      <div className={styles.vcEntryCompany}>{exp.company}</div>
+                      {exp.description && <p className={styles.vcEntryText}>{exp.description}</p>}
+                    </div>
+                  ))}
                 </div>
-                <div className={styles.vcEntryCompany}>{intern.company}</div>
-                {intern.description && <p className={styles.vcEntryText}>{intern.description}</p>}
-              </div>
-            ))}
-          </div>
-        )}
-
-        {education.some(e => e.institution) && (
-          <div className={styles.vcMainSection}>
-            <h2 className={styles.vcMainTitle}>Education</h2>
-            {education.filter(e => e.institution).map(edu => (
-              <div key={edu.id} className={styles.vcEntry}>
-                <div className={styles.vcEntryHead}>
-                  <span className={styles.vcEntryTitle}>{edu.degree} {edu.field && `in ${edu.field}`}</span>
-                  <span className={styles.vcEntryDate}>{formatDate(edu.startDate)} — {formatDate(edu.endDate)}</span>
+              );
+            case 'internships':
+              return internships.some(i => i.company) && (
+                <div key="interns" className={styles.vcMainSection}>
+                  <h2 className={styles.vcMainTitle}>Internships</h2>
+                  {internships.filter(i => i.company).map(intern => (
+                    <div key={intern.id} className={styles.vcEntry}>
+                      <div className={styles.vcEntryHead}>
+                        <span className={styles.vcEntryTitle}>{intern.role}</span>
+                        <span className={styles.vcEntryDate}>{formatDate(intern.startDate)} — {formatDate(intern.endDate)}</span>
+                      </div>
+                      <div className={styles.vcEntryCompany}>{intern.company}</div>
+                      {intern.description && <p className={styles.vcEntryText}>{intern.description}</p>}
+                    </div>
+                  ))}
                 </div>
-                <div className={styles.vcEntryCompany}>
-                  {edu.institution} 
-                  {edu.gpa && ` | GPA: ${edu.gpa}`} 
-                  {edu.cgpa && ` | CGPA: ${edu.cgpa}`}
+              );
+            case 'education':
+              return education.some(e => e.institution) && (
+                <div key="edu" className={styles.vcMainSection}>
+                  <h2 className={styles.vcMainTitle}>Education</h2>
+                  {education.filter(e => e.institution).map(edu => (
+                    <div key={edu.id} className={styles.vcEntry}>
+                      <div className={styles.vcEntryHead}>
+                        <span className={styles.vcEntryTitle}>{edu.degree} {edu.field && `in ${edu.field}`}</span>
+                        <span className={styles.vcEntryDate}>{formatDate(edu.startDate)} — {formatDate(edu.endDate)}</span>
+                      </div>
+                      <div className={styles.vcEntryCompany}>
+                        {edu.institution} 
+                        {edu.gpa && ` | GPA: ${edu.gpa}`} 
+                        {edu.cgpa && ` | CGPA: ${edu.cgpa}`}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {academicProjects.some(p => p.name) && (
-          <div className={styles.vcMainSection}>
-            <h2 className={styles.vcMainTitle}>Projects</h2>
-            {academicProjects.filter(p => p.name).map(proj => (
-              <div key={proj.id} className={styles.vcEntry}>
-                <span className={styles.vcEntryTitle}>{proj.name}</span>
-                {proj.technologies && <div className={styles.vcEntryCompany}>{proj.technologies}</div>}
-                {proj.description && <p className={styles.vcEntryText}>{proj.description}</p>}
-              </div>
-            ))}
-          </div>
-        )}
-
-        {customSections.map(section => (
-          section.items.some(i => i.content) && (
-            <div key={section.id} className={styles.vcMainSection}>
-              <h2 className={styles.vcMainTitle}>{section.title}</h2>
-              <ul style={{ paddingLeft: '16px' }}>
-                {section.items.filter(i => i.content).map(item => (
-                  <li key={item.id} style={{ fontSize: '8.5pt', marginBottom: '3px', color: '#444' }}>{item.content}</li>
-                ))}
-              </ul>
-            </div>
-          )
-        ))}
+              );
+            case 'academicProjects':
+              return academicProjects.some(p => p.name) && (
+                <div key="acadProj" className={styles.vcMainSection}>
+                  <h2 className={styles.vcMainTitle}>Projects</h2>
+                  {academicProjects.filter(p => p.name).map(proj => (
+                    <div key={proj.id} className={styles.vcEntry}>
+                      <span className={styles.vcEntryTitle}>{proj.name}</span>
+                      {proj.technologies && <div className={styles.vcEntryCompany}>{proj.technologies}</div>}
+                      {proj.description && <p className={styles.vcEntryText}>{proj.description}</p>}
+                    </div>
+                  ))}
+                </div>
+              );
+            case 'clientProjects':
+              return resume.clientProjects?.some(p => p.client) && (
+                <div key="clientProj" className={styles.vcMainSection}>
+                  <h2 className={styles.vcMainTitle}>Clients</h2>
+                  {resume.clientProjects.filter(p => p.client).map(proj => (
+                    <div key={proj.id} className={styles.vcEntry}>
+                      <div className={styles.vcEntryHead}>
+                        <span className={styles.vcEntryTitle}>{proj.client}</span>
+                        <span className={styles.vcEntryDate}>{proj.role}</span>
+                      </div>
+                      {proj.duration && <div className={styles.vcEntryCompany}>{proj.duration}</div>}
+                      {proj.description && <p className={styles.vcEntryText}>{proj.description}</p>}
+                    </div>
+                  ))}
+                </div>
+              );
+            case 'researchPapers':
+              return resume.researchPapers?.some(p => p.title) && (
+                <div key="research" className={styles.vcMainSection}>
+                  <h2 className={styles.vcMainTitle}>Publications</h2>
+                  {resume.researchPapers.filter(p => p.title).map(paper => (
+                    <div key={paper.id} className={styles.vcEntry}>
+                      <div className={styles.vcEntryHead}>
+                        <span className={styles.vcEntryTitle}>{paper.title}</span>
+                        <span className={styles.vcEntryDate}>{paper.date}</span>
+                      </div>
+                      <div className={styles.vcEntryCompany}>{paper.publication}</div>
+                      {paper.abstract && <p className={styles.vcEntryText}>{paper.abstract}</p>}
+                    </div>
+                  ))}
+                </div>
+              );
+            case 'portfolio':
+              return resume.portfolio?.some(p => p.title) && (
+                <div key="portfolio" className={styles.vcMainSection}>
+                  <h2 className={styles.vcMainTitle}>Portfolio</h2>
+                  {resume.portfolio.filter(p => p.title).map(item => (
+                    <div key={item.id} className={styles.vcEntry}>
+                      <span className={styles.vcEntryTitle}>{item.title}</span>
+                      {item.description && <p className={styles.vcEntryText}>{item.description}</p>}
+                    </div>
+                  ))}
+                </div>
+              );
+            case 'customSections':
+              return window.customSectionVc = true && customSections.map(section => (
+                section.items.some(i => i.content) && (
+                  <div key={section.id} className={styles.vcMainSection}>
+                    <h2 className={styles.vcMainTitle}>{section.title}</h2>
+                    <ul style={{ paddingLeft: '16px' }}>
+                      {section.items.filter(i => i.content).map(item => (
+                        <li key={item.id} style={{ fontSize: '8.5pt', marginBottom: '3px', color: '#444' }}>{item.content}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )
+              ));
+            default:
+              return null; // skills, certifications, personalInfo are rendered elsewhere in this template
+          }
+        })}
       </div>
     </div>
   );

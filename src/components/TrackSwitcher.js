@@ -16,45 +16,74 @@ export default function TrackSwitcher() {
       </div>
 
       <div className={styles.switcher}>
-        <button
-          className={`${styles.option} ${track === 'fresher' ? styles.active : ''}`}
-          onClick={() => dispatch({ type: 'SET_TRACK', payload: 'fresher' })}
-          id="track-fresher-btn"
-        >
-          <div className={styles.optionIcon}>🎓</div>
-          <div className={styles.optionContent}>
-            <span className={styles.optionTitle}>Fresher</span>
-            <span className={styles.optionDesc}>Recent graduate or student with internship & project experience</span>
-          </div>
-          <div className={styles.optionSections}>
-            <span className={styles.tag}>Academic Projects</span>
-            <span className={styles.tag}>Internships</span>
-            <span className={styles.tag}>Skills</span>
-          </div>
-        </button>
-
-        <button
-          className={`${styles.option} ${track === 'experienced' ? styles.active : ''}`}
-          onClick={() => dispatch({ type: 'SET_TRACK', payload: 'experienced' })}
-          id="track-experienced-btn"
-        >
-          <div className={styles.optionIcon}>💼</div>
-          <div className={styles.optionContent}>
-            <span className={styles.optionTitle}>Experienced</span>
-            <span className={styles.optionDesc}>Professional with work history and executive-level experience</span>
-          </div>
-          <div className={styles.optionSections}>
-            <span className={styles.tag}>Work History</span>
-            <span className={styles.tag}>Executive Summary</span>
-            <span className={styles.tag}>Skills</span>
-          </div>
-        </button>
+        {[
+          {
+            id: 'fresher',
+            icon: '🎓',
+            title: 'Fresher',
+            desc: 'Recent graduate with internship & project experience',
+            tags: ['Academic Projects', 'Internships']
+          },
+          {
+            id: 'professional',
+            icon: '💼',
+            title: 'Professional',
+            desc: 'Professional with work history and executive experience',
+            tags: ['Work History', 'Executive Summary']
+          },
+          {
+            id: 'freelancer',
+            icon: '🌍',
+            title: 'Freelancer',
+            desc: 'Independent contractor specializing in client success',
+            tags: ['Client Projects', 'Portfolio']
+          },
+          {
+            id: 'academic',
+            icon: '🔬',
+            title: 'Academic',
+            desc: 'Researcher or professor driven by publications',
+            tags: ['Research Papers', 'Education']
+          },
+          {
+            id: 'designer',
+            icon: '🎨',
+            title: 'Designer',
+            desc: 'Creative professional with strong visual focus',
+            tags: ['Portfolio', 'Experience']
+          },
+          {
+            id: 'career-switcher',
+            icon: '🔄',
+            title: 'Career Switcher',
+            desc: 'Pivoting industries with transferable skills',
+            tags: ['Transferable Skills', 'Projects']
+          }
+        ].map((t) => (
+          <button
+            key={t.id}
+            className={`${styles.option} ${track === t.id ? styles.active : ''}`}
+            onClick={() => dispatch({ type: 'SET_TRACK', payload: t.id })}
+            id={`track-${t.id}-btn`}
+          >
+            <div className={styles.optionIcon}>{t.icon}</div>
+            <div className={styles.optionContent}>
+              <span className={styles.optionTitle}>{t.title}</span>
+              <span className={styles.optionDesc}>{t.desc}</span>
+            </div>
+            <div className={styles.optionSections}>
+              {t.tags.map(tag => (
+                <span key={tag} className={styles.tag}>{tag}</span>
+              ))}
+            </div>
+          </button>
+        ))}
       </div>
 
       <div className={styles.indicator}>
         <div className={`${styles.indicatorDot} ${styles.active}`} />
         <span className={styles.indicatorText}>
-          {track === 'fresher' ? 'Fresher Mode' : 'Experienced Mode'} — sections adjusted automatically
+          {track.charAt(0).toUpperCase() + track.slice(1)} Mode — sections adjusted automatically
         </span>
       </div>
     </div>

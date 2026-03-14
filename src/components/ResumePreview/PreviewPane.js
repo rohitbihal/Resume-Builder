@@ -7,9 +7,7 @@ import GridMaster from './templates/GridMaster';
 import VivaColor from './templates/VivaColor';
 import TypeForge from './templates/TypeForge';
 import InkSplash from './templates/InkSplash';
-import { PDFDownloadLink } from '@react-pdf/renderer';
-import { ResumePDF } from './ResumePDF';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 
 const TEMPLATES = [
@@ -26,6 +24,8 @@ export default function PreviewPane() {
   const dispatch = useResumeDispatch();
   const [hasPremiumAccess, setHasPremiumAccess] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const previewRef = useRef(null);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -54,6 +54,44 @@ export default function PreviewPane() {
   const current = TEMPLATES.find(t => t.id === activeTemplate) || TEMPLATES[0];
   const TemplateComponent = current.component;
 
+  const handleDownloadPdf = async () => {
+    if (!previewRef.current) return;
+    setIsGeneratingPdf(true);
+    try {
+      // Collect all styles
+      const stylesArr = Array.from(document.querySelectorAll('style')).map(s => s.innerHTML);
+      // Extra template-specific styles (importing the font mappings if necessary)
+      const cssString = stylesArr.join('\n');
+      const watermarkHtml = !hasPremiumAccess 
+        ? '<div style="position: absolute; bottom: 10px; right: 20px; color: #a0aec0; font-size: 10px; font-family: sans-serif; z-index: 9999;">Created with CreativeResume (Free)</div>'
+        : '';
+      const htmlString = previewRef.current.innerHTML + watermarkHtml;
+
+      const response = await fetch('/api/generate-pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ html: htmlString, css: cssString }),
+      });
+
+      if (!response.ok) throw new Error('Failed to generate PDF');
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${personalInfo?.firstName || 'My'}_CreativeResume.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert('Failed to generate PDF. Please try again.');
+    } finally {
+      setIsGeneratingPdf(false);
+    }
+  };
+
   return (
     <div className={styles.previewWrapper}>
       <div className={styles.previewHeader}>
@@ -75,29 +113,22 @@ export default function PreviewPane() {
       </div>
 
       <div className={styles.previewContainer}>
-        <div className={styles.previewScale}>
+        <div className={styles.previewScale} ref={previewRef}>
           <TemplateComponent />
         </div>
       </div>
 
       <div className={styles.downloadArea}>
         {isClient && (
-          <PDFDownloadLink 
-            document={<ResumePDF data={resumeData} hasWatermark={!hasPremiumAccess} />} 
-            fileName={`${resumeData.personalInfo.firstName || 'My'}_CreativeResume.pdf`}
-            style={{ flex: 1, textDecoration: 'none' }}
+          <button 
+            className="cr-btn cr-btn-primary cr-btn-lg" 
+            style={{ width: '100%' }} 
+            id="download-pdf-btn"
+            disabled={isGeneratingPdf}
+            onClick={handleDownloadPdf}
           >
-            {({ blob, url, loading, error }) => (
-              <button 
-                className="cr-btn cr-btn-primary cr-btn-lg" 
-                style={{ width: '100%' }} 
-                id="download-pdf-btn"
-                disabled={loading}
-              >
-                {loading ? '⏳ Generating PDF...' : '⬇ Download PDF'}
-              </button>
-            )}
-          </PDFDownloadLink>
+            {isGeneratingPdf ? '⏳ Generating PDF...' : '⬇ Download PDF'}
+          </button>
         )}
       </div>
     </div>

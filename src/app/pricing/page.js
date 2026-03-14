@@ -1,10 +1,17 @@
+'use client';
+
 import Link from 'next/link';
+import Script from 'next/script';
+import { useState } from 'react';
+import { supabase } from '@/lib/supabase';
 import styles from './pricing.module.css';
 
 const PLANS = [
   {
+    id: 'free',
     name: 'Free',
     price: '₹0',
+    amount: 0,
     period: 'forever',
     description: 'Build, preview, and customize your resume',
     features: [
@@ -20,8 +27,10 @@ const PLANS = [
     accent: 'var(--cr-success)',
   },
   {
+    id: 'single_download',
     name: 'Single Download',
     price: '₹49',
+    amount: 49,
     period: 'one-time',
     description: 'Download a single resume without watermark',
     features: [
@@ -37,8 +46,10 @@ const PLANS = [
     accent: 'var(--cr-info)',
   },
   {
+    id: 'monthly_subscription',
     name: 'Monthly',
     price: '₹199',
+    amount: 199,
     period: '/month',
     description: 'Full access to all templates and downloads',
     features: [
@@ -54,8 +65,10 @@ const PLANS = [
     accent: 'var(--cr-accent-primary)',
   },
   {
+    id: 'quarterly_subscription',
     name: 'Quarterly',
     price: '₹499',
+    amount: 499,
     period: '/3 months',
     description: 'Save 16% with a quarterly plan',
     features: [
@@ -71,8 +84,10 @@ const PLANS = [
     accent: '#a855f7',
   },
   {
+    id: 'annual_subscription',
     name: 'Annual',
     price: '₹1,499',
+    amount: 1499,
     period: '/year',
     description: 'Best value — save 37%',
     features: [
@@ -90,8 +105,76 @@ const PLANS = [
 ];
 
 export default function PricingPage() {
+  const [loading, setLoading] = useState(null);
+
+  const handleSubscription = async (plan) => {
+    if (plan.id === 'free') return;
+    
+    setLoading(plan.id);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        alert('Please login to continue');
+        window.location.href = '/auth?redirect=/pricing';
+        return;
+      }
+
+      // Create order
+      const res = await fetch('/api/razorpay/order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: plan.amount, planId: plan.id }),
+      });
+      const order = await res.json();
+
+      if (!order.id) throw new Error('Failed to create order');
+
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: order.amount,
+        currency: order.currency,
+        name: 'CreativeResume',
+        description: `${plan.name} Plan`,
+        order_id: order.id,
+        handler: async function (response) {
+          const verifyRes = await fetch('/api/razorpay/verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              ...response,
+              userId: session.user.id,
+              planId: plan.id
+            }),
+          });
+          const verifyData = await verifyRes.json();
+          if (verifyData.status === 'ok') {
+            alert('Payment successful! You are now a PRO user.');
+            window.location.href = '/builder';
+          } else {
+            alert('Payment verification failed.');
+          }
+        },
+        prefill: {
+          email: session.user.email,
+        },
+        theme: {
+          color: '#2563eb',
+        },
+      };
+
+      const rzp1 = new window.Razorpay(options);
+      rzp1.open();
+    } catch (error) {
+      console.error('Subscription error:', error);
+      alert('Something went wrong. Please try again.');
+    } finally {
+      setLoading(null);
+    }
+  };
+
   return (
     <main className={styles.pricing}>
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" />
       <nav className={styles.nav}>
         <div className={styles.navInner}>
           <Link href="/" className={styles.logo}>CreativeResume</Link>
@@ -132,9 +215,20 @@ export default function PricingPage() {
                 </li>
               ))}
             </ul>
-            <Link href={plan.href} className={`${styles.planCta} ${plan.popular ? styles.planCtaPrimary : ''}`}>
-              {plan.cta}
-            </Link>
+            {plan.id === 'free' ? (
+              <Link href={plan.href} className={`${styles.planCta} ${plan.popular ? styles.planCtaPrimary : ''}`}>
+                {plan.cta}
+              </Link>
+            ) : (
+              <button 
+                onClick={() => handleSubscription(plan)}
+                disabled={loading === plan.id}
+                className={`${styles.planCta} ${plan.popular ? styles.planCtaPrimary : ''}`}
+                style={{ width: '100%', border: 'none', cursor: 'pointer' }}
+              >
+                {loading === plan.id ? 'Loading...' : plan.cta}
+              </button>
+            )}
           </div>
         ))}
       </section>
@@ -144,7 +238,7 @@ export default function PricingPage() {
         <div className={styles.faqGrid}>
           {[
             { q: 'Can I try before I pay?', a: 'Yes! Build and preview your resume with all templates completely free. You only pay when you download.' },
-            { q: 'What payment methods do you accept?', a: 'We accept all major credit/debit cards, UPI, and net banking via Stripe.' },
+            { q: 'What payment methods do you accept?', a: 'We accept all major credit/debit cards, UPI, and net banking via Razorpay.' },
             { q: 'Can I cancel my subscription?', a: 'Absolutely. Cancel anytime from your dashboard. You\'ll retain access until the end of your billing period.' },
             { q: 'What happens to my data?', a: 'Your resume data is stored securely in your account. Even on the free plan, your data is never deleted.' },
           ].map((item) => (

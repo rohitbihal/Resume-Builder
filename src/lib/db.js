@@ -76,5 +76,25 @@ export const ResumeDB = {
       return [];
     }
     return data;
+  },
+
+  /**
+   * Save a version snapshot
+   */
+  async saveVersion(resumeId, versionName, data) {
+    const res = await fetch(`/api/resumes/${resumeId}/versions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ versionName, resumeData: data }),
+    });
+    return res.json();
+  },
+
+  /**
+   * Get all versions for a resume
+   */
+  async getResumeVersions(resumeId) {
+    const res = await fetch(`/api/resumes/${resumeId}/versions`);
+    return res.json();
   }
 };

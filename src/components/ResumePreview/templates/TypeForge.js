@@ -29,115 +29,166 @@ export default function TypeForge() {
           {personalInfo.portfolio && <span>{personalInfo.portfolio}</span>}
         </div>
 
-        {track === 'experienced' && executiveSummary && (
-          <div className={styles.tfSection}>
-            <h2 className={styles.tfSectionTitle}>SUMMARY</h2>
-            <div className={styles.tfSectionBg}>
-              <p className={styles.tfEntryText}>{executiveSummary}</p>
-            </div>
-          </div>
-        )}
-
-        {track === 'experienced' && workExperience.some(e => e.company) && (
-          <div className={styles.tfSection}>
-            <h2 className={styles.tfSectionTitle}>EXPERIENCE</h2>
-            {workExperience.filter(e => e.company).map(exp => (
-              <div key={exp.id} className={styles.tfEntry}>
-                <div className={styles.tfEntryHead}>
-                  <span className={styles.tfEntryTitle}>{exp.title}</span>
-                  <span className={styles.tfEntryDate}>{formatDate(exp.startDate)} — {exp.current ? 'Present' : formatDate(exp.endDate)}</span>
+        {layoutOrder.map(sectionId => {
+          switch (sectionId) {
+            case 'executiveSummary':
+              return executiveSummary && (
+                <div key="execSum" className={styles.tfSection}>
+                  <h2 className={styles.tfSectionTitle}>SUMMARY</h2>
+                  <div className={styles.tfSectionBg}>
+                    <p className={styles.tfEntryText}>{executiveSummary}</p>
+                  </div>
                 </div>
-                <div className={styles.tfEntryMeta}>{exp.company}</div>
-                {exp.description && <p className={styles.tfEntryText}>{exp.description}</p>}
-              </div>
-            ))}
-          </div>
-        )}
-
-        {track === 'fresher' && internships.some(i => i.company) && (
-          <div className={styles.tfSection}>
-            <h2 className={styles.tfSectionTitle}>INTERNSHIPS</h2>
-            {internships.filter(i => i.company).map(intern => (
-              <div key={intern.id} className={styles.tfEntry}>
-                <div className={styles.tfEntryHead}>
-                  <span className={styles.tfEntryTitle}>{intern.role}</span>
-                  <span className={styles.tfEntryDate}>{formatDate(intern.startDate)} — {formatDate(intern.endDate)}</span>
-                </div>
-                <div className={styles.tfEntryMeta}>{intern.company}</div>
-                {intern.description && <p className={styles.tfEntryText}>{intern.description}</p>}
-              </div>
-            ))}
-          </div>
-        )}
-
-        {education.some(e => e.institution) && (
-          <div className={styles.tfSection}>
-            <h2 className={styles.tfSectionTitle}>EDUCATION</h2>
-            {education.filter(e => e.institution).map(edu => (
-              <div key={edu.id} className={styles.tfEntry}>
-                <div className={styles.tfEntryHead}>
-                  <span className={styles.tfEntryTitle}>{edu.degree} {edu.field && `in ${edu.field}`}</span>
-                  <span className={styles.tfEntryDate}>{formatDate(edu.startDate)} — {formatDate(edu.endDate)}</span>
-                </div>
-                <div className={styles.tfEntryMeta}>
-                  {edu.institution} 
-                  {edu.gpa && ` | GPA: ${edu.gpa}`} 
-                  {edu.cgpa && ` | CGPA: ${edu.cgpa}`}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {academicProjects.some(p => p.name) && (
-          <div className={styles.tfSection}>
-            <h2 className={styles.tfSectionTitle}>PROJECTS</h2>
-            {academicProjects.filter(p => p.name).map(proj => (
-              <div key={proj.id} className={styles.tfEntry}>
-                <span className={styles.tfEntryTitle}>{proj.name}</span>
-                {proj.technologies && <div className={styles.tfEntryMeta}>{proj.technologies}</div>}
-                {proj.description && <p className={styles.tfEntryText}>{proj.description}</p>}
-              </div>
-            ))}
-          </div>
-        )}
-
-        {skills.some(s => s.name) && (
-          <div className={styles.tfSection}>
-            <h2 className={styles.tfSectionTitle}>SKILLS</h2>
-            <div className={styles.tfSectionBg}>
-              <span className={styles.tfSkillLine}>
-                {skills.filter(s => s.name).map(s => s.name).join(', ')}
-              </span>
-            </div>
-          </div>
-        )}
-
-        {certifications.some(c => c.name) && (
-          <div className={styles.tfSection}>
-            <h2 className={styles.tfSectionTitle}>CERTIFICATIONS</h2>
-            {certifications.filter(c => c.name).map(cert => (
-              <div key={cert.id} className={styles.tfEntry}>
-                <strong>{cert.name}</strong> — {cert.issuer} {cert.date && `(${formatDate(cert.date)})`}
-              </div>
-            ))}
-          </div>
-        )}
-
-        {customSections.map(section => (
-          section.items.some(i => i.content) && (
-            <div key={section.id} className={styles.tfSection}>
-              <h2 className={styles.tfSectionTitle}>{section.title.toUpperCase()}</h2>
-              <div className={styles.tfSectionBg}>
-                <ul style={{ paddingLeft: '16px' }}>
-                  {section.items.filter(i => i.content).map(item => (
-                    <li key={item.id} style={{ fontSize: '8.5pt', marginBottom: '3px' }}>{item.content}</li>
+              );
+            case 'workExperience':
+              return workExperience.some(e => e.company) && (
+                <div key="workExp" className={styles.tfSection}>
+                  <h2 className={styles.tfSectionTitle}>EXPERIENCE</h2>
+                  {workExperience.filter(e => e.company).map(exp => (
+                    <div key={exp.id} className={styles.tfEntry}>
+                      <div className={styles.tfEntryHead}>
+                        <span className={styles.tfEntryTitle}>{exp.title}</span>
+                        <span className={styles.tfEntryDate}>{formatDate(exp.startDate)} — {exp.current ? 'Present' : formatDate(exp.endDate)}</span>
+                      </div>
+                      <div className={styles.tfEntryMeta}>{exp.company}</div>
+                      {exp.description && <p className={styles.tfEntryText}>{exp.description}</p>}
+                    </div>
                   ))}
-                </ul>
-              </div>
-            </div>
-          )
-        ))}
+                </div>
+              );
+            case 'internships':
+              return internships.some(i => i.company) && (
+                <div key="interns" className={styles.tfSection}>
+                  <h2 className={styles.tfSectionTitle}>INTERNSHIPS</h2>
+                  {internships.filter(i => i.company).map(intern => (
+                    <div key={intern.id} className={styles.tfEntry}>
+                      <div className={styles.tfEntryHead}>
+                        <span className={styles.tfEntryTitle}>{intern.role}</span>
+                        <span className={styles.tfEntryDate}>{formatDate(intern.startDate)} — {formatDate(intern.endDate)}</span>
+                      </div>
+                      <div className={styles.tfEntryMeta}>{intern.company}</div>
+                      {intern.description && <p className={styles.tfEntryText}>{intern.description}</p>}
+                    </div>
+                  ))}
+                </div>
+              );
+            case 'education':
+              return education.some(e => e.institution) && (
+                <div key="edu" className={styles.tfSection}>
+                  <h2 className={styles.tfSectionTitle}>EDUCATION</h2>
+                  {education.filter(e => e.institution).map(edu => (
+                    <div key={edu.id} className={styles.tfEntry}>
+                      <div className={styles.tfEntryHead}>
+                        <span className={styles.tfEntryTitle}>{edu.degree} {edu.field && `in ${edu.field}`}</span>
+                        <span className={styles.tfEntryDate}>{formatDate(edu.startDate)} — {formatDate(edu.endDate)}</span>
+                      </div>
+                      <div className={styles.tfEntryMeta}>
+                        {edu.institution} 
+                        {edu.gpa && ` | GPA: ${edu.gpa}`} 
+                        {edu.cgpa && ` | CGPA: ${edu.cgpa}`}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              );
+            case 'academicProjects':
+              return academicProjects.some(p => p.name) && (
+                <div key="acadProj" className={styles.tfSection}>
+                  <h2 className={styles.tfSectionTitle}>PROJECTS</h2>
+                  {academicProjects.filter(p => p.name).map(proj => (
+                    <div key={proj.id} className={styles.tfEntry}>
+                      <span className={styles.tfEntryTitle}>{proj.name}</span>
+                      {proj.technologies && <div className={styles.tfEntryMeta}>{proj.technologies}</div>}
+                      {proj.description && <p className={styles.tfEntryText}>{proj.description}</p>}
+                    </div>
+                  ))}
+                </div>
+              );
+            case 'clientProjects':
+              return resume.clientProjects?.some(p => p.client) && (
+                <div key="clientProj" className={styles.tfSection}>
+                  <h2 className={styles.tfSectionTitle}>CLIENTS</h2>
+                  {resume.clientProjects.filter(p => p.client).map(proj => (
+                    <div key={proj.id} className={styles.tfEntry}>
+                      <div className={styles.tfEntryHead}>
+                        <span className={styles.tfEntryTitle}>{proj.client}</span>
+                        <span className={styles.tfEntryDate}>{proj.role}</span>
+                      </div>
+                      {proj.duration && <div className={styles.tfEntryMeta}>{proj.duration}</div>}
+                      {proj.description && <p className={styles.tfEntryText}>{proj.description}</p>}
+                    </div>
+                  ))}
+                </div>
+              );
+            case 'researchPapers':
+              return resume.researchPapers?.some(p => p.title) && (
+                <div key="research" className={styles.tfSection}>
+                  <h2 className={styles.tfSectionTitle}>PUBLICATIONS</h2>
+                  {resume.researchPapers.filter(p => p.title).map(paper => (
+                    <div key={paper.id} className={styles.tfEntry}>
+                      <div className={styles.tfEntryHead}>
+                        <span className={styles.tfEntryTitle}>{paper.title}</span>
+                        <span className={styles.tfEntryDate}>{paper.date}</span>
+                      </div>
+                      <div className={styles.tfEntryMeta}>{paper.publication}</div>
+                      {paper.abstract && <p className={styles.tfEntryText}>{paper.abstract}</p>}
+                    </div>
+                  ))}
+                </div>
+              );
+            case 'portfolio':
+              return resume.portfolio?.some(p => p.title) && (
+                <div key="portfolio" className={styles.tfSection}>
+                  <h2 className={styles.tfSectionTitle}>PORTFOLIO</h2>
+                  {resume.portfolio.filter(p => p.title).map(item => (
+                    <div key={item.id} className={styles.tfEntry}>
+                      <span className={styles.tfEntryTitle}>{item.title}</span>
+                      {item.description && <p className={styles.tfEntryText}>{item.description}</p>}
+                    </div>
+                  ))}
+                </div>
+              );
+            case 'skills':
+              return skills.some(s => s.name) && (
+                <div key="skills" className={styles.tfSection}>
+                  <h2 className={styles.tfSectionTitle}>SKILLS</h2>
+                  <div className={styles.tfSectionBg}>
+                    <span className={styles.tfSkillLine}>
+                      {skills.filter(s => s.name).map(s => s.name).join(', ')}
+                    </span>
+                  </div>
+                </div>
+              );
+            case 'certifications':
+              return certifications.some(c => c.name) && (
+                <div key="certs" className={styles.tfSection}>
+                  <h2 className={styles.tfSectionTitle}>CERTIFICATIONS</h2>
+                  {certifications.filter(c => c.name).map(cert => (
+                    <div key={cert.id} className={styles.tfEntry}>
+                      <strong>{cert.name}</strong> — {cert.issuer} {cert.date && `(${formatDate(cert.date)})`}
+                    </div>
+                  ))}
+                </div>
+              );
+            case 'customSections':
+              return window.customSectionTf = true && customSections.map(section => (
+                section.items.some(i => i.content) && (
+                  <div key={section.id} className={styles.tfSection}>
+                    <h2 className={styles.tfSectionTitle}>{section.title.toUpperCase()}</h2>
+                    <div className={styles.tfSectionBg}>
+                      <ul style={{ paddingLeft: '16px' }}>
+                        {section.items.filter(i => i.content).map(item => (
+                          <li key={item.id} style={{ fontSize: '8.5pt', marginBottom: '3px' }}>{item.content}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                )
+              ));
+            default:
+              return null;
+          }
+        })}
       </div>
     </div>
   );

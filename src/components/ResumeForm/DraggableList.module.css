@@ -1,0 +1,57 @@
+.dragHandleContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  width: 100%;
+}
+
+.sectionDivider {
+  display: flex;
+  align-items: center;
+  margin: var(--cr-space-lg) 0;
+  flex: 1;
+}
+
+.sectionDivider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--cr-border);
+  margin-left: var(--cr-space-md);
+}
+
+.sectionDividerText {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--cr-text-muted);
+  font-weight: 600;
+}
+
+.dragHandle {
+  background: transparent;
+  border: none;
+  cursor: grab;
+  color: var(--cr-text-muted);
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: all 0.2s ease;
+  margin-left: 1rem;
+}
+
+.dragHandle:hover {
+  background: var(--cr-surface);
+  color: var(--cr-text);
+}
+
+.dragHandle:active {
+  cursor: grabbing;
+}
+
+.sortableContent {
+  background: transparent;
+}

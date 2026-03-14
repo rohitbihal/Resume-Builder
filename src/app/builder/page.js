@@ -2,15 +2,9 @@
 
 import { ResumeProvider, useResume, useResumeDispatch } from '@/context/ResumeContext';
 import TrackSwitcher from '@/components/TrackSwitcher';
-import PersonalInfo from '@/components/ResumeForm/PersonalInfo';
-import Education from '@/components/ResumeForm/Education';
-import Skills from '@/components/ResumeForm/Skills';
-import WorkExperience from '@/components/ResumeForm/WorkExperience';
-import Internships from '@/components/ResumeForm/Internships';
-import AcademicProjects from '@/components/ResumeForm/AcademicProjects';
-import ExecutiveSummary from '@/components/ResumeForm/ExecutiveSummary';
-import Certifications from '@/components/ResumeForm/Certifications';
-import CustomSection from '@/components/ResumeForm/CustomSection';
+import LinkedInImport from '@/components/ResumeForm/LinkedInImport';
+import RoleSelection from '@/components/Onboarding/RoleSelection';
+import DraggableSectionList from '@/components/ResumeForm/DraggableSectionList';
 import PreviewPane from '@/components/ResumePreview/PreviewPane';
 import styles from './builder.module.css';
 import Link from 'next/link';
@@ -25,6 +19,9 @@ function BuilderInner() {
   const dispatch = useResumeDispatch();
   const [session, setSession] = useState(null);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [currentResumeId, setCurrentResumeId] = useState(null);
+  const [versions, setVersions] = useState([]);
+  const [isLoadingVersions, setIsLoadingVersions] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -39,6 +36,26 @@ function BuilderInner() {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (currentResumeId && session) {
+      loadVersions();
+    }
+  }, [currentResumeId, session]);
+
+  const loadVersions = async () => {
+    setIsLoadingVersions(true);
+    try {
+      const data = await ResumeDB.getResumeVersions(currentResumeId);
+      if (Array.isArray(data)) {
+        setVersions(data);
+      }
+    } catch (err) {
+      console.error('Error loading versions:', err);
+    } finally {
+      setIsLoadingVersions(false);
+    }
+  };
 
   const handleSave = async () => {
     if (!session) {
@@ -55,14 +72,39 @@ function BuilderInner() {
     );
     
     if (result.success) {
+      setCurrentResumeId(result.id);
       alert('Resume saved successfully!');
     } else {
       alert('Error saving resume: ' + result.error);
     }
   };
 
+  const handleSaveVersion = async () => {
+    if (!currentResumeId) {
+      alert('Please save the resume first before creating a version.');
+      return;
+    }
+    const versionName = prompt('Enter a name for this version:', `Version ${new Date().toLocaleTimeString()}`);
+    if (!versionName) return;
+
+    const result = await ResumeDB.saveVersion(currentResumeId, versionName, resumeState);
+    if (result.id) {
+      alert('Version saved!');
+      loadVersions();
+    } else {
+      alert('Error saving version: ' + (result.error || 'Unknown error'));
+    }
+  };
+
+  const handleLoadVersion = (version) => {
+    if (confirm(`Are you sure you want to load "${version.version_name}"? This will overwrite your current changes.`)) {
+      dispatch({ type: 'LOAD_RESUME', payload: version.resume_data });
+    }
+  };
+
   return (
     <>
+      <RoleSelection />
       <nav className={styles.builderNav}>
         <Link href="/" className={styles.navLogo}>CreativeResume</Link>
         <div className={styles.navLinks}>
@@ -75,6 +117,9 @@ function BuilderInner() {
               </span>
               <button className="cr-btn" onClick={signOut}>Sign Out</button>
               <button className="cr-btn cr-btn-primary cr-btn-sm" onClick={handleSave}>Save Resume</button>
+              {currentResumeId && (
+                <button className="cr-btn cr-btn-secondary cr-btn-sm" onClick={handleSaveVersion}>Save Version</button>
+              )}
             </div>
           ) : (
             <button className="cr-btn cr-btn-primary cr-btn-sm" onClick={() => setIsAuthOpen(true)}>
@@ -90,46 +135,37 @@ function BuilderInner() {
 
         <div className={styles.builderLayout}>
           <div className={styles.formColumn}>
+            {versions.length > 0 && (
+              <div className={styles.sectionCard} style={{ marginBottom: '1rem', border: '1px solid var(--cr-border)' }}>
+                <div className={styles.sectionHeader}>
+                  <h4 className={styles.sectionTitle}>🕒 Version History</h4>
+                </div>
+                <div style={{ padding: '0.75rem', maxHeight: '150px', overflowY: 'auto' }}>
+                  {versions.map(v => (
+                    <div 
+                      key={v.id} 
+                      onClick={() => handleLoadVersion(v)}
+                      style={{ 
+                        padding: '0.5rem', 
+                        cursor: 'pointer', 
+                        borderBottom: '1px solid var(--cr-border)',
+                        fontSize: '0.8rem',
+                        display: 'flex',
+                        justifyContent: 'space-between'
+                      }}
+                      className={styles.versionItem}
+                    >
+                      <span>{v.version_name}</span>
+                      <span style={{ color: 'var(--cr-text-muted)' }}>{new Date(v.created_at).toLocaleDateString()}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            <LinkedInImport />
             <TrackSwitcher />
 
-            <div className={styles.sectionDivider}>
-              <span className={styles.sectionDividerText}>Personal Details</span>
-            </div>
-            <PersonalInfo />
-
-            {track === 'experienced' && (
-              <>
-                <div className={styles.sectionDivider}>
-                  <span className={styles.sectionDividerText}>Professional Profile</span>
-                </div>
-                <ExecutiveSummary />
-                <WorkExperience />
-              </>
-            )}
-
-            {track === 'fresher' && (
-              <>
-                <div className={styles.sectionDivider}>
-                  <span className={styles.sectionDividerText}>Experience & Projects</span>
-                </div>
-                <Internships />
-                <AcademicProjects />
-              </>
-            )}
-
-            <div className={styles.sectionDivider}>
-              <span className={styles.sectionDividerText}>Education & Skills</span>
-            </div>
-            <Education />
-            <Skills />
-
-            {track === 'experienced' && <AcademicProjects />}
-
-            <div className={styles.sectionDivider}>
-              <span className={styles.sectionDividerText}>Additional Sections</span>
-            </div>
-            <Certifications />
-            <CustomSection />
+            <DraggableSectionList />
           </div>
 
           <div className={styles.previewColumn}>

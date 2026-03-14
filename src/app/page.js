@@ -45,7 +45,7 @@ export default function Home() {
               <span className={styles.statLabel}>Creative Templates</span>
             </div>
             <div className={styles.stat}>
-              <span className={styles.statNum}>2</span>
+              <span className={styles.statNum}>6</span>
               <span className={styles.statLabel}>Career Tracks</span>
             </div>
             <div className={styles.stat}>
@@ -62,7 +62,7 @@ export default function Home() {
           <h2 className={styles.sectionTitle}>Why CreativeResume?</h2>
           <div className={styles.featureGrid}>
             {[
-              { icon: '🎯', title: 'Smart Track Switcher', desc: 'Fresher or Experienced? Toggle once — sections adapt automatically.' },
+              { icon: '🎯', title: 'Smart Track Switcher', desc: 'Choose from 6 specialized roles: Professional, Fresher, Freelancer, Academic, Designer, or Career Switcher.' },
               { icon: '🎨', title: '5 Creative Templates', desc: 'Bold Neo, Grid Master, Viva Color, TypeForge, Ink Splash — designed to impress.' },
               { icon: '✨', title: 'Custom Sections', desc: 'Add unlimited sections with custom titles and rich-text bullets.' },
               { icon: '📱', title: 'Live Preview', desc: 'See your resume update in real-time as you type.' },

@@ -55,7 +55,7 @@ export default function AuthModal({ isOpen, onClose }) {
                 input: styles.supabaseInput,
               }
             }}
-            providers={['google', 'github']}
+            providers={['google']}
             theme="dark"
           />
         </div>

@@ -744,3 +744,31 @@
   display: flex;
   gap: var(--cr-space-sm);
 }
+
+/* Print Styles - Safety Fallback */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .resumePage, .resumePage * {
+    visibility: visible;
+  }
+  .resumePage {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 210mm;
+    height: 297mm;
+    margin: 0;
+    padding: 0;
+    border: none !important;
+    box-shadow: none !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    z-index: 10000;
+  }
+  /* Hide all builder UI elements */
+  nav, button, footer, .downloadArea, .templateTabs, .previewHeader, .formColumn, .builderNav, [id*="download"] {
+    display: none !important;
+  }
+}

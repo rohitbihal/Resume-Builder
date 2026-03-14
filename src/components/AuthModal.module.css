@@ -84,3 +84,54 @@
   border-radius: var(--cr-radius-md) !important;
   padding: 0.75rem 1rem !important;
 }
+
+.separator {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: var(--cr-space-lg) 0;
+  color: var(--cr-text-muted);
+  font-size: 0.85rem;
+}
+
+.separator::before,
+.separator::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid var(--cr-border);
+}
+
+.separator::before {
+  margin-right: .5em;
+}
+
+.separator::after {
+  margin-left: .5em;
+}
+
+.googleButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--cr-space-sm);
+  width: 100%;
+  padding: 0.75rem;
+  background: white;
+  color: #1f2937;
+  border: none;
+  border-radius: var(--cr-radius-md);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all var(--cr-transition-fast);
+}
+
+.googleButton:hover {
+  background: #f3f4f6;
+  transform: translateY(-1px);
+}
+
+.googleIcon {
+  width: 18px;
+  height: 18px;
+}

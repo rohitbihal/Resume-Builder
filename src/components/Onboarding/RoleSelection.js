@@ -16,22 +16,24 @@ const ROLES = [
 export default function RoleSelection() {
   const { onboardingComplete } = useResume();
   const dispatch = useResumeDispatch();
+  const [loadingRole, setLoadingRole] = useState(null);
 
   if (onboardingComplete) return null;
 
   const handleSelect = async (roleId) => {
+    setLoadingRole(roleId);
     try {
-      // Get current user
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (user) {
-        // Update profile in Supabase
-        const { error } = await supabase
-          .from('profiles')
-          .update({ role: roleId })
-          .eq('id', user.id);
+      // Get current user if supabase is available
+      if (supabase) {
+        const { data: { user } } = await supabase.auth.getUser();
         
-        if (error) throw error;
+        if (user) {
+          // Update profile in Supabase
+          await supabase
+            .from('profiles')
+            .update({ role: roleId })
+            .eq('id', user.id);
+        }
       }
       
       // Update local context
@@ -40,6 +42,8 @@ export default function RoleSelection() {
       console.error('Error saving role:', err);
       // Fallback: still update context so user can use the app
       dispatch({ type: 'SET_TRACK', payload: roleId });
+    } finally {
+      setLoadingRole(null);
     }
   };
 
@@ -55,10 +59,12 @@ export default function RoleSelection() {
           {ROLES.map((role) => (
             <button 
               key={role.id} 
-              className={styles.roleCard}
+              type="button"
+              className={`${styles.roleCard} ${loadingRole === role.id ? styles.loading : ''}`}
               onClick={() => handleSelect(role.id)}
+              disabled={loadingRole !== null}
             >
-              <span className={styles.icon}>{role.icon}</span>
+              <span className={styles.icon}>{loadingRole === role.id ? '⏳' : role.icon}</span>
               <div className={styles.text}>
                 <h3 className={styles.roleTitle}>{role.title}</h3>
                 <p className={styles.roleDesc}>{role.desc}</p>

@@ -53,7 +53,10 @@ const initialState = {
 function resumeReducer(state, action) {
   switch (action.type) {
     case 'SET_TRACK':
-      return { ...state, track: action.payload };
+      return { ...state, track: action.payload, onboardingComplete: true };
+
+    case 'COMPLETE_ONBOARDING':
+      return { ...state, onboardingComplete: true };
 
     case 'SET_TEMPLATE':
       return { ...state, activeTemplate: action.payload };

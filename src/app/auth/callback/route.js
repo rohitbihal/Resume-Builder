@@ -36,12 +36,10 @@ export async function GET(request) {
       return response;
     } else {
       console.error('OAuth: Code exchange error:', error.message);
+      return NextResponse.redirect(`${origin}/auth/auth-code-error?error=${encodeURIComponent(error.message)}`);
     }
   } else {
     console.warn('OAuth: No code found in query parameters');
+    return NextResponse.redirect(`${origin}/auth/auth-code-error?error=No+authentication+code+received`);
   }
-
-  // return the user to an error page with instructions
-  console.log('OAuth: Redirecting to error page');
-  return NextResponse.redirect(`${origin}/auth/auth-code-error`);
 }

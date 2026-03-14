@@ -3,7 +3,7 @@ import Razorpay from 'razorpay';
 
 export async function POST(req) {
   try {
-    const { amount, planId } = await req.json();
+    const { amount, planId, userId } = await req.json();
 
     if (!amount) {
       return NextResponse.json({ error: 'Amount is required' }, { status: 400 });
@@ -20,6 +20,7 @@ export async function POST(req) {
       receipt: `receipt_${Date.now()}`,
       notes: {
         planId: planId || 'single_download',
+        userId: userId || 'anonymous',
       },
     };
 

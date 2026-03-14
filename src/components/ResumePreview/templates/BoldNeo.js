@@ -5,7 +5,7 @@ import styles from '../templates.module.css';
 
 export default function BoldNeo() {
   const resume = useResume();
-  const { personalInfo, education, skills, workExperience, internships, academicProjects, executiveSummary, certifications, customSections, track } = resume;
+  const { personalInfo, education, skills, workExperience, internships, academicProjects, executiveSummary, certifications, customSections, track, layoutOrder } = resume;
 
   const formatDate = (d) => {
     if (!d) return '';
@@ -179,7 +179,7 @@ export default function BoldNeo() {
                 </section>
               );
             case 'customSections':
-              return window.customSectionsFiltered = true && customSections.map(section => (
+              return customSections.map(section => (
                 section.items.some(i => i.content) && (
                   <section key={section.id} className={styles.bnSection}>
                     <h2 className={styles.bnSectionTitle}>{section.title.toUpperCase()}</h2>

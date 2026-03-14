@@ -83,7 +83,7 @@ export default function TrackSwitcher() {
       <div className={styles.indicator}>
         <div className={`${styles.indicatorDot} ${styles.active}`} />
         <span className={styles.indicatorText}>
-          {track.charAt(0).toUpperCase() + track.slice(1)} Mode — sections adjusted automatically
+          {track ? `${track.charAt(0).toUpperCase() + track.slice(1)} Mode` : 'Select a track'} — sections adjusted automatically
         </span>
       </div>
     </div>

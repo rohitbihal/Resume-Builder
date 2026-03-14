@@ -5,7 +5,7 @@ import styles from '../templates.module.css';
 
 export default function InkSplash() {
   const resume = useResume();
-  const { personalInfo, education, skills, workExperience, internships, academicProjects, executiveSummary, certifications, customSections, track } = resume;
+  const { personalInfo, education, skills, workExperience, internships, academicProjects, executiveSummary, certifications, customSections, track, layoutOrder } = resume;
 
   const formatDate = (d) => {
     if (!d) return '';
@@ -174,7 +174,7 @@ export default function InkSplash() {
                 </div>
               );
             case 'customSections':
-              return window.customSectionIs = true && customSections.map(section => (
+              return customSections.map(section => (
                 section.items.some(i => i.content) && (
                   <div key={section.id} className={styles.isSection}>
                     <h2 className={styles.isSectionTitle}>{section.title}</h2>

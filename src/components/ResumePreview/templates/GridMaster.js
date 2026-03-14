@@ -5,7 +5,7 @@ import styles from '../templates.module.css';
 
 export default function GridMaster() {
   const resume = useResume();
-  const { personalInfo, education, skills, workExperience, internships, academicProjects, executiveSummary, certifications, customSections, track } = resume;
+  const { personalInfo, education, skills, workExperience, internships, academicProjects, executiveSummary, certifications, customSections, track, layoutOrder } = resume;
 
   const formatDate = (d) => {
     if (!d) return '';
@@ -174,7 +174,7 @@ export default function GridMaster() {
                 </div>
               );
             case 'customSections':
-              return window.customSectionGm = true && customSections.map(section => (
+              return customSections.map(section => (
                 section.items.some(i => i.content) && (
                   <div key={section.id} className={styles.gmMainSection}>
                     <h2 className={styles.gmMainTitle}>{section.title}</h2>

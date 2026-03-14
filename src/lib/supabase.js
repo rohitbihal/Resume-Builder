@@ -1,11 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
 
 // These will be pulled from .env.local
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder_key';
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-// Global client instance
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Global client instance - Guard against missing keys during build
+export const supabase = (supabaseUrl && supabaseAnonKey) 
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : null;
+
+if (!supabase) {
+  console.warn('Supabase client not initialized: Missing environment variables.');
+}
 
 /**
  * Helper to get the current session

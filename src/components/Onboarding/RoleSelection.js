@@ -1,6 +1,7 @@
 'use client';
 
 import { useResume, useResumeDispatch } from '@/context/ResumeContext';
+import { supabase } from '@/lib/supabase';
 import styles from './RoleSelection.module.css';
 
 const ROLES = [
@@ -18,8 +19,28 @@ export default function RoleSelection() {
 
   if (onboardingComplete) return null;
 
-  const handleSelect = (roleId) => {
-    dispatch({ type: 'SET_TRACK', payload: roleId });
+  const handleSelect = async (roleId) => {
+    try {
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (user) {
+        // Update profile in Supabase
+        const { error } = await supabase
+          .from('profiles')
+          .update({ role: roleId })
+          .eq('id', user.id);
+        
+        if (error) throw error;
+      }
+      
+      // Update local context
+      dispatch({ type: 'SET_TRACK', payload: roleId });
+    } catch (err) {
+      console.error('Error saving role:', err);
+      // Fallback: still update context so user can use the app
+      dispatch({ type: 'SET_TRACK', payload: roleId });
+    }
   };
 
   return (

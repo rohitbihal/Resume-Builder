@@ -1,0 +1,75 @@
+﻿
+> creative-resume@0.1.0 build
+> next build
+
+Γû▓ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 3.5s
+  Running TypeScript ...
+  Collecting page data using 19 workers ...
+node.exe : Error: 
+supabaseKey is required.
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
+    + CategoryInfo         
+     : NotSpecified: (Err  
+  or: supabaseKey is req   
+ uired.:String) [], Rem    
+oteException
+    + FullyQualifiedErrorI 
+   d : NativeCommandError
+ 
+    at module evaluation (C
+:\Users\rohit\OneDrive\Desk
+top\Resume Builder\creative
+-resume\.next\server\chunks
+\[root-of-the-server]__9fc6
+509f._.js:1:1297)
+    at instantiateModule (C
+:\Users\rohit\OneDrive\Desk
+top\Resume Builder\creative
+-resume\.next\server\chunks
+\[turbopack]_runtime.js:740
+:9)
+    at 
+instantiateRuntimeModule (C
+:\Users\rohit\OneDrive\Desk
+top\Resume Builder\creative
+-resume\.next\server\chunks
+\[turbopack]_runtime.js:768
+:12)
+    at getOrInstantiateRunt
+imeModule (C:\Users\rohit\O
+neDrive\Desktop\Resume Buil
+der\creative-resume\.next\s
+erver\chunks\[turbopack]_ru
+ntime.js:781:12)
+    at Object.m (C:\Users\r
+ohit\OneDrive\Desktop\Resum
+e Builder\creative-resume\.
+next\server\chunks\[turbopa
+ck]_runtime.js:790:18)
+    at Object.<anonymous> (
+C:\Users\rohit\OneDrive\Des
+ktop\Resume Builder\creativ
+e-resume\.next\server\app\a
+pi\resumes\[id]\versions\ro
+ute.js:6:3)
+
+> Build error occurred
+Error: Failed to collect 
+page data for 
+/api/resumes/[id]/versions
+    at ignore-listed 
+frames {
+  type: 'Error'
+}
+

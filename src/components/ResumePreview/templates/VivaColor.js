@@ -5,7 +5,7 @@ import styles from '../templates.module.css';
 
 export default function VivaColor() {
   const resume = useResume();
-  const { personalInfo, education, skills, workExperience, internships, academicProjects, executiveSummary, certifications, customSections, track } = resume;
+  const { personalInfo, education, skills, workExperience, internships, academicProjects, executiveSummary, certifications, customSections, track, layoutOrder } = resume;
 
   const formatDate = (d) => {
     if (!d) return '';
@@ -187,7 +187,7 @@ export default function VivaColor() {
                 </div>
               );
             case 'customSections':
-              return window.customSectionVc = true && customSections.map(section => (
+              return customSections.map(section => (
                 section.items.some(i => i.content) && (
                   <div key={section.id} className={styles.vcMainSection}>
                     <h2 className={styles.vcMainTitle}>{section.title}</h2>

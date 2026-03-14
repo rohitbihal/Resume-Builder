@@ -5,7 +5,7 @@ import styles from '../templates.module.css';
 
 export default function TypeForge() {
   const resume = useResume();
-  const { personalInfo, education, skills, workExperience, internships, academicProjects, executiveSummary, certifications, customSections, track } = resume;
+  const { personalInfo, education, skills, workExperience, internships, academicProjects, executiveSummary, certifications, customSections, track, layoutOrder } = resume;
 
   const formatDate = (d) => {
     if (!d) return '';
@@ -171,7 +171,7 @@ export default function TypeForge() {
                 </div>
               );
             case 'customSections':
-              return window.customSectionTf = true && customSections.map(section => (
+              return customSections.map(section => (
                 section.items.some(i => i.content) && (
                   <div key={section.id} className={styles.tfSection}>
                     <h2 className={styles.tfSectionTitle}>{section.title.toUpperCase()}</h2>

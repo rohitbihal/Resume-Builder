@@ -12,6 +12,7 @@ import { useState, useEffect } from 'react';
 import { supabase, signOut } from '@/lib/supabase';
 import { ResumeDB } from '@/lib/db';
 import AuthModal from '@/components/AuthModal';
+import Logo from '@/components/Branding/Logo';
 
 function BuilderInner() {
   const resumeState = useResume();
@@ -106,7 +107,9 @@ function BuilderInner() {
     <>
       <RoleSelection />
       <nav className={styles.builderNav}>
-        <Link href="/" className={styles.navLogo}>CreativeResume</Link>
+        <Link href="/" style={{ textDecoration: 'none' }}>
+          <Logo size="sm" />
+        </Link>
         <div className={styles.navLinks}>
           <Link href="/templates" className={styles.navLink}>Templates</Link>
           <Link href="/pricing" className={styles.navLink}>Pricing</Link>

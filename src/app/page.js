@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import styles from './page.module.css';
 import AuthNav from '@/components/AuthNav';
+import Logo from '@/components/Branding/Logo';
 
 export default function Home() {
   return (
@@ -8,7 +9,9 @@ export default function Home() {
       {/* Navbar */}
       <nav className={styles.nav}>
         <div className={styles.navInner}>
-          <span className={styles.logo}>CreativeResume</span>
+          <Link href="/" style={{ textDecoration: 'none' }}>
+            <Logo />
+          </Link>
           <div className={styles.navLinks}>
             <Link href="/templates" className={styles.navLink}>Templates</Link>
             <Link href="/pricing" className={styles.navLink}>Pricing</Link>
@@ -115,12 +118,12 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className={styles.footer}>
-        <div className={styles.footerInner}>
-          <span className={styles.footerLogo}>CreativeResume</span>
+          <Logo size="sm" />
+          <div className={styles.footerLinks}>
+            <Link href="/privacy">Privacy Policy</Link>
+            <Link href="/terms">Terms of Service</Link>
+          </div>
           <span className={styles.footerText}>© 2026 CreativeResume. Craft your story.</span>
-        </div>
-      </footer>
     </main>
   );
 }

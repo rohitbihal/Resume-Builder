@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
+import { ResumeDB } from '@/lib/db';
 import styles from './dashboard.module.css';
 import Navbar from '@/components/Navbar';
 

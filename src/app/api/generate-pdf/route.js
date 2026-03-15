@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import puppeteer from 'puppeteer-core';
-import chromium from '@sparticuz/chromium';
 
 export async function POST(req) {
   let browser = null;
@@ -36,18 +35,28 @@ export async function POST(req) {
     `;
 
     const isLocal = process.env.NODE_ENV === 'development';
+    let launchOptions = {};
+
+    if (isLocal) {
+      launchOptions = {
+        args: puppeteer.defaultArgs(),
+        executablePath: process.platform === 'win32' 
+          ? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe' 
+          : '/usr/bin/google-chrome',
+        headless: true,
+      };
+    } else {
+      // Dynamic import to avoid build-time issues on environments without chromium
+      const chromium = (await import('@sparticuz/chromium')).default;
+      launchOptions = {
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath(),
+        headless: chromium.headless,
+      };
+    }
     
-    // Most robust launch configuration for Vercel 2025
-    browser = await puppeteer.launch({
-      args: isLocal ? puppeteer.defaultArgs() : chromium.args,
-      defaultViewport: chromium.defaultViewport,
-      executablePath: isLocal 
-        ? (process.platform === 'win32' 
-            ? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe' 
-            : '/usr/bin/google-chrome')
-        : await chromium.executablePath(),
-      headless: isLocal ? true : chromium.headless,
-    });
+    browser = await puppeteer.launch(launchOptions);
 
     const page = await browser.newPage();
     await page.setViewport({ width: 1240, height: 1754, deviceScaleFactor: 2 });
@@ -62,6 +71,7 @@ export async function POST(req) {
     });
 
     await browser.close();
+    browser = null;
 
     return new Response(pdfBuffer, {
       status: 200,

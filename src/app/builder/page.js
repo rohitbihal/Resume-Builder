@@ -8,11 +8,8 @@ import DraggableSectionList from '@/components/ResumeForm/DraggableSectionList';
 import PreviewPane from '@/components/ResumePreview/PreviewPane';
 import styles from './builder.module.css';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
-import { supabase, signOut } from '@/lib/supabase';
-import { ResumeDB } from '@/lib/db';
-import AuthModal from '@/components/AuthModal';
-import Logo from '@/components/Branding/Logo';
+import Navbar from '@/components/Navbar';
+import BackButton from '@/components/BackButton';
 
 function BuilderInner() {
   const resumeState = useResume();
@@ -106,33 +103,18 @@ function BuilderInner() {
   return (
     <>
       <RoleSelection />
-      <nav className={styles.builderNav}>
-        <Link href="/" style={{ textDecoration: 'none' }}>
-          <Logo size="sm" />
-        </Link>
-        <div className={styles.navLinks}>
-          <Link href="/templates" className={styles.navLink}>Templates</Link>
-          <Link href="/pricing" className={styles.navLink}>Pricing</Link>
-          {session ? (
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-              <span style={{ fontSize: '0.8rem', color: 'var(--cr-text-muted)' }}>
-                {session.user.email}
-              </span>
-              <button className="cr-btn" onClick={signOut}>Sign Out</button>
-              <button className="cr-btn cr-btn-primary cr-btn-sm" onClick={handleSave}>Save Resume</button>
-              {currentResumeId && (
-                <button className="cr-btn cr-btn-secondary cr-btn-sm" onClick={handleSaveVersion}>Save Version</button>
-              )}
-            </div>
-          ) : (
-            <button className="cr-btn cr-btn-primary cr-btn-sm" onClick={() => setIsAuthOpen(true)}>
-              Sign In to Save
-            </button>
-          )}
-        </div>
-      </nav>
+      <Navbar />
 
       <div className={styles.builderContent}>
+        <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <BackButton href="/dashboard" label="Back to Dashboard" />
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button className="cr-btn cr-btn-primary cr-btn-sm" onClick={handleSave}>Save Resume</button>
+            {currentResumeId && (
+              <button className="cr-btn cr-btn-secondary cr-btn-sm" onClick={handleSaveVersion}>Save Version</button>
+            )}
+          </div>
+        </div>
         <h1 className={styles.builderTitle}>Build Your Resume</h1>
         <p className={styles.builderSubtitle}>Fill in your details below and watch your resume come alive in real-time.</p>
 

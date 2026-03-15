@@ -32,7 +32,6 @@ export default function Education() {
   return (
     <div className={styles.formSection}>
       <div className={styles.sectionHeader}>
-        <span className={styles.sectionIcon}>🎓</span>
         <div className={styles.sectionMeta}>
           <h3 className={styles.sectionName}>Education</h3>
           <p className={styles.sectionDesc}>Your academic background</p>

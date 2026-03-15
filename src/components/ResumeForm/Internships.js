@@ -31,7 +31,6 @@ export default function Internships() {
   return (
     <div className={styles.formSection}>
       <div className={styles.sectionHeader}>
-        <span className={styles.sectionIcon}>🚀</span>
         <div className={styles.sectionMeta}>
           <h3 className={styles.sectionName}>Internships & Freelance</h3>
           <p className={styles.sectionDesc}>Your practical industry experience</p>

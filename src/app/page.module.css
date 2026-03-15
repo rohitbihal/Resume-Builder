@@ -9,7 +9,7 @@
   left: 0;
   right: 0;
   z-index: 1000;
-  background: rgba(10, 10, 15, 0.8);
+  background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--cr-border);
 }
@@ -56,6 +56,7 @@
   padding: 160px var(--cr-space-lg) 100px;
   text-align: center;
   overflow: hidden;
+  background-color: var(--cr-bg-primary);
 }
 
 .heroGlow {
@@ -65,7 +66,7 @@
   transform: translate(-50%, -50%);
   width: 800px;
   height: 600px;
-  background: radial-gradient(ellipse, rgba(108, 92, 231, 0.12) 0%, rgba(168, 85, 247, 0.05) 40%, transparent 70%);
+  background: radial-gradient(ellipse, rgba(76, 110, 245, 0.08) 0%, rgba(21, 170, 191, 0.03) 40%, transparent 70%);
   pointer-events: none;
 }
 
@@ -78,12 +79,12 @@
 .heroBadge {
   display: inline-block;
   padding: 6px 18px;
-  background: rgba(108, 92, 231, 0.1);
-  border: 1px solid rgba(108, 92, 231, 0.25);
+  background: rgba(76, 110, 245, 0.08);
+  border: 1px solid rgba(76, 110, 245, 0.2);
   border-radius: var(--cr-radius-full);
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--cr-accent-secondary);
+  color: var(--cr-accent-primary);
   margin-bottom: var(--cr-space-xl);
   animation: fadeIn 0.6s ease-out;
 }
@@ -127,6 +128,8 @@
   justify-content: center;
   gap: var(--cr-space-3xl);
   margin-top: var(--cr-space-3xl);
+  border-top: 1px solid var(--cr-border);
+  padding-top: var(--cr-space-2xl);
   animation: fadeIn 1.2s ease-out;
 }
 
@@ -140,10 +143,7 @@
   font-family: var(--cr-font-display);
   font-size: 2rem;
   font-weight: 700;
-  background: var(--cr-accent-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--cr-text-primary);
 }
 
 .statLabel {
@@ -155,11 +155,12 @@
 /* Features */
 .features {
   padding: var(--cr-space-3xl) 0;
+  background: var(--cr-bg-primary);
 }
 
 .sectionTitle {
   font-family: var(--cr-font-display);
-  font-size: 2rem;
+  font-size: 2.2rem;
   font-weight: 700;
   text-align: center;
   color: var(--cr-text-primary);
@@ -180,7 +181,7 @@
 }
 
 .featureCard {
-  background: var(--cr-bg-card);
+  background: var(--cr-bg-primary);
   border: 1px solid var(--cr-border);
   border-radius: var(--cr-radius-lg);
   padding: var(--cr-space-xl);
@@ -189,8 +190,8 @@
 }
 
 .featureCard:hover {
-  border-color: var(--cr-border-active);
-  box-shadow: var(--cr-shadow-glow);
+  border-color: var(--cr-accent-primary);
+  box-shadow: var(--cr-shadow-md);
   transform: translateY(-4px);
 }
 
@@ -202,15 +203,15 @@
 
 .featureTitle {
   font-family: var(--cr-font-display);
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 700;
   color: var(--cr-text-primary);
   margin-bottom: var(--cr-space-sm);
 }
 
 .featureDesc {
-  font-size: 0.85rem;
-  color: var(--cr-text-muted);
+  font-size: 0.9rem;
+  color: var(--cr-text-secondary);
   line-height: 1.6;
 }
 
@@ -243,11 +244,14 @@
   align-items: center;
   justify-content: center;
   margin-bottom: var(--cr-space-sm);
-  transition: box-shadow var(--cr-transition-normal);
+  background: white;
+  border: 1px solid var(--cr-border);
+  transition: all var(--cr-transition-normal);
 }
 
 .templateCard:hover .templatePreview {
-  box-shadow: var(--cr-shadow-lg);
+  box-shadow: var(--cr-shadow-md);
+  border-color: var(--cr-accent-primary);
 }
 
 .templateName {
@@ -266,9 +270,10 @@
 /* CTA */
 .ctaSection {
   position: relative;
-  padding: 80px var(--cr-space-lg);
+  padding: 100px var(--cr-space-lg);
   text-align: center;
   overflow: hidden;
+  background: var(--cr-bg-primary);
 }
 
 .ctaGlow {
@@ -278,13 +283,13 @@
   transform: translate(-50%, -50%);
   width: 500px;
   height: 300px;
-  background: radial-gradient(ellipse, rgba(108, 92, 231, 0.15) 0%, transparent 70%);
+  background: radial-gradient(ellipse, rgba(76, 110, 245, 0.1) 0%, transparent 70%);
   pointer-events: none;
 }
 
 .ctaTitle {
   font-family: var(--cr-font-display);
-  font-size: 2.2rem;
+  font-size: 2.5rem;
   font-weight: 800;
   color: var(--cr-text-primary);
   margin-bottom: var(--cr-space-md);
@@ -293,15 +298,16 @@
 
 .ctaDesc {
   color: var(--cr-text-secondary);
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   margin-bottom: var(--cr-space-xl);
   position: relative;
 }
 
-/* Footer */
+/* FooterStyles */
 .footer {
   border-top: 1px solid var(--cr-border);
   padding: var(--cr-space-xl) var(--cr-space-lg);
+  background: var(--cr-bg-primary);
 }
 
 .footerInner {
@@ -315,11 +321,11 @@
 .footerLogo {
   font-family: var(--cr-font-display);
   font-weight: 700;
-  color: var(--cr-text-muted);
+  color: var(--cr-text-primary);
 }
 
 .footerText {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--cr-text-muted);
 }
 
@@ -329,14 +335,14 @@
 }
 
 .footerLinks a {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--cr-text-muted);
   text-decoration: none;
   transition: color var(--cr-transition-fast);
 }
 
 .footerLinks a:hover {
-  color: var(--cr-primary);
+  color: var(--cr-accent-primary);
 }
 
 @media (max-width: 1024px) {
@@ -351,7 +357,7 @@
 
 @media (max-width: 768px) {
   .heroTitle {
-    font-size: 2.2rem;
+    font-size: 2.5rem;
   }
 
   .heroStats {

@@ -58,16 +58,17 @@ function AuthContent() {
           variables: { 
             default: { 
               colors: { 
-                brand: '#00FFE0',
-                brandAccent: '#00E6CB',
-                inputText: 'white',
-                inputBackground: '#1A1A24',
-                inputBorder: '#2A2A35',
+                brand: '#4c6ef5',
+                brandAccent: '#15aabf',
+                inputText: 'var(--cr-text-primary)',
+                inputBackground: 'var(--cr-bg-card)',
+                inputBorder: 'var(--cr-border)',
+                inputPlaceholder: 'var(--cr-text-muted)',
               } 
             } 
           } 
         }}
-        theme="dark"
+        theme="light"
         providers={[]}
       />
 
@@ -107,10 +108,10 @@ export default function AuthPage() {
       display: 'flex', 
       alignItems: 'center', 
       justifyContent: 'center',
-      background: '#0a0a0a',
+      background: 'var(--cr-bg-secondary)',
       padding: '1rem'
     }}>
-      <Suspense fallback={<div style={{ color: '#fff' }}>Loading...</div>}>
+      <Suspense fallback={<div style={{ color: 'var(--cr-text-muted)' }}>Loading...</div>}>
         <AuthContent />
       </Suspense>
     </div>

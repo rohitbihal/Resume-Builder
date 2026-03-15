@@ -5,6 +5,7 @@ import Script from 'next/script';
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import styles from './pricing.module.css';
+import Navbar from '@/components/Navbar';
 
 const PLANS = [
   {
@@ -175,15 +176,7 @@ export default function PricingPage() {
   return (
     <main className={styles.pricing}>
       <Script src="https://checkout.razorpay.com/v1/checkout.js" />
-      <nav className={styles.nav}>
-        <div className={styles.navInner}>
-          <Link href="/" className={styles.logo}>CreativeResume</Link>
-          <div className={styles.navLinks}>
-            <Link href="/builder" className={styles.navLink}>Builder</Link>
-            <Link href="/templates" className={styles.navLink}>Templates</Link>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       <section className={styles.hero}>
         <h1 className={styles.title}>Simple, Transparent Pricing</h1>

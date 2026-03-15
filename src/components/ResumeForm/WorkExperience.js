@@ -32,7 +32,6 @@ export default function WorkExperience() {
   return (
     <div className={styles.formSection}>
       <div className={styles.sectionHeader}>
-        <span className={styles.sectionIcon}>💼</span>
         <div className={styles.sectionMeta}>
           <h3 className={styles.sectionName}>Professional Work History</h3>
           <p className={styles.sectionDesc}>Your professional experience and achievements</p>

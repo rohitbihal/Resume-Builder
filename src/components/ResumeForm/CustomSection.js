@@ -36,7 +36,6 @@ export default function CustomSection() {
       {customSections.map((section) => (
         <div key={section.id} className={styles.formSection} style={{ position: 'relative' }}>
           <div className={styles.sectionHeader}>
-            <span className={styles.sectionIcon}>✨</span>
             <div className={styles.sectionMeta} style={{ flex: 1 }}>
               <input
                 className={styles.customTitleInput}
@@ -88,7 +87,7 @@ export default function CustomSection() {
         id="add-custom-section-btn"
         style={{ width: '100%', borderStyle: 'dashed' }}
       >
-        ✨ Add Custom Section
+        Add Custom Section
       </button>
     </>
   );

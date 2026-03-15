@@ -10,7 +10,6 @@ export default function ExecutiveSummary() {
   return (
     <div className={styles.formSection}>
       <div className={styles.sectionHeader}>
-        <span className={styles.sectionIcon}>📋</span>
         <div className={styles.sectionMeta}>
           <h3 className={styles.sectionName}>Executive Summary</h3>
           <p className={styles.sectionDesc}>A powerful overview of your professional profile</p>

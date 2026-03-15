@@ -6,7 +6,7 @@
 
 .nav {
   border-bottom: 1px solid var(--cr-border);
-  background: rgba(13, 13, 13, 0.8);
+  background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
   position: sticky;
   top: 0;
@@ -73,7 +73,7 @@
 .card:hover {
   border-color: var(--cr-accent-primary);
   transform: translateY(-4px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--cr-shadow-glow);
 }
 
 .cardIcon {

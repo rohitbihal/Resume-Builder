@@ -4,19 +4,20 @@
   border-radius: var(--cr-radius-lg);
   padding: var(--cr-space-xl);
   animation: fadeIn 0.4s ease-out;
+  box-shadow: var(--cr-shadow-sm);
 }
 
 .sectionHeader {
   display: flex;
-  align-items: center;
-  gap: var(--cr-space-md);
+  flex-direction: column;
+  gap: 4px;
   margin-bottom: var(--cr-space-xl);
   padding-bottom: var(--cr-space-md);
-  border-bottom: 1px solid var(--cr-border);
+  border-bottom: 2px solid var(--cr-bg-secondary);
 }
 
 .sectionIcon {
-  font-size: 1.5rem;
+  display: none;
 }
 
 .sectionMeta {
@@ -25,25 +26,28 @@
 
 .sectionName {
   font-family: var(--cr-font-display);
-  font-size: 1.15rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--cr-text-primary);
+  letter-spacing: -0.01em;
 }
 
 .sectionDesc {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--cr-text-muted);
-  margin-top: 2px;
+  font-weight: 400;
 }
 
 .optionalBadge {
-  padding: 3px 10px;
-  background: rgba(253, 203, 110, 0.1);
-  border: 1px solid rgba(253, 203, 110, 0.3);
+  display: inline-flex;
+  padding: 4px 12px;
+  background: #fff9db;
+  border: 1px solid #ffe066;
   border-radius: var(--cr-radius-full);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  color: var(--cr-warning);
+  color: #f08c00;
+  margin-top: 8px;
 }
 
 .fieldGrid {

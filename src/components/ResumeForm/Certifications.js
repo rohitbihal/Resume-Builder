@@ -31,7 +31,6 @@ export default function Certifications() {
   return (
     <div className={styles.formSection}>
       <div className={styles.sectionHeader}>
-        <span className={styles.sectionIcon}>🏆</span>
         <div className={styles.sectionMeta}>
           <h3 className={styles.sectionName}>Certifications</h3>
           <p className={styles.sectionDesc}>Professional certifications and credentials</p>

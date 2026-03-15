@@ -1,0 +1,89 @@
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--cr-border);
+  height: 70px;
+  display: flex;
+  align-items: center;
+  transition: all var(--cr-transition-normal);
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--cr-space-lg);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logoLink {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.navLinks {
+  display: flex;
+  gap: var(--cr-space-xl);
+  align-items: center;
+}
+
+.navLink {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--cr-text-secondary);
+  text-decoration: none;
+  transition: color var(--cr-transition-fast);
+}
+
+.navLink:hover {
+  color: var(--cr-accent-primary);
+}
+
+.authActions {
+  display: flex;
+  align-items: center;
+  gap: var(--cr-space-md);
+}
+
+.userSection {
+  display: flex;
+  align-items: center;
+  gap: var(--cr-space-md);
+}
+
+.userEmail {
+  font-size: 0.85rem;
+  color: var(--cr-text-muted);
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.guestSection {
+  display: flex;
+  gap: var(--cr-space-sm);
+}
+
+.loading {
+  font-size: 0.8rem;
+  color: var(--cr-text-muted);
+  opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+  .navLinks {
+    display: none; /* simple for now, can add hamburger later */
+  }
+  
+  .userEmail {
+    display: none;
+  }
+}

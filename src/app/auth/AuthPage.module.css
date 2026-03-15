@@ -1,11 +1,11 @@
 .authContainer {
-  background: #111;
+  background: var(--cr-bg-card);
   padding: 2.5rem;
-  border-radius: 12px;
+  border-radius: var(--cr-radius-lg);
   width: 100%;
   max-width: 400px;
-  border: 1px solid #333;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--cr-border);
+  box-shadow: var(--cr-shadow-lg);
 }
 
 .title {
@@ -13,8 +13,8 @@
   margin-bottom: 1.5rem;
   font-weight: 700;
   font-size: 1.8rem;
-  color: #fff;
-  font-family: var(--font-space-grotesk);
+  color: var(--cr-text-primary);
+  font-family: var(--cr-font-display);
 }
 
 .separator {
@@ -22,7 +22,7 @@
   align-items: center;
   text-align: center;
   margin: 1.5rem 0;
-  color: #666;
+  color: var(--cr-text-muted);
   font-size: 0.9rem;
 }
 
@@ -30,7 +30,7 @@
 .separator::after {
   content: "";
   flex: 1;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid var(--cr-border);
 }
 
 .separator::before {

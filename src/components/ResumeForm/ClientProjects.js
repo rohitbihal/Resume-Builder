@@ -31,7 +31,6 @@ export default function ClientProjects() {
   return (
     <div className={styles.formSection}>
       <div className={styles.sectionHeader}>
-        <span className={styles.sectionIcon}>💼</span>
         <div className={styles.sectionMeta}>
           <h3 className={styles.sectionName}>Client Projects</h3>
           <p className={styles.sectionDesc}>

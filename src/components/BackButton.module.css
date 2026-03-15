@@ -1,0 +1,31 @@
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cr-space-sm);
+  background: transparent;
+  border: 1px solid var(--cr-border);
+  color: var(--cr-text-secondary);
+  padding: var(--cr-space-xs) var(--cr-space-md);
+  border-radius: var(--cr-radius-md);
+  font-family: var(--cr-font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--cr-transition-normal);
+  height: 36px;
+}
+
+.backButton:hover {
+  background: var(--cr-bg-secondary);
+  border-color: var(--cr-border-active);
+  color: var(--cr-text-primary);
+  transform: translateX(-2px);
+}
+
+.backButton svg {
+  transition: transform var(--cr-transition-fast);
+}
+
+.backButton:hover svg {
+  transform: translateX(-2px);
+}

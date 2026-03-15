@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import styles from './templates.module.css';
+import Navbar from '@/components/Navbar';
 
 const TEMPLATES = [
   {
@@ -52,15 +53,7 @@ const TEMPLATES = [
 export default function TemplatesPage() {
   return (
     <main className={styles.page}>
-      <nav className={styles.nav}>
-        <div className={styles.navInner}>
-          <Link href="/" className={styles.logo}>CreativeResume</Link>
-          <div className={styles.navLinks}>
-            <Link href="/builder" className={styles.navLink}>Builder</Link>
-            <Link href="/pricing" className={styles.navLink}>Pricing</Link>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       <section className={styles.hero}>
         <h1 className={styles.title}>Creative Templates</h1>

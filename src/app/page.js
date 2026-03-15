@@ -1,24 +1,12 @@
 import Link from 'next/link';
 import styles from './page.module.css';
-import AuthNav from '@/components/AuthNav';
+import Navbar from '@/components/Navbar';
 import Logo from '@/components/Branding/Logo';
 
 export default function Home() {
   return (
     <main className={styles.landing}>
-      {/* Navbar */}
-      <nav className={styles.nav}>
-        <div className={styles.navInner}>
-          <Link href="/" style={{ textDecoration: 'none' }}>
-            <Logo />
-          </Link>
-          <div className={styles.navLinks}>
-            <Link href="/templates" className={styles.navLink}>Templates</Link>
-            <Link href="/pricing" className={styles.navLink}>Pricing</Link>
-            <AuthNav />
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Hero */}
       <section className={styles.hero}>
@@ -62,18 +50,17 @@ export default function Home() {
       {/* Features */}
       <section className={styles.features}>
         <div className="cr-container">
-          <h2 className={styles.sectionTitle}>Why CreativeResume?</h2>
+          <h2 className={styles.sectionTitle}>Built for Professionals</h2>
           <div className={styles.featureGrid}>
             {[
-              { icon: '🎯', title: 'Smart Track Switcher', desc: 'Choose from 6 specialized roles: Professional, Fresher, Freelancer, Academic, Designer, or Career Switcher.' },
-              { icon: '🎨', title: '5 Creative Templates', desc: 'Bold Neo, Grid Master, Viva Color, TypeForge, Ink Splash — designed to impress.' },
-              { icon: '✨', title: 'Custom Sections', desc: 'Add unlimited sections with custom titles and rich-text bullets.' },
-              { icon: '📱', title: 'Live Preview', desc: 'See your resume update in real-time as you type.' },
-              { icon: '📄', title: 'PDF Download', desc: 'Export pixel-perfect PDFs ready for any job application.' },
-              { icon: '🔒', title: 'Premium Plans', desc: 'From single downloads to unlimited access — pick your plan.' },
+              { title: 'Smart Track Switcher', desc: 'Choose from specialized roles: Professional, Fresher, Freelancer, Academic, Designer, or Career Switcher.' },
+              { title: 'Premium Design Templates', desc: 'Crafted with precision — Bold Neo, Grid Master, Viva Color, TypeForge, and Ink Splash.' },
+              { title: 'Custom Content Sections', desc: 'Add unlimited sections with personalized titles and rich-text editing.' },
+              { title: 'Interactive Live Editor', desc: 'Real-time updates as you build your resume, ensuring every detail is perfect.' },
+              { title: 'Simplified PDF Export', desc: 'Download high-quality, ATS-ready PDFs instantly.' },
+              { title: 'Flexible Subscription Plans', desc: 'Choose the right plan that fits your career goals.' },
             ].map((f) => (
               <div key={f.title} className={styles.featureCard}>
-                <span className={styles.featureIcon}>{f.icon}</span>
                 <h3 className={styles.featureTitle}>{f.title}</h3>
                 <p className={styles.featureDesc}>{f.desc}</p>
               </div>

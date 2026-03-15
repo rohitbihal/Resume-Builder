@@ -768,7 +768,7 @@
     z-index: 10000;
   }
   /* Hide all builder UI elements */
-  nav, button, footer, .downloadArea, .templateTabs, .previewHeader, .formColumn, .builderNav, [id*="download"] {
+  :global(nav), :global(button), :global(footer), .downloadArea, .templateTabs, .previewHeader, .formColumn, .builderNav, :global([id*="download"]) {
     display: none !important;
   }
 }

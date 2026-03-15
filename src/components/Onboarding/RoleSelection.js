@@ -6,12 +6,12 @@ import { supabase } from '@/lib/supabase';
 import styles from './RoleSelection.module.css';
 
 const ROLES = [
-  { id: 'professional', title: 'Professional', icon: '💼', desc: 'Standard experience-focused resume for established careers.' },
-  { id: 'fresher', title: 'Fresher', icon: '🎓', desc: 'Education and internship-focused layout for students & graduates.' },
-  { id: 'freelancer', title: 'Freelancer', icon: '🎨', desc: 'Showcase your clients, portfolio, and specialized project work.' },
-  { id: 'academic', title: 'Academic', icon: '🔬', desc: 'Focused on research, publications, and teaching experience.' },
-  { id: 'designer', title: 'Designer', icon: '✨', desc: 'Visual-first layout focusing on portfolio and creative skills.' },
-  { id: 'career-switcher', title: 'Career Switcher', icon: '🔄', desc: 'Emphasize transferable skills and relevant independent projects.' },
+  { id: 'professional', title: 'Professional', desc: 'Standard experience-focused resume for established careers.' },
+  { id: 'fresher', title: 'Fresher', desc: 'Education and internship-focused layout for students & graduates.' },
+  { id: 'freelancer', title: 'Freelancer', desc: 'Showcase your clients, portfolio, and specialized project work.' },
+  { id: 'academic', title: 'Academic', desc: 'Focused on research, publications, and teaching experience.' },
+  { id: 'designer', title: 'Designer', desc: 'Visual-first layout focusing on portfolio and creative skills.' },
+  { id: 'career-switcher', title: 'Career Switcher', desc: 'Emphasize transferable skills and relevant independent projects.' },
 ];
 
 export default function RoleSelection() {
@@ -65,7 +65,6 @@ export default function RoleSelection() {
               onClick={() => handleSelect(role.id)}
               disabled={loadingRole !== null}
             >
-              <span className={styles.icon}>{loadingRole === role.id ? '⏳' : role.icon}</span>
               <div className={styles.text}>
                 <h3 className={styles.roleTitle}>{role.title}</h3>
                 <p className={styles.roleDesc}>{role.desc}</p>

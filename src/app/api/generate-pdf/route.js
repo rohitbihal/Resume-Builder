@@ -1,10 +1,6 @@
 import { NextResponse } from 'next/server';
 import puppeteer from 'puppeteer-core';
-import chromium from '@sparticuz/chromium-min';
-
-// Helper to get chromium pack based on version
-// Using a reliable pack URL for Chromium 123
-const CHROMIUM_PACK_URL = 'https://github.com/Sparticuz/chromium/releases/download/v123.0.1/chromium-v123.0.1-pack.tar';
+import chromium from '@sparticuz/chromium';
 
 export async function POST(req) {
   let browser = null;
@@ -41,27 +37,19 @@ export async function POST(req) {
 
     const isLocal = process.env.NODE_ENV === 'development';
     
-    // Launch options for different environments
-    const launchOptions = {
-      args: isLocal ? puppeteer.defaultArgs() : [...chromium.args, '--no-sandbox', '--disable-setuid-sandbox'],
+    // Most robust launch configuration for Vercel 2025
+    browser = await puppeteer.launch({
+      args: isLocal ? puppeteer.defaultArgs() : chromium.args,
       defaultViewport: chromium.defaultViewport,
       executablePath: isLocal 
         ? (process.platform === 'win32' 
             ? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe' 
             : '/usr/bin/google-chrome')
-        : await chromium.executablePath(CHROMIUM_PACK_URL),
+        : await chromium.executablePath(),
       headless: isLocal ? true : chromium.headless,
-    };
+    });
 
-    // Vercel-specific fix: Ensure LD_LIBRARY_PATH is set if we have an executable path
-    if (!isLocal && launchOptions.executablePath) {
-      const execDir = launchOptions.executablePath.substring(0, launchOptions.executablePath.lastIndexOf('/'));
-      process.env.LD_LIBRARY_PATH = `${execDir}:${process.env.LD_LIBRARY_PATH || ''}`;
-    }
-
-    browser = await puppeteer.launch(launchOptions);
     const page = await browser.newPage();
-    
     await page.setViewport({ width: 1240, height: 1754, deviceScaleFactor: 2 });
     await page.setContent(fullHtml, { waitUntil: 'networkidle0' });
     await page.evaluateHandle('document.fonts.ready');
@@ -85,12 +73,14 @@ export async function POST(req) {
 
   } catch (error) {
     console.error('PDF Generation Error:', error);
-    if (browser) await browser.close();
+    if (browser) {
+      try { await browser.close(); } catch (e) {}
+    }
     
     return NextResponse.json({ 
       error: 'PDF generation failed', 
       details: error.message,
-      suggestion: 'This error is often due to serverless environment constraints. Trying again usually helps, or increase function memory in Vercel settings.'
+      suggestion: 'Ensure your Vercel Function memory is set to at least 1024MB.'
     }, { status: 500 });
   }
 }

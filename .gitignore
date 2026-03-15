@@ -33,7 +33,7 @@ build_*.txt
 build_output*
 middleware_paths.txt
 proxy_paths.txt
-src/usestate_verification.txt
+src/usestate_*.txt
 
 # env files (can opt-in for committing if needed)
 .env*

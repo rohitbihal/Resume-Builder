@@ -48,11 +48,26 @@ export async function POST(req) {
     } else {
       // Dynamic import to avoid build-time issues on environments without chromium
       const chromium = (await import('@sparticuz/chromium')).default;
+      
+      // Fix for libnss3.so and others on Vercel
+      if (process.env.VERCEL) {
+        const path = await chromium.executablePath();
+        const binPath = path.substring(0, path.lastIndexOf('/'));
+        process.env.LD_LIBRARY_PATH = `${binPath}:${process.env.LD_LIBRARY_PATH || ''}`;
+      }
+
       launchOptions = {
-        args: chromium.args,
+        args: [
+          ...chromium.args,
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage',
+          '--disable-gpu',
+        ],
         defaultViewport: chromium.defaultViewport,
         executablePath: await chromium.executablePath(),
         headless: chromium.headless,
+        ignoreHTTPSErrors: true,
       };
     }
     

@@ -49,7 +49,7 @@ export default function Navbar() {
           <Link href="/pricing" className={styles.navLink}>Pricing</Link>
           
           {user && (
-            <Link href="/dashboard" className={styles.navLink}>Dashboard</Link>
+            <Link href="/dashboard" className={styles.navLink}>My Resumes</Link>
           )}
         </div>
 

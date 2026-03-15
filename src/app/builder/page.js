@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { ResumeProvider, useResume, useResumeDispatch } from '@/context/ResumeContext';
 import TrackSwitcher from '@/components/TrackSwitcher';
 import LinkedInImport from '@/components/ResumeForm/LinkedInImport';
@@ -10,6 +11,9 @@ import styles from './builder.module.css';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import BackButton from '@/components/BackButton';
+import AuthModal from '@/components/AuthModal';
+import { supabase } from '@/lib/supabase';
+import { ResumeDB } from '@/lib/db';
 
 function BuilderInner() {
   const resumeState = useResume();

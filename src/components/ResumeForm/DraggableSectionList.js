@@ -57,7 +57,7 @@ const TRACK_DEFAULTS = {
   'career-switcher': ['personalInfo', 'executiveSummary', 'workExperience', 'academicProjects', 'skills', 'education', 'certifications', 'customSections'],
 };
 
-function SortableItem({ id, children, label, isSortable }) {
+function SortableItem({ id, children, label, isSortable, index }) {
   const {
     attributes,
     listeners,
@@ -72,11 +72,12 @@ function SortableItem({ id, children, label, isSortable }) {
     transition,
     opacity: isDragging ? 0.5 : 1,
     position: 'relative',
-    marginBottom: 'var(--cr-space-xl)'
+    marginBottom: 'var(--cr-space-xl)',
+    animationDelay: `${index * 0.1}s`
   };
 
   return (
-    <div ref={setNodeRef} style={style}>
+    <div ref={setNodeRef} style={style} className="reveal-entry">
       {isSortable && (
         <div className={styles.dragHandleContainer}>
            <div className={styles.sectionDivider}>
@@ -159,13 +160,13 @@ export default function DraggableSectionList() {
         items={activeItems}
         strategy={verticalListSortingStrategy}
       >
-        {activeItems.map((id) => {
+        {activeItems.map((id, index) => {
           const config = SECTION_COMPONENTS[id];
           if (!config) return null;
           const ComponentToRender = config.component;
           
           return (
-            <SortableItem key={id} id={id} label={config.label} isSortable={config.isSortable}>
+            <SortableItem key={id} id={id} label={config.label} isSortable={config.isSortable} index={index}>
               <ComponentToRender />
             </SortableItem>
           );

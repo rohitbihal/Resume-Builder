@@ -1,0 +1,99 @@
+.container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  background: var(--cr-bg-card);
+  border: 1px solid var(--cr-border);
+  border-radius: var(--cr-radius-md);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--cr-shadow-lg);
+  min-width: 280px;
+  max-width: 400px;
+  transition: all var(--cr-transition-normal);
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.message {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--cr-text-primary);
+}
+
+/* Types */
+.success {
+  border-left: 4px solid var(--cr-success);
+}
+.success .icon {
+  background: rgba(47, 158, 68, 0.1);
+  color: var(--cr-success);
+}
+
+.error {
+  border-left: 4px solid var(--cr-danger);
+}
+.error .icon {
+  background: rgba(224, 49, 49, 0.1);
+  color: var(--cr-danger);
+}
+
+.info {
+  border-left: 4px solid var(--cr-info);
+}
+.info .icon {
+  background: rgba(21, 170, 191, 0.1);
+  color: var(--cr-info);
+}
+
+/* Animations */
+.show {
+  animation: slideIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.hide {
+  animation: fadeOut 0.3s ease-in forwards;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(30px) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}

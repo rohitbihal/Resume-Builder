@@ -53,7 +53,7 @@ export default function LinkedInImport() {
   return (
     <div className={styles.sectionCard} style={{ marginBottom: '2rem', border: '1px dashed var(--cr-accent-primary)', background: 'rgba(37, 99, 235, 0.05)' }}>
       <div className={styles.sectionHeader}>
-        <h3 className={styles.sectionTitle}>✨ AI LinkedIn Import</h3>
+        <h3 className={styles.sectionTitle}>AI LinkedIn Import</h3>
       </div>
       <div className={styles.sectionContent} style={{ padding: '1.5rem', textAlign: 'center' }}>
         <p style={{ fontSize: '0.9rem', color: 'var(--cr-text-muted)', marginBottom: '1rem' }}>
@@ -61,7 +61,7 @@ export default function LinkedInImport() {
         </p>
         
         <label className="cr-btn cr-btn-primary" style={{ cursor: 'pointer', display: 'inline-block' }}>
-          {loading ? '⏳ Processing...' : '📤 Upload LinkedIn PDF'}
+          {loading ? 'Processing...' : 'Upload LinkedIn PDF'}
           <input 
             type="file" 
             accept=".pdf" 
@@ -73,7 +73,7 @@ export default function LinkedInImport() {
 
         {error && (
           <p style={{ color: 'var(--cr-error)', fontSize: '0.8rem', marginTop: '1rem' }}>
-            ❌ {error}
+            {error}
           </p>
         )}
       </div>

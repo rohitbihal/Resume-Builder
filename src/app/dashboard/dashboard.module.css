@@ -94,3 +94,61 @@
 .cardCta {
   margin-top: auto;
 }
+.sectionTitle {
+  font-family: var(--cr-font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: var(--cr-text-primary);
+}
+
+.savedSection {
+  margin-bottom: 3rem;
+}
+
+.resumeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.resumeCard {
+  background: var(--cr-bg-card);
+  border: 1px solid var(--cr-border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+  transition: all 0.3s ease;
+}
+
+.resumeCard:hover {
+  transform: translateY(-2px);
+  border-color: var(--cr-accent-primary);
+  box-shadow: var(--cr-shadow-md);
+}
+
+.resumeCardTitle {
+  font-family: var(--cr-font-display);
+  font-size: 1.25rem;
+  margin-bottom: 0.25rem;
+  color: var(--cr-text-primary);
+}
+
+.resumeCardMeta {
+  font-size: 0.85rem;
+  color: var(--cr-text-muted);
+}
+
+.resumeCardActions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 2rem;
+  }
+}

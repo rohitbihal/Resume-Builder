@@ -14,6 +14,7 @@ import BackButton from '@/components/BackButton';
 import AuthModal from '@/components/AuthModal';
 import { supabase } from '@/lib/supabase';
 import { ResumeDB } from '@/lib/db';
+import { ToastContainer } from '@/components/Notifications/Toast';
 
 function BuilderInner() {
   const resumeState = useResume();
@@ -24,6 +25,17 @@ function BuilderInner() {
   const [currentResumeId, setCurrentResumeId] = useState(null);
   const [versions, setVersions] = useState([]);
   const [isLoadingVersions, setIsLoadingVersions] = useState(false);
+  const [toasts, setToasts] = useState([]);
+  const [lastSavedState, setLastSavedState] = useState(JSON.stringify(resumeState));
+
+  const addToast = (message, type = 'success') => {
+    const id = Date.now();
+    setToasts(prev => [...prev, { id, message, type }]);
+  };
+
+  const removeToast = (id) => {
+    setToasts(prev => prev.filter(t => t.id !== id));
+  };
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -38,6 +50,30 @@ function BuilderInner() {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // Auto-save logic
+  useEffect(() => {
+    if (!session || !currentResumeId) return;
+
+    const currentState = JSON.stringify(resumeState);
+    if (currentState === lastSavedState) return;
+
+    const timer = setTimeout(async () => {
+      const result = await ResumeDB.saveResume(
+        session.user.id,
+        activeTemplate,
+        track,
+        dataState,
+        currentResumeId
+      );
+      if (result.success) {
+        setLastSavedState(currentState);
+        addToast('Changes saved automatically', 'info');
+      }
+    }, 30000); // 30 seconds debounce
+
+    return () => clearTimeout(timer);
+  }, [resumeState, session, currentResumeId, lastSavedState, activeTemplate, track, dataState]);
 
   useEffect(() => {
     if (currentResumeId && session) {
@@ -65,25 +101,26 @@ function BuilderInner() {
       return;
     }
     
-    // In a real app we'd have a loading state here
     const result = await ResumeDB.saveResume(
       session.user.id,
       activeTemplate,
       track,
-      dataState
+      dataState,
+      currentResumeId
     );
     
     if (result.success) {
       setCurrentResumeId(result.id);
-      alert('Resume saved successfully!');
+      setLastSavedState(JSON.stringify(resumeState));
+      addToast('Resume saved successfully!');
     } else {
-      alert('Error saving resume: ' + result.error);
+      addToast('Error saving resume: ' + result.error, 'error');
     }
   };
 
   const handleSaveVersion = async () => {
     if (!currentResumeId) {
-      alert('Please save the resume first before creating a version.');
+      addToast('Please save the resume first before creating a version.', 'error');
       return;
     }
     const versionName = prompt('Enter a name for this version:', `Version ${new Date().toLocaleTimeString()}`);
@@ -91,16 +128,18 @@ function BuilderInner() {
 
     const result = await ResumeDB.saveVersion(currentResumeId, versionName, resumeState);
     if (result.id) {
-      alert('Version saved!');
+      addToast('Version saved!');
       loadVersions();
     } else {
-      alert('Error saving version: ' + (result.error || 'Unknown error'));
+      addToast('Error saving version: ' + (result.error || 'Unknown error'), 'error');
     }
   };
 
   const handleLoadVersion = (version) => {
     if (confirm(`Are you sure you want to load "${version.version_name}"? This will overwrite your current changes.`)) {
       dispatch({ type: 'LOAD_RESUME', payload: version.resume_data });
+      setLastSavedState(JSON.stringify(version.resume_data));
+      addToast('Version loaded');
     }
   };
 
@@ -127,7 +166,7 @@ function BuilderInner() {
             {versions.length > 0 && (
               <div className={styles.sectionCard} style={{ marginBottom: '1rem', border: '1px solid var(--cr-border)' }}>
                 <div className={styles.sectionHeader}>
-                  <h4 className={styles.sectionTitle}>🕒 Version History</h4>
+                  <h4 className={styles.sectionTitle}>Version History</h4>
                 </div>
                 <div style={{ padding: '0.75rem', maxHeight: '150px', overflowY: 'auto' }}>
                   {versions.map(v => (
@@ -164,6 +203,7 @@ function BuilderInner() {
       </div>
 
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </>
   );
 }

@@ -49,15 +49,15 @@
   --cr-radius-full: 9999px;
 
   /* Shadows */
-  --cr-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
-  --cr-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
-  --cr-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.1);
-  --cr-shadow-glow: 0 0 40px rgba(76, 110, 245, 0.1);
+  --cr-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --cr-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.06);
+  --cr-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.08);
+  --cr-shadow-glow: 0 0 40px rgba(76, 110, 245, 0.08);
 
   /* Transitions */
   --cr-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --cr-transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-  --cr-transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  --cr-transition-normal: 250ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --cr-transition-slow: 450ms cubic-bezier(0.2, 0.8, 0.2, 1);
   --cr-transition-spring: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -116,11 +116,30 @@ a:hover {
   border-radius: var(--cr-radius-lg);
   padding: var(--cr-space-xl);
   transition: all var(--cr-transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.cr-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--cr-accent-gradient);
+  opacity: 0;
+  transition: opacity var(--cr-transition-normal);
 }
 
 .cr-card:hover {
   border-color: var(--cr-border-active);
-  box-shadow: var(--cr-shadow-glow);
+  box-shadow: var(--cr-shadow-lg);
+  transform: translateY(-4px);
+}
+
+.cr-card:hover::before {
+  opacity: 1;
 }
 
 /* --- Buttons --- */
@@ -166,8 +185,8 @@ a:hover {
 }
 
 .cr-btn-primary:hover {
-  box-shadow: 0 0 50px rgba(108, 92, 231, 0.4);
-  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(76, 110, 245, 0.3);
+  transform: translateY(-2px);
 }
 
 .cr-btn-secondary {
@@ -262,6 +281,23 @@ a:hover {
   font-weight: 400;
   color: var(--cr-text-muted);
   font-style: italic;
+}
+
+/* --- Entry Animations --- */
+.reveal-entry {
+  animation: revealEntry var(--cr-transition-slow) forwards;
+  opacity: 0;
+}
+
+@keyframes revealEntry {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* --- Animations --- */

@@ -15,11 +15,31 @@ export async function POST(req) {
       <html>
         <head>
           <meta charset="utf-8">
+          <link rel="preconnect" href="https://fonts.googleapis.com">
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+          <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Lora:wght@400;500;600;700&display=swap" rel="stylesheet">
           <style>
             ${css || ''}
+            
             /* Ensures exact background and size printing */
-            @page { margin: 0; }
-            body { margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            @page { 
+              margin: 0;
+              size: A4;
+            }
+            
+            body { 
+              margin: 0; 
+              padding: 0;
+              -webkit-print-color-adjust: exact !important; 
+              print-color-adjust: exact !important;
+              font-family: 'Inter', sans-serif;
+            }
+
+            .resumePage {
+              box-shadow: none !important;
+              margin: 0 !important;
+              border: none !important;
+            }
           </style>
         </head>
         <body>
@@ -31,32 +51,29 @@ export async function POST(req) {
     // Launch puppeteer with timeout and better error handling
     const browser = await puppeteer.launch({
       headless: 'new',
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--font-render-hinting=none'],
     });
 
     try {
       const page = await browser.newPage();
       
       // Set timeout for all operations
-      page.setDefaultNavigationTimeout(10000); // 10s
-      page.setDefaultTimeout(10000); // 10s
+      page.setDefaultNavigationTimeout(30000); // Increased to 30s for font loading
+      page.setDefaultTimeout(30000);
 
-      // Set viewport matching A4 size at 96 DPI roughly
-      await page.setViewport({ width: 794, height: 1123, deviceScaleFactor: 2 });
+      // Set viewport matching A4 size at high DPI for clarity
+      await page.setViewport({ width: 1240, height: 1754, deviceScaleFactor: 2 });
       
-      // Set the HTML content
+      // Set the HTML content and wait for fonts
       await page.setContent(fullHtml, { waitUntil: 'networkidle0' });
+      await page.evaluateHandle('document.fonts.ready');
 
       // Generate PDF
       const pdfBuffer = await page.pdf({
         format: 'A4',
         printBackground: true,
-        margin: {
-          top: '0',
-          right: '0',
-          bottom: '0',
-          left: '0',
-        },
+        preferCSSPageSize: true,
+        margin: { top: '0', right: '0', bottom: '0', left: '0' },
       });
 
       await browser.close();

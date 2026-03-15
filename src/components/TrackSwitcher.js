@@ -10,7 +10,6 @@ export default function TrackSwitcher() {
   return (
     <div className={styles.wrapper}>
       <div className={styles.header}>
-        <span className={styles.icon}>🎯</span>
         <h3 className={styles.title}>Choose Your Track</h3>
         <p className={styles.subtitle}>Select the mode that best fits your career stage</p>
       </div>
@@ -19,42 +18,36 @@ export default function TrackSwitcher() {
         {[
           {
             id: 'fresher',
-            icon: '🎓',
             title: 'Fresher',
             desc: 'Recent graduate with internship & project experience',
             tags: ['Academic Projects', 'Internships']
           },
           {
             id: 'professional',
-            icon: '💼',
             title: 'Professional',
             desc: 'Professional with work history and executive experience',
             tags: ['Work History', 'Executive Summary']
           },
           {
             id: 'freelancer',
-            icon: '🌍',
             title: 'Freelancer',
             desc: 'Independent contractor specializing in client success',
             tags: ['Client Projects', 'Portfolio']
           },
           {
             id: 'academic',
-            icon: '🔬',
             title: 'Academic',
             desc: 'Researcher or professor driven by publications',
             tags: ['Research Papers', 'Education']
           },
           {
             id: 'designer',
-            icon: '🎨',
             title: 'Designer',
             desc: 'Creative professional with strong visual focus',
             tags: ['Portfolio', 'Experience']
           },
           {
             id: 'career-switcher',
-            icon: '🔄',
             title: 'Career Switcher',
             desc: 'Pivoting industries with transferable skills',
             tags: ['Transferable Skills', 'Projects']
@@ -66,7 +59,6 @@ export default function TrackSwitcher() {
             onClick={() => dispatch({ type: 'SET_TRACK', payload: t.id })}
             id={`track-${t.id}-btn`}
           >
-            <div className={styles.optionIcon}>{t.icon}</div>
             <div className={styles.optionContent}>
               <span className={styles.optionTitle}>{t.title}</span>
               <span className={styles.optionDesc}>{t.desc}</span>

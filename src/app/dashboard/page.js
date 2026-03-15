@@ -10,14 +10,31 @@ export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const [resumes, setResumes] = useState([]);
+
   useEffect(() => {
     const checkUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       setUser(user);
+      if (user) {
+        const userResumes = await ResumeDB.getUserResumes(user.id);
+        setResumes(userResumes);
+      }
       setLoading(false);
     };
     checkUser();
   }, []);
+
+  const handleDeleteResume = async (id) => {
+    if (confirm('Are you sure you want to delete this resume?')) {
+      const { error } = await supabase.from('resumes').delete().eq('id', id);
+      if (!error) {
+        setResumes(resumes.filter(r => r.id !== id));
+      } else {
+        alert('Error deleting resume: ' + error.message);
+      }
+    }
+  };
 
   if (loading) {
     return (
@@ -33,10 +50,41 @@ export default function Dashboard() {
 
       <div className={styles.content}>
         <header className={styles.welcome}>
-          <h1 className={styles.title}>Welcome Back, Creative.</h1>
+          <h1 className={styles.title}>Welcome Back, {user?.email?.split('@')[0] || 'Creative'}.</h1>
           <p className={styles.subtitle}>Manage your resumes and career tracks from one place.</p>
         </header>
 
+        {resumes.length > 0 && (
+          <section className={styles.savedSection}>
+            <h2 className={styles.sectionTitle}>Your Saved Resumes</h2>
+            <div className={styles.resumeGrid}>
+              {resumes.map(resume => (
+                <div key={resume.id} className={styles.resumeCard}>
+                  <div className={styles.resumeCardContent}>
+                    <h3 className={styles.resumeCardTitle}>{resume.title}</h3>
+                    <p className={styles.resumeCardMeta}>
+                      Track: <span style={{ textTransform: 'capitalize' }}>{resume.track}</span> • 
+                      Updated {new Date(resume.updated_at).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <div className={styles.resumeCardActions}>
+                    <Link href={`/builder?id=${resume.id}`} className="cr-btn cr-btn-sm cr-btn-secondary">
+                      Edit
+                    </Link>
+                    <button 
+                      className="cr-btn cr-btn-sm cr-btn-danger" 
+                      onClick={() => handleDeleteResume(resume.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        <h2 className={styles.sectionTitle} style={{ marginTop: 'var(--cr-space-2xl)' }}>Create Something New</h2>
         <div className={styles.grid}>
           <div className={styles.card}>
             <h3 className={styles.cardTitle}>New Resume</h3>

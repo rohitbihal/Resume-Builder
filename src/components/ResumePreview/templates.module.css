@@ -676,19 +676,22 @@
 /* ===== Preview Pane Wrapper ===== */
 .previewWrapper {
   position: sticky;
-  top: var(--cr-space-lg);
+  top: 90px; /* Adjusted for shared Navbar (70px) + 20px margin */
+  height: calc(100vh - 110px);
+  display: flex;
+  flex-direction: column;
 }
 
 .previewHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--cr-space-md);
+  margin-bottom: var(--cr-space-sm);
 }
 
 .previewTitle {
   font-family: var(--cr-font-display);
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--cr-text-primary);
 }
@@ -697,16 +700,16 @@
   display: flex;
   gap: var(--cr-space-xs);
   flex-wrap: wrap;
-  margin-bottom: var(--cr-space-md);
+  margin-bottom: var(--cr-space-sm);
 }
 
 .templateTab {
-  padding: 6px 14px;
+  padding: 4px 10px;
   background: var(--cr-bg-card);
   border: 1px solid var(--cr-border);
   border-radius: var(--cr-radius-full);
   font-family: var(--cr-font-body);
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 600;
   color: var(--cr-text-muted);
   cursor: pointer;
@@ -730,13 +733,16 @@
   border-radius: var(--cr-radius-lg);
   padding: var(--cr-space-md);
   overflow: auto;
-  max-height: calc(100vh - 180px);
+  flex: 1;
+  display: flex;
+  justify-content: center; /* Center the scaled page */
+  box-shadow: var(--cr-shadow-sm);
 }
 
 .previewScale {
-  transform: scale(0.72);
-  transform-origin: top left;
-  width: 138.9%;
+  transform: scale(0.65); /* Slightly smaller scale to fit better */
+  transform-origin: top center; /* Center on zoom */
+  min-width: 210mm; /* A4 width */
 }
 
 .downloadArea {

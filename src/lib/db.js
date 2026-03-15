@@ -7,34 +7,41 @@ export const ResumeDB = {
   /**
    * Save a complete resume and all its sections
    */
-  async saveResume(userId, templateId, track, state) {
+  async saveResume(userId, templateId, track, state, resumeId = null) {
     try {
-      // 1. Upsert the main resume record (we need an ID if it's new, or update existing)
-      // Note: In a real app we'd track the current resume ID in Context. 
-      // For now, we'll create a new one every time to demonstrate.
-      
+      const resumeDataToSave = {
+        user_id: userId,
+        template_id: templateId,
+        title: `${state.personalInfo?.firstName || 'Untitled'} Resume`,
+        track: track,
+        personal_info: state.personalInfo,
+        education: state.education,
+        skills: state.skills,
+        work_experience: state.workExperience,
+        internships: state.internships,
+        academic_projects: state.academicProjects,
+        executive_summary: state.executiveSummary,
+        certifications: state.certifications,
+        updated_at: new Date().toISOString()
+      };
+
+      if (resumeId) {
+        resumeDataToSave.id = resumeId;
+      }
+
       const { data: resumeData, error: resumeError } = await supabase
         .from('resumes')
-        .insert({
-          user_id: userId,
-          template_id: templateId,
-          title: `${state.personalInfo?.firstName || 'Untitled'} Resume`,
-          track: track,
-          personal_info: state.personalInfo,
-          education: state.education,
-          skills: state.skills,
-          work_experience: state.workExperience,
-          internships: state.internships,
-          academic_projects: state.academicProjects,
-          executive_summary: state.executiveSummary,
-          certifications: state.certifications,
-        })
+        .upsert(resumeDataToSave)
         .select()
         .single();
 
       if (resumeError) throw resumeError;
 
-      // 2. Save Custom Sections
+      // 2. Clear and Save Custom Sections
+      if (resumeId) {
+        await supabase.from('resume_sections').delete().eq('resume_id', resumeId);
+      }
+
       if (state.customSections && state.customSections.length > 0) {
         const sectionsToInsert = state.customSections.map((section, index) => ({
           resume_id: resumeData.id,

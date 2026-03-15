@@ -98,7 +98,7 @@ export default function PreviewPane() {
   return (
     <div className={styles.previewWrapper}>
       <div className={styles.previewHeader}>
-        <h3 className={styles.previewTitle}>📄 Live Preview</h3>
+        <h3 className={styles.previewTitle}>Live Preview</h3>
       </div>
 
       <div className={styles.templateTabs}>

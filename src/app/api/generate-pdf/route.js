@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
+import chromium from '@sparticuz/chromium';
 
 export async function POST(req) {
   try {
@@ -48,20 +49,29 @@ export async function POST(req) {
       </html>
     `;
 
-    // Launch puppeteer with timeout and better error handling
+    // Configuration for local vs production (Vercel)
+    const isLocal = process.env.NODE_ENV === 'development';
+    
+    // Launch puppeteer with platform-specific options
     const browser = await puppeteer.launch({
-      headless: 'new',
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--font-render-hinting=none'],
+      args: isLocal ? puppeteer.defaultArgs() : chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: isLocal 
+        ? (process.platform === 'win32' 
+            ? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe' 
+            : '/usr/bin/google-chrome')
+        : await chromium.executablePath(),
+      headless: isLocal ? true : chromium.headless,
     });
 
     try {
       const page = await browser.newPage();
       
       // Set timeout for all operations
-      page.setDefaultNavigationTimeout(30000); // Increased to 30s for font loading
+      page.setDefaultNavigationTimeout(30000); 
       page.setDefaultTimeout(30000);
 
-      // Set viewport matching A4 size at high DPI for clarity
+      // Set viewport matching A4 size
       await page.setViewport({ width: 1240, height: 1754, deviceScaleFactor: 2 });
       
       // Set the HTML content and wait for fonts
@@ -78,7 +88,6 @@ export async function POST(req) {
 
       await browser.close();
 
-      // Return the PDF buffer directly
       return new Response(pdfBuffer, {
         status: 200,
         headers: {
@@ -88,7 +97,7 @@ export async function POST(req) {
       });
     } catch (innerError) {
       console.error('Inner PDF Error:', innerError);
-      await browser.close();
+      if (browser) await browser.close();
       throw innerError;
     }
   } catch (error) {
@@ -96,7 +105,7 @@ export async function POST(req) {
     return NextResponse.json({ 
       error: 'Failed to generate PDF', 
       details: error.message,
-      suggestion: 'Try using the browser print function if this continues.'
+      suggestion: 'If on Vercel, ensure @sparticuz/chromium is installed.'
     }, { status: 500 });
   }
 }

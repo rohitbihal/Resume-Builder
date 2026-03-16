@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import puppeteer from 'puppeteer-core';
-import chromium from '@sparticuz/chromium';
+import chromium from '@sparticuz/chromium-min';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
@@ -38,25 +38,24 @@ export async function POST(req) {
     `;
 
     const isLocal = process.env.NODE_ENV === 'development';
-    let launchOptions = {};
-
-    if (isLocal) {
-      launchOptions = {
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
-        executablePath: process.platform === 'win32' 
-          ? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe' 
-          : '/usr/bin/google-chrome',
-        headless: true,
-      };
-    } else {
-      launchOptions = {
-        args: chromium.args,
-        defaultViewport: chromium.defaultViewport,
-        executablePath: await chromium.executablePath(),
-        headless: chromium.headless,
-        ignoreHTTPSErrors: true,
-      };
-    }
+    
+    const launchOptions = isLocal
+      ? {
+          args: ['--no-sandbox', '--disable-setuid-sandbox'],
+          executablePath: process.platform === 'win32' 
+            ? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe' 
+            : '/usr/bin/google-chrome',
+          headless: true,
+        }
+      : {
+          args: chromium.args,
+          defaultViewport: chromium.defaultViewport,
+          executablePath: await chromium.executablePath(
+            'https://github.com/Sparticuz/chromium/releases/download/v131.0.1/chromium-v131.0.1-pack.tar'
+          ),
+          headless: chromium.headless,
+          ignoreHTTPSErrors: true,
+        };
     
     browser = await puppeteer.launch(launchOptions);
 

@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import puppeteer from 'puppeteer-core';
+import chromium from '@sparticuz/chromium-min';
 
 // pdf-parse is a CommonJS module and must be required for Turbopack compatibility
 const pdf = require('pdf-parse');
@@ -7,23 +9,65 @@ const pdf = require('pdf-parse');
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 export async function POST(req) {
+  let browser = null;
   try {
-    const formData = await req.formData();
-    const file = formData.get('file');
+    const contentType = req.headers.get('content-type') || '';
+    let rawText = '';
 
-    if (!file) {
-      return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
+    if (contentType.includes('application/json')) {
+      const { url } = await req.json();
+      if (!url) return NextResponse.json({ error: 'No URL provided' }, { status: 400 });
+
+      // Fetch content from URL using Puppeteer
+      const isLocal = process.env.NODE_ENV === 'development';
+      const launchOptions = isLocal
+        ? {
+            args: ['--no-sandbox', '--disable-setuid-sandbox'],
+            executablePath: process.platform === 'win32' 
+              ? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe' 
+              : '/usr/bin/google-chrome',
+            headless: true,
+          }
+        : {
+            args: chromium.args,
+            defaultViewport: chromium.defaultViewport,
+            executablePath: await chromium.executablePath(
+              'https://github.com/Sparticuz/chromium/releases/download/v131.0.1/chromium-v131.0.1-pack.tar'
+            ),
+            headless: chromium.headless,
+            ignoreHTTPSErrors: true,
+          };
+
+      browser = await puppeteer.launch(launchOptions);
+      const page = await browser.newPage();
+      
+      // Set user agent to avoid basic bot detection
+      await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+      
+      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+      
+      // Extract text content
+      rawText = await page.evaluate(() => document.body.innerText);
+      await browser.close();
+      browser = null;
+    } else {
+      const formData = await req.formData();
+      const file = formData.get('file');
+
+      if (!file) {
+        return NextResponse.json({ error: 'No file or URL provided' }, { status: 400 });
+      }
+
+      const bytes = await file.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+
+      // Extract text from PDF
+      const pdfData = await pdf(buffer);
+      rawText = pdfData.text;
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    // Extract text from PDF
-    const pdfData = await pdf(buffer);
-    const rawText = pdfData.text;
-
     if (!rawText || rawText.trim().length === 0) {
-      return NextResponse.json({ error: 'Could not extract text from PDF' }, { status: 422 });
+      return NextResponse.json({ error: 'Could not extract text content' }, { status: 422 });
     }
 
     // Call Gemini to parse the text into our schema
@@ -111,7 +155,9 @@ export async function POST(req) {
     }
 
   } catch (error) {
-    console.error('LinkedIn Parse Error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error('Profile Parse Error:', error);
+    return NextResponse.json({ error: 'Internal server error: ' + error.message }, { status: 500 });
+  } finally {
+    if (browser) await browser.close();
   }
 }

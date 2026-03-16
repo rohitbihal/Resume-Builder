@@ -128,20 +128,32 @@ export default function PreviewPane() {
       <div className={styles.previewContainer}>
         <div className={styles.previewScale} ref={previewRef}>
           <TemplateComponent />
+          {!hasPremiumAccess && (
+            <div className={styles.watermark}>
+              PREVIEW ONLY
+            </div>
+          )}
         </div>
       </div>
 
       <div className={styles.downloadArea}>
         {isClient && (
-          <button 
-            className="cr-btn cr-btn-primary cr-btn-lg" 
-            style={{ width: '100%' }} 
-            id="download-pdf-btn"
-            disabled={isGeneratingPdf}
-            onClick={handleDownloadPdf}
-          >
-            {isGeneratingPdf ? '⏳ Generating PDF...' : '⬇ Download PDF'}
-          </button>
+          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <button 
+              className={`cr-btn ${hasPremiumAccess ? 'cr-btn-primary' : 'cr-btn-outline'} cr-btn-lg`}
+              style={{ width: '100%' }} 
+              id="download-pdf-btn"
+              disabled={isGeneratingPdf || (!hasPremiumAccess && !isGeneratingPdf)}
+              onClick={handleDownloadPdf}
+            >
+              {isGeneratingPdf ? '⏳ Generating PDF...' : hasPremiumAccess ? '⬇ Download PDF' : '🔒 Upgrade to Download'}
+            </button>
+            {!hasPremiumAccess && (
+              <p style={{ fontSize: '0.75rem', color: 'var(--cr-text-muted)', textAlign: 'center' }}>
+                You are currently on the Free plan. <a href="/pricing" style={{ color: 'var(--cr-accent-primary)', fontWeight: 600 }}>Upgrade to Pro</a> to remove watermark and download.
+              </p>
+            )}
+          </div>
         )}
       </div>
     </div>

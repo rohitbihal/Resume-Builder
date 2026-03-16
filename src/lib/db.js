@@ -72,8 +72,7 @@ export const ResumeDB = {
     const { data, error } = await supabase
       .from('resumes')
       .select(`
-        id, title, track, created_at, updated_at,
-        templates ( name )
+        id, title, track, created_at, updated_at, template_id
       `)
       .eq('user_id', userId)
       .order('updated_at', { ascending: false });

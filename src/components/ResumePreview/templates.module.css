@@ -743,6 +743,22 @@
   transform: scale(0.65); /* Slightly smaller scale to fit better */
   transform-origin: top center; /* Center on zoom */
   min-width: 210mm; /* A4 width */
+  position: relative;
+}
+
+.watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-translate(-50%, -50%)) rotate(-45deg);
+  font-size: 60pt;
+  color: rgba(0, 0, 0, 0.05);
+  font-weight: 900;
+  pointer-events: none;
+  z-index: 1000;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
 }
 
 .downloadArea {

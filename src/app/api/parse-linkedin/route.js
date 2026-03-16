@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
-import pdf from 'pdf-parse';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+
+// pdf-parse is a CommonJS module and must be required for Turbopack compatibility
+const pdf = require('pdf-parse');
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
@@ -17,8 +19,7 @@ export async function POST(req) {
     const buffer = Buffer.from(bytes);
 
     // Extract text from PDF
-    const pdfParser = pdf.default || pdf;
-    const pdfData = await pdfParser(buffer);
+    const pdfData = await pdf(buffer);
     const rawText = pdfData.text;
 
     if (!rawText || rawText.trim().length === 0) {

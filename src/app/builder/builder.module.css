@@ -107,6 +107,18 @@
   white-space: nowrap;
 }
 
+.previewOnly {
+  grid-template-columns: 1fr;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.previewCentered {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
 @media (max-width: 1024px) {
   .builderLayout {
     grid-template-columns: 1fr;

@@ -55,7 +55,7 @@ export default function Dashboard() {
           <p className={styles.subtitle}>Manage your resumes and career tracks from one place.</p>
         </header>
 
-        {resumes.length > 0 && (
+        {resumes.length > 0 ? (
           <section className={styles.savedSection}>
             <h2 className={styles.sectionTitle}>Your Saved Resumes</h2>
             <div className={styles.resumeGrid}>
@@ -65,16 +65,28 @@ export default function Dashboard() {
                     <h3 className={styles.resumeCardTitle}>{resume.title}</h3>
                     <p className={styles.resumeCardMeta}>
                       Track: <span style={{ textTransform: 'capitalize' }}>{resume.track}</span> • 
-                      Updated {new Date(resume.updated_at).toLocaleDateString()}
+                      Updated {new Date(resume.updated_at).toLocaleDateString(undefined, { 
+                        year: 'numeric', month: 'short', day: 'numeric' 
+                      })}
                     </p>
                   </div>
                   <div className={styles.resumeCardActions}>
+                    <Link href={`/builder?id=${resume.id}&preview=true`} className="cr-btn cr-btn-sm cr-btn-ghost">
+                      Preview
+                    </Link>
                     <Link href={`/builder?id=${resume.id}`} className="cr-btn cr-btn-sm cr-btn-secondary">
                       Edit
+                    </Link>
+                    <Link 
+                      href={`/builder?id=${resume.id}&download=true`} 
+                      className="cr-btn cr-btn-sm cr-btn-primary"
+                    >
+                      Download PDF
                     </Link>
                     <button 
                       className="cr-btn cr-btn-sm cr-btn-danger" 
                       onClick={() => handleDeleteResume(resume.id)}
+                      title="Delete Resume"
                     >
                       Delete
                     </button>
@@ -82,6 +94,15 @@ export default function Dashboard() {
                 </div>
               ))}
             </div>
+          </section>
+        ) : (
+          <section className={styles.emptyState}>
+            <div className={styles.emptyIcon}>📄</div>
+            <h2 className={styles.emptyTitle}>No saved resumes yet.</h2>
+            <p className={styles.emptyDesc}>Create your first professional resume in minutes using our creative templates.</p>
+            <Link href="/builder" className="cr-btn cr-btn-primary">
+              Create Your First Resume
+            </Link>
           </section>
         )}
 

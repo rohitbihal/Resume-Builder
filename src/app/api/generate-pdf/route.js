@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import puppeteer from 'puppeteer-core';
 import chromium from '@sparticuz/chromium';
 
+export const runtime = 'nodejs';
+export const maxDuration = 60;
+
 export async function POST(req) {
   let browser = null;
   try {
@@ -40,18 +43,18 @@ export async function POST(req) {
 
     if (isLocal) {
       launchOptions = {
-        args: puppeteer.defaultArgs(),
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
         executablePath: process.platform === 'win32' 
           ? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe' 
           : '/usr/bin/google-chrome',
         headless: true,
       };
     } else {
-      // Configure for Vercel Serverless
+      // Configure for Vercel Serverless with specific Chromium path
       launchOptions = {
         args: chromium.args,
         defaultViewport: chromium.defaultViewport,
-        executablePath: await chromium.executablePath(),
+        executablePath: await chromium.executablePath('/tmp/localChromium/chromium/linux-1366123/chrome-linux/chrome'),
         headless: chromium.headless,
         ignoreHTTPSErrors: true,
       };

@@ -50,11 +50,11 @@ export async function POST(req) {
         headless: true,
       };
     } else {
-      // Configure for Vercel Serverless with specific Chromium path
+      // Configure for Vercel Serverless with automatic Chromium path resolution
       launchOptions = {
         args: chromium.args,
         defaultViewport: chromium.defaultViewport,
-        executablePath: await chromium.executablePath('/tmp/localChromium/chromium/linux-1366123/chrome-linux/chrome'),
+        executablePath: await chromium.executablePath(),
         headless: chromium.headless,
         ignoreHTTPSErrors: true,
       };

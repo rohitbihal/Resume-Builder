@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  serverExternalPackages: ['pdf-parse', '@sparticuz/chromium', 'puppeteer-core'],
+  // Required for @sparticuz/chromium to work in Vercel functions
+  serverExternalPackages: ['@sparticuz/chromium', 'puppeteer-core', 'pdf-parse'],
 };
 
 export default nextConfig;

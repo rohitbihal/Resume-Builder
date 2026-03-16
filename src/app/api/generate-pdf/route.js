@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import puppeteer from 'puppeteer-core';
+import chromium from '@sparticuz/chromium';
 
 export async function POST(req) {
   let browser = null;
@@ -46,24 +47,9 @@ export async function POST(req) {
         headless: true,
       };
     } else {
-      // Dynamic import to avoid build-time issues on environments without chromium
-      const chromium = (await import('@sparticuz/chromium')).default;
-      
-      // Fix for libnss3.so and others on Vercel
-      if (process.env.VERCEL) {
-        const path = await chromium.executablePath();
-        const binPath = path.substring(0, path.lastIndexOf('/'));
-        process.env.LD_LIBRARY_PATH = `${binPath}:${process.env.LD_LIBRARY_PATH || ''}`;
-      }
-
+      // Configure for Vercel Serverless
       launchOptions = {
-        args: [
-          ...chromium.args,
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-dev-shm-usage',
-          '--disable-gpu',
-        ],
+        args: chromium.args,
         defaultViewport: chromium.defaultViewport,
         executablePath: await chromium.executablePath(),
         headless: chromium.headless,
@@ -74,6 +60,8 @@ export async function POST(req) {
     browser = await puppeteer.launch(launchOptions);
 
     const page = await browser.newPage();
+    // A4 size in pixels at 96 DPI: 794 x 1123
+    // At higher scale factor (2): 1588 x 2246
     await page.setViewport({ width: 1240, height: 1754, deviceScaleFactor: 2 });
     await page.setContent(fullHtml, { waitUntil: 'networkidle0' });
     await page.evaluateHandle('document.fonts.ready');

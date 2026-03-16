@@ -12,6 +12,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   const [resumes, setResumes] = useState([]);
+  const [deleteModal, setDeleteModal] = useState({ show: false, resumeId: null });
 
   useEffect(() => {
     const checkUser = async () => {
@@ -26,14 +27,19 @@ export default function Dashboard() {
     checkUser();
   }, []);
 
-  const handleDeleteResume = async (id) => {
-    if (confirm('Are you sure you want to delete this resume?')) {
-      const { error } = await supabase.from('resumes').delete().eq('id', id);
-      if (!error) {
-        setResumes(resumes.filter(r => r.id !== id));
-      } else {
-        alert('Error deleting resume: ' + error.message);
-      }
+  const handleDeleteClick = (id) => {
+    setDeleteModal({ show: true, resumeId: id });
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteModal.resumeId) return;
+    
+    const { error } = await supabase.from('resumes').delete().eq('id', deleteModal.resumeId);
+    if (!error) {
+      setResumes(resumes.filter(r => r.id !== deleteModal.resumeId));
+      setDeleteModal({ show: false, resumeId: null });
+    } else {
+      alert('Error deleting resume: ' + error.message);
     }
   };
 
@@ -85,7 +91,7 @@ export default function Dashboard() {
                     </Link>
                     <button 
                       className="cr-btn cr-btn-sm cr-btn-danger" 
-                      onClick={() => handleDeleteResume(resume.id)}
+                      onClick={() => handleDeleteClick(resume.id)}
                       title="Delete Resume"
                     >
                       Delete
@@ -145,6 +151,33 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      {deleteModal.show && (
+        <div className={styles.modalOverlay} onClick={() => setDeleteModal({ show: false, resumeId: null })}>
+          <div className={styles.modal} onClick={e => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <h3 className={styles.modalTitle}>Delete Resume</h3>
+              <p className={styles.modalDesc}>
+                Are you sure you want to delete this resume? This action cannot be undone.
+              </p>
+            </div>
+            <div className={styles.modalActions}>
+              <button 
+                className="cr-btn cr-btn-ghost" 
+                onClick={() => setDeleteModal({ show: false, resumeId: null })}
+              >
+                Cancel
+              </button>
+              <button 
+                className="cr-btn cr-btn-danger" 
+                onClick={handleConfirmDelete}
+              >
+                Delete Permanently
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

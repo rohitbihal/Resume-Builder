@@ -127,12 +127,14 @@ export default function PreviewPane() {
 
       <div className={styles.previewContainer}>
         <div className={styles.previewScale} ref={previewRef}>
-          <TemplateComponent />
-          {!hasPremiumAccess && (
-            <div className={styles.watermark}>
-              PREVIEW ONLY
-            </div>
-          )}
+          <div className={styles.previewContent}>
+            <TemplateComponent />
+            {!hasPremiumAccess && (
+              <div className={styles.watermark}>
+                PREVIEW ONLY
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

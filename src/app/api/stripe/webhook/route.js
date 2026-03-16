@@ -3,6 +3,7 @@ import { stripe } from '@/lib/stripe';
 import { createClient } from '@supabase/supabase-js';
 
 export const dynamic = 'force-dynamic';
+export const maxDuration = 60;
 
 export async function POST(req) {
   const body = await req.text();
@@ -14,16 +15,16 @@ export async function POST(req) {
     event = stripe.webhooks.constructEvent(
       body,
       signature,
-      process.env.STRIPE_WEBHOOK_SECRET || 'whsec_placeholder'
+      process.env.STRIPE_WEBHOOK_SECRET
     );
   } catch (error) {
     console.error(`Webhook signature verification failed: ${error.message}`);
     return new NextResponse(`Webhook Error: ${error.message}`, { status: 400 });
   }
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321';
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   // Note: Needs a Service Role key to bypass RLS in a webhook context
-  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'service_key_placeholder';
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
   // Handle the event

@@ -55,10 +55,20 @@ export default function PreviewPane() {
     if (!previewRef.current) return;
     setIsGeneratingPdf(true);
     try {
-      // Collect all styles
+      // Collect all styles including link tags (external stylesheets)
       const stylesArr = Array.from(document.querySelectorAll('style')).map(s => s.innerHTML);
-      // Extra template-specific styles (importing the font mappings if necessary)
-      const cssString = stylesArr.join('\n');
+      const linksArr = await Promise.all(
+        Array.from(document.querySelectorAll('link[rel="stylesheet"]')).map(async (link) => {
+          try {
+            const res = await fetch(link.href);
+            return await res.text();
+          } catch (e) {
+            return '';
+          }
+        })
+      );
+      
+      const cssString = [...stylesArr, ...linksArr].join('\n');
       const watermarkHtml = !hasPremiumAccess 
         ? '<div style="position: absolute; bottom: 10px; right: 20px; color: #a0aec0; font-size: 10px; font-family: sans-serif; z-index: 9999;">Created with CreativeResume (Free)</div>'
         : '';

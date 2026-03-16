@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import Razorpay from 'razorpay';
 
+export const maxDuration = 60;
+
 export async function POST(req) {
   try {
     const { amount, planId, userId } = await req.json();

@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { createClient } from '@supabase/supabase-js';
 
+export const maxDuration = 60;
+
 export async function POST(req) {
   try {
     const { planId, resumeId, templateId } = await req.json();
@@ -10,8 +12,8 @@ export async function POST(req) {
     const token = req.headers.get('Authorization')?.replace('Bearer ', '');
     // Need a non-anon key for admin verification if we want to be secure, 
     // but for demo we can parse the JWT directly or use the anon client with the token
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321';
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder_key';
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
     let userEmail = 'guest@example.com';

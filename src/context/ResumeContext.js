@@ -5,10 +5,18 @@ import { createContext, useContext, useReducer } from 'react';
 const ResumeContext = createContext(null);
 const ResumeDispatchContext = createContext(null);
 
-const initialState = {
-  track: null, // 'fresher' | 'professional' | 'freelancer' | 'academic' | 'designer' | 'career-switcher'
+// Safe UUID helper for both Client and Server (SSR)
+const generateId = () => {
+  if (typeof window !== 'undefined' && window.crypto?.randomUUID) {
+    return window.crypto.randomUUID();
+  }
+  return Math.random().toString(36).substring(2, 11);
+};
+
+const createInitialState = () => ({
+  track: null,
   activeTemplate: 'bold-neo',
-  layoutOrder: [], // Will store the order of active sections
+  layoutOrder: [],
   onboardingComplete: false,
   personalInfo: {
     fullName: '',
@@ -21,34 +29,36 @@ const initialState = {
   },
   executiveSummary: '',
   education: [
-    { id: crypto.randomUUID(), institution: '', degree: '', field: '', startDate: '', endDate: '', gpa: '', cgpa: '', description: '' }
+    { id: generateId(), institution: '', degree: '', field: '', startDate: '', endDate: '', gpa: '', cgpa: '', description: '' }
   ],
   skills: [
-    { id: crypto.randomUUID(), name: '', level: 'intermediate' }
+    { id: generateId(), name: '', level: 'intermediate' }
   ],
   workExperience: [
-    { id: crypto.randomUUID(), company: '', title: '', startDate: '', endDate: '', current: false, description: '' }
+    { id: generateId(), company: '', title: '', startDate: '', endDate: '', current: false, description: '' }
   ],
   internships: [
-    { id: crypto.randomUUID(), company: '', role: '', startDate: '', endDate: '', description: '' }
+    { id: generateId(), company: '', role: '', startDate: '', endDate: '', description: '' }
   ],
   academicProjects: [
-    { id: crypto.randomUUID(), name: '', technologies: '', link: '', description: '' }
+    { id: generateId(), name: '', technologies: '', link: '', description: '' }
   ],
   certifications: [
-    { id: crypto.randomUUID(), name: '', issuer: '', date: '', link: '' }
+    { id: generateId(), name: '', issuer: '', date: '', link: '' }
   ],
   clientProjects: [
-    { id: crypto.randomUUID(), client: '', role: '', duration: '', description: '', link: '' }
+    { id: generateId(), client: '', role: '', duration: '', description: '', link: '' }
   ],
   researchPapers: [
-    { id: crypto.randomUUID(), title: '', publication: '', date: '', link: '', abstract: '' }
+    { id: generateId(), title: '', publication: '', date: '', link: '', abstract: '' }
   ],
   portfolio: [
-    { id: crypto.randomUUID(), title: '', image: null, link: '', description: '' }
+    { id: generateId(), title: '', image: null, link: '', description: '' }
   ],
   customSections: [],
-};
+});
+
+const initialState = createInitialState();
 
 function resumeReducer(state, action) {
   switch (action.type) {
@@ -84,7 +94,7 @@ function resumeReducer(state, action) {
       const { section, item } = action.payload;
       return {
         ...state,
-        [section]: [...state[section], { id: crypto.randomUUID(), ...item }],
+        [section]: [...state[section], { id: generateId(), ...item }],
       };
     }
 
@@ -102,9 +112,9 @@ function resumeReducer(state, action) {
         customSections: [
           ...state.customSections,
           {
-            id: crypto.randomUUID(),
+            id: generateId(),
             title: action.payload?.title || 'Custom Section',
-            items: [{ id: crypto.randomUUID(), content: '' }],
+            items: [{ id: generateId(), content: '' }],
           },
         ],
       };
@@ -125,7 +135,7 @@ function resumeReducer(state, action) {
         ...state,
         customSections: state.customSections.map(s =>
           s.id === sectionId
-            ? { ...s, items: [...s.items, { id: crypto.randomUUID(), content: '' }] }
+            ? { ...s, items: [...s.items, { id: generateId(), content: '' }] }
             : s
         ),
       };
@@ -175,7 +185,7 @@ function resumeReducer(state, action) {
       return { ...state, ...action.payload };
 
     case 'RESET':
-      return initialState;
+      return createInitialState();
 
     default:
       return state;

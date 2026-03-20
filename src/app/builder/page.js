@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
-import { ResumeProvider, useResume, useResumeDispatch } from '@/context/ResumeContext';
+import { useResume, useResumeDispatch } from '@/context/ResumeContext';
 import TrackSwitcher from '@/components/TrackSwitcher';
 import LinkedInImport from '@/components/ResumeForm/LinkedInImport';
 import RoleSelection from '@/components/Onboarding/RoleSelection';
@@ -285,9 +285,7 @@ function BuilderInner() {
 export default function BuilderPage() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <ResumeProvider>
-        <BuilderInner />
-      </ResumeProvider>
+      <BuilderInner />
     </Suspense>
   );
 }

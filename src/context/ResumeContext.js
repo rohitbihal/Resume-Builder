@@ -10,59 +10,66 @@ const generateId = () => {
   if (typeof window !== 'undefined' && window.crypto?.randomUUID) {
     return window.crypto.randomUUID();
   }
+  // Fallback for SSR or older browsers
   return Math.random().toString(36).substring(2, 11);
 };
 
-const createInitialState = () => ({
-  track: null,
-  activeTemplate: 'bold-neo',
-  theme: { color: '#00B8A9', font: 'Inter' },
-  is_public: false,
-  slug: '',
-  language: 'en',
-  layoutOrder: [],
-  onboardingComplete: false,
-  personalInfo: {
-    fullName: '',
-    email: '',
-    phone: '',
-    location: '',
-    linkedin: '',
-    portfolio: '',
-    profilePhoto: null,
-  },
-  executiveSummary: '',
-  education: [
-    { id: generateId(), institution: '', degree: '', field: '', startDate: '', endDate: '', gpa: '', cgpa: '', description: '' }
-  ],
-  skills: [
-    { id: generateId(), name: '', level: 'intermediate' }
-  ],
-  workExperience: [
-    { id: generateId(), company: '', title: '', startDate: '', endDate: '', current: false, description: '' }
-  ],
-  internships: [
-    { id: generateId(), company: '', role: '', startDate: '', endDate: '', description: '' }
-  ],
-  academicProjects: [
-    { id: generateId(), name: '', technologies: '', link: '', description: '' }
-  ],
-  certifications: [
-    { id: generateId(), name: '', issuer: '', date: '', link: '' }
-  ],
-  clientProjects: [
-    { id: generateId(), client: '', role: '', duration: '', description: '', link: '' }
-  ],
-  researchPapers: [
-    { id: generateId(), title: '', publication: '', date: '', link: '', abstract: '' }
-  ],
-  portfolio: [
-    { id: generateId(), title: '', image: null, link: '', description: '' }
-  ],
-  customSections: [],
-});
+const createInitialState = (isClient = false) => {
+  // Use stable IDs for SSR to prevent hydration mismatch
+  const getStableId = (prefix) => isClient ? generateId() : `${prefix}-initial-0`;
 
-const initialState = createInitialState();
+  return {
+    track: null,
+    activeTemplate: 'bold-neo',
+    theme: { color: '#00B8A9', font: 'Inter' },
+    is_public: false,
+    slug: '',
+    language: 'en',
+    layoutOrder: [],
+    onboardingComplete: false,
+    personalInfo: {
+      fullName: '',
+      email: '',
+      phone: '',
+      location: '',
+      linkedin: '',
+      portfolio: '',
+      profilePhoto: null,
+    },
+    executiveSummary: '',
+    education: [
+      { id: getStableId('edu'), institution: '', degree: '', field: '', startDate: '', endDate: '', gpa: '', cgpa: '', description: '' }
+    ],
+    skills: [
+      { id: getStableId('skill'), name: '', level: 'intermediate' }
+    ],
+    workExperience: [
+      { id: getStableId('work'), company: '', title: '', startDate: '', endDate: '', current: false, description: '' }
+    ],
+    internships: [
+      { id: getStableId('intern'), company: '', role: '', startDate: '', endDate: '', description: '' }
+    ],
+    academicProjects: [
+      { id: getStableId('proj'), name: '', technologies: '', link: '', description: '' }
+    ],
+    certifications: [
+      { id: getStableId('cert'), name: '', issuer: '', date: '', link: '' }
+    ],
+    clientProjects: [
+      { id: getStableId('client'), client: '', role: '', duration: '', description: '', link: '' }
+    ],
+    researchPapers: [
+      { id: getStableId('paper'), title: '', publication: '', date: '', link: '', abstract: '' }
+    ],
+    portfolio: [
+      { id: getStableId('port'), title: '', image: null, link: '', description: '' }
+    ],
+    customSections: [],
+  };
+};
+
+// This initialState is used for SSR and initial client hydration
+const initialState = createInitialState(false);
 
 function resumeReducer(state, action) {
   switch (action.type) {

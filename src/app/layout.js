@@ -1,6 +1,7 @@
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import GoogleAnalytics from "@/components/Analytics/GoogleAnalytics";
+import { ResumeProvider } from "@/context/ResumeContext";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -24,8 +25,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${inter.variable} ${spaceGrotesk.variable}`}>
-        <GoogleAnalytics ga_id="AIzaSyCbZE_4NYxWhaSARdXrhUyFVIuBSSA1Lkk" />
-        {children}
+        <ResumeProvider>
+          <GoogleAnalytics ga_id="G-7M6E4NRTX7" />
+          {children}
+        </ResumeProvider>
       </body>
     </html>
   );

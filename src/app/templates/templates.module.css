@@ -156,9 +156,23 @@
 }
 
 @media (max-width: 768px) {
+  .hero {
+    padding: 100px var(--cr-space-md) 40px;
+  }
+
   .grid {
     grid-template-columns: 1fr;
     max-width: 500px;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 80px var(--cr-space-md) 20px;
   }
 
   .title {

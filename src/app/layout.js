@@ -1,5 +1,6 @@
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
+import GoogleAnalytics from "@/components/Analytics/GoogleAnalytics";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -23,6 +24,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${inter.variable} ${spaceGrotesk.variable}`}>
+        <GoogleAnalytics ga_id="AIzaSyCbZE_4NYxWhaSARdXrhUyFVIuBSSA1Lkk" />
         {children}
       </body>
     </html>

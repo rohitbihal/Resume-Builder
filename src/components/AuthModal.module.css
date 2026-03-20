@@ -135,3 +135,9 @@
   width: 18px;
   height: 18px;
 }
+
+@media (max-width: 480px) {
+  .modalContent {
+    padding: var(--cr-space-lg);
+  }
+}

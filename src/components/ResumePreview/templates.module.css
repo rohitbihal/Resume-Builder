@@ -5,7 +5,7 @@
   min-height: 1123px; /* Exact A4 height at 96dpi */
   background: #ffffff;
   color: #1a1a1a;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--resume-font, 'Inter'), sans-serif;
   font-size: 11pt; /* Increased from 9.5pt */
   line-height: 1.6;
   position: relative;
@@ -24,7 +24,7 @@
   top: 0;
   bottom: 0;
   width: 6px;
-  background: linear-gradient(180deg, #00FFE0, #00B8A9);
+  background: var(--resume-primary, #00B8A9);
 }
 
 .bnContent {
@@ -38,7 +38,7 @@
 }
 
 .bnName {
-  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-family: 'Space Grotesk', var(--resume-font, 'Inter'), sans-serif;
   font-size: 32pt; /* Increased from 26pt */
   font-weight: 900;
   color: #0a0a0a;
@@ -60,7 +60,7 @@
 }
 
 .bnSectionTitle {
-  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-family: 'Space Grotesk', var(--resume-font, 'Inter'), sans-serif;
   font-size: 12pt; /* Increased from 10pt */
   font-weight: 700;
   letter-spacing: 0.15em;
@@ -101,7 +101,7 @@
 
 .bnTech {
   font-size: 7.5pt;
-  color: #00B8A9;
+  color: var(--resume-primary, #00B8A9);
   font-weight: 600;
 }
 
@@ -133,7 +133,7 @@
 
 .bnSkillFill {
   height: 100%;
-  background: linear-gradient(90deg, #00FFE0, #00B8A9);
+  background: var(--resume-primary, #00B8A9);
   border-radius: 3px;
   transition: width 0.5s ease;
 }

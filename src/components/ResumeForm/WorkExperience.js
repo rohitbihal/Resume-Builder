@@ -1,11 +1,46 @@
 'use client';
 
+import { useState } from 'react';
 import { useResume, useResumeDispatch } from '@/context/ResumeContext';
 import styles from './FormSection.module.css';
+import { translations } from '@/lib/i18n';
 
 export default function WorkExperience() {
-  const { workExperience } = useResume();
+  const resume = useResume();
+  const { workExperience, language } = resume;
   const dispatch = useResumeDispatch();
+  const t = translations[language || 'en'];
+  const [loadingId, setLoadingId] = useState(null);
+
+  const handleEnhance = async (exp) => {
+    if (!exp.description || exp.description.trim() === '') {
+      alert('Please write a brief draft description first.');
+      return;
+    }
+    
+    setLoadingId(exp.id);
+    try {
+      const res = await fetch('/api/enhance-bullets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          description: exp.description, 
+          company: exp.company, 
+          title: exp.title 
+        })
+      });
+      
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to enhance text');
+      
+      updateItem(exp.id, 'description', data.enhancedText);
+    } catch (err) {
+      console.error(err);
+      alert(err.message);
+    } finally {
+      setLoadingId(null);
+    }
+  };
 
   const updateItem = (id, field, value) => {
     dispatch({
@@ -33,7 +68,7 @@ export default function WorkExperience() {
     <div className={styles.formSection}>
       <div className={styles.sectionHeader}>
         <div className={styles.sectionMeta}>
-          <h3 className={styles.sectionName}>Professional Work History</h3>
+          <h3 className={styles.sectionName}>{t.builder.workExperience}</h3>
           <p className={styles.sectionDesc}>Your professional experience and achievements</p>
         </div>
       </div>
@@ -49,12 +84,12 @@ export default function WorkExperience() {
 
           <div className={styles.fieldGrid}>
             <div className="cr-input-group">
-              <label className="cr-label">Company *</label>
-              <input className="cr-input" placeholder="Google" value={exp.company} onChange={(e) => updateItem(exp.id, 'company', e.target.value)} />
+              <label className="cr-label">Company Name *</label>
+              <input className="cr-input" placeholder="e.g. Google, Inc." value={exp.company} onChange={(e) => updateItem(exp.id, 'company', e.target.value)} />
             </div>
             <div className="cr-input-group">
               <label className="cr-label">Job Title *</label>
-              <input className="cr-input" placeholder="Senior Software Engineer" value={exp.title} onChange={(e) => updateItem(exp.id, 'title', e.target.value)} />
+              <input className="cr-input" placeholder="e.g. Senior Software Engineer" value={exp.title} onChange={(e) => updateItem(exp.id, 'title', e.target.value)} />
             </div>
           </div>
 
@@ -74,7 +109,17 @@ export default function WorkExperience() {
           </div>
 
           <div className="cr-input-group" style={{ marginTop: 'var(--cr-space-md)' }}>
-            <label className="cr-label">Description & Achievements</label>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+              <label className="cr-label" style={{ marginBottom: '0.25rem' }}>Description & Achievements</label>
+              <button 
+                className="cr-btn cr-btn-ghost cr-btn-sm" 
+                style={{ color: 'var(--cr-accent-primary)', padding: '2px 8px', fontSize: '0.75rem', height: '28px' }}
+                onClick={() => handleEnhance(exp)}
+                disabled={loadingId === exp.id}
+              >
+                {loadingId === exp.id ? '✨ ...' : `✨ ${t.builder.enhance}`}
+              </button>
+            </div>
             <textarea className="cr-input cr-textarea" placeholder="• Led a team of 5 engineers to deliver..." value={exp.description} onChange={(e) => updateItem(exp.id, 'description', e.target.value)} />
           </div>
         </div>

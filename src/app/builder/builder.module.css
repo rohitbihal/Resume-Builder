@@ -1,110 +1,91 @@
 .builderLayout {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--cr-space-xl);
-  min-height: 100vh;
+  grid-template-columns: 280px 1.2fr 1fr;
+  gap: var(--cr-space-lg);
+  min-height: calc(100vh - 70px);
+  position: relative;
 }
 
-.builderNav {
+.sidebarColumn {
   position: sticky;
-  top: 0;
-  z-index: 100;
-  background: rgba(10, 10, 15, 0.85);
-  backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--cr-border);
-  padding: var(--cr-space-md) var(--cr-space-lg);
+  top: 70px;
+  height: calc(100vh - 70px);
+  background: var(--cr-bg-secondary);
+  border-right: 1px solid var(--cr-border);
+  padding: var(--cr-space-lg) var(--cr-space-md);
+  overflow-y: auto;
+}
+
+.builderTopBar {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-}
-
-.navLogo {
-  font-family: var(--cr-font-display);
-  font-size: 1.2rem;
-  font-weight: 700;
-  background: var(--cr-accent-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.navLinks {
-  display: flex;
-  gap: var(--cr-space-md);
   align-items: center;
+  padding: var(--cr-space-sm) var(--cr-space-lg);
+  background: var(--cr-bg-secondary);
+  border-bottom: 1px solid var(--cr-border);
+  position: sticky;
+  top: 70px;
+  z-index: 90;
+  height: 60px;
 }
 
-.navLink {
-  font-size: 0.85rem;
-  color: var(--cr-text-secondary);
+.topBarLeft, .topBarRight {
+  display: flex;
+  align-items: center;
+  gap: var(--cr-space-lg);
+}
+
+.atsChip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 184, 169, 0.1);
+  color: var(--cr-accent-primary);
+  padding: 6px 14px;
+  border-radius: var(--cr-radius-full);
+  font-size: 0.8rem;
   font-weight: 500;
-  transition: color var(--cr-transition-fast);
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-family: var(--cr-font-body);
+  border: 1px solid rgba(0, 184, 169, 0.2);
 }
 
-.navLink:hover {
-  color: var(--cr-text-primary);
+.atsDot {
+  width: 8px;
+  height: 8px;
+  background: var(--cr-accent-primary);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--cr-accent-primary);
+  animation: pulse 2s infinite;
+}
+
+.saveIndicator {
+  font-size: 0.75rem;
+  color: var(--cr-text-muted);
+  font-weight: 500;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.95); opacity: 0.7; }
+  70% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.7; }
 }
 
 .builderContent {
-  max-width: 1500px;
-  margin: 0 auto;
-  padding: var(--cr-space-xl) var(--cr-space-lg);
+  width: 100%;
 }
 
 .formColumn {
   display: flex;
   flex-direction: column;
   gap: var(--cr-space-lg);
+  padding: var(--cr-space-lg);
   padding-bottom: var(--cr-space-3xl);
+  overflow-y: auto;
 }
 
 .previewColumn {
-  position: relative;
-}
-
-.builderTitle {
-  font-family: var(--cr-font-display);
-  font-size: 2rem;
-  font-weight: 800;
-  background: var(--cr-accent-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-bottom: var(--cr-space-xs);
-}
-
-.builderSubtitle {
-  color: var(--cr-text-muted);
-  font-size: 0.95rem;
-  margin-bottom: var(--cr-space-xl);
-}
-
-.sectionDivider {
-  display: flex;
-  align-items: center;
-  gap: var(--cr-space-md);
-  margin: var(--cr-space-sm) 0;
-}
-
-.sectionDivider::before,
-.sectionDivider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--cr-border);
-}
-
-.sectionDividerText {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--cr-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  white-space: nowrap;
+  position: sticky;
+  top: 130px;
+  height: calc(100vh - 130px);
 }
 
 .previewOnly {
@@ -119,12 +100,29 @@
   width: 100%;
 }
 
+@media (max-width: 1200px) {
+  .builderLayout {
+    grid-template-columns: 240px 1fr 1fr;
+  }
+}
+
 @media (max-width: 1024px) {
   .builderLayout {
     grid-template-columns: 1fr;
   }
 
+  .sidebarColumn {
+    position: relative;
+    top: 0;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--cr-border);
+  }
+  
   .previewColumn {
     order: -1;
+    position: relative;
+    top: 0;
+    height: auto;
   }
 }

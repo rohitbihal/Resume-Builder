@@ -49,6 +49,17 @@ export default function GridMaster() {
             ))}
           </div>
         )}
+
+        {resume.is_public && resume.id && (
+          <div style={{ marginTop: 'auto', textAlign: 'center', paddingTop: '1rem' }}>
+            <img 
+              src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${encodeURIComponent(window.location.origin + '/share/' + resume.id)}`} 
+              alt="Resume QR Code"
+              style={{ width: '60px', height: '60px', border: '1px solid #ddd', padding: '2px', background: '#fff' }}
+            />
+            <p style={{ fontSize: '6pt', color: '#666', marginTop: '4px', margin: 0 }}>Scan to view online</p>
+          </div>
+        )}
       </div>
 
       {/* Main */}

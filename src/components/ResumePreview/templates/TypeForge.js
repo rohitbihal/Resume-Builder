@@ -21,6 +21,16 @@ export default function TypeForge() {
           <h1 className={styles.tfName}>{personalInfo.fullName || 'Your Name'}</h1>
         </div>
 
+        {resume.is_public && resume.id && (
+          <div style={{ position: 'absolute', top: '30px', right: '30px', textAlign: 'center' }}>
+            <img 
+              src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${encodeURIComponent(window.location.origin + '/share/' + resume.id)}`} 
+              alt="Resume QR Code"
+              style={{ width: '50px', height: '50px', filter: 'grayscale(1)', opacity: 0.6 }}
+            />
+          </div>
+        )}
+
         <div className={styles.tfContact}>
           {personalInfo.email && <span>{personalInfo.email}</span>}
           {personalInfo.phone && <span>{personalInfo.phone}</span>}

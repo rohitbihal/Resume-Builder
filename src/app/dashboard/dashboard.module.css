@@ -184,6 +184,14 @@
     font-size: 2rem;
   }
   
+  .content {
+    padding: 2rem 1rem;
+  }
+  
+  .navInner {
+    padding: 1rem;
+  }
+
   .resumeCardActions {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -193,6 +201,10 @@
   .resumeCardActions > * {
     text-align: center;
     justify-content: center;
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
   }
 }
 

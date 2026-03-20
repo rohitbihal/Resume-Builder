@@ -16,6 +16,10 @@ const generateId = () => {
 const createInitialState = () => ({
   track: null,
   activeTemplate: 'bold-neo',
+  theme: { color: '#00B8A9', font: 'Inter' },
+  is_public: false,
+  slug: '',
+  language: 'en',
   layoutOrder: [],
   onboardingComplete: false,
   personalInfo: {
@@ -70,6 +74,18 @@ function resumeReducer(state, action) {
 
     case 'SET_TEMPLATE':
       return { ...state, activeTemplate: action.payload };
+
+    case 'UPDATE_THEME':
+      return { ...state, theme: { ...state.theme, ...action.payload } };
+
+    case 'TOGGLE_PUBLIC':
+      return { ...state, is_public: !state.is_public };
+
+    case 'UPDATE_SLUG':
+      return { ...state, slug: action.payload };
+
+    case 'SET_LANGUAGE':
+      return { ...state, language: action.payload };
 
     case 'SET_LAYOUT_ORDER':
       return { ...state, layoutOrder: action.payload };
@@ -192,8 +208,8 @@ function resumeReducer(state, action) {
   }
 }
 
-export function ResumeProvider({ children }) {
-  const [state, dispatch] = useReducer(resumeReducer, initialState);
+export function ResumeProvider({ children, initialData = null }) {
+  const [state, dispatch] = useReducer(resumeReducer, initialData || initialState);
 
   return (
     <ResumeContext.Provider value={state}>

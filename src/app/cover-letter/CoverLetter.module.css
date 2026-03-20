@@ -1,0 +1,145 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.title {
+  font-family: var(--cr-font-display);
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: var(--cr-accent-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: var(--cr-text-muted);
+  font-size: 1.1rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  gap: 2rem;
+}
+
+.formCard {
+  background: var(--cr-bg-card);
+  border: 1px solid var(--cr-border);
+  border-radius: var(--cr-radius-md);
+  padding: 1.5rem;
+  height: fit-content;
+  position: sticky;
+  top: 84px;
+}
+
+.section {
+  margin-bottom: 1.5rem;
+}
+
+.label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--cr-text-primary);
+}
+
+.textarea {
+  width: 100%;
+  min-height: 200px;
+  padding: 0.75rem;
+  border: 1px solid var(--cr-border);
+  border-radius: var(--cr-radius-sm);
+  font-family: inherit;
+  font-size: 0.95rem;
+  resize: vertical;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: var(--cr-accent-primary);
+  box-shadow: 0 0 0 2px rgba(var(--cr-accent-rgb), 0.1);
+}
+
+.previewCard {
+  background: #ffffff;
+  border: 1px solid var(--cr-border);
+  border-radius: var(--cr-radius-md);
+  box-shadow: var(--cr-shadow-lg);
+  display: flex;
+  flex-direction: column;
+}
+
+.previewHeader {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--cr-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.previewContent {
+  flex: 1;
+  padding: 4rem; /* Standard letter margins */
+  min-height: 1056px; /* A4 aspect */
+  color: #334155;
+  line-height: 1.6;
+  font-size: 11pt;
+  white-space: pre-line;
+}
+
+.letterEditor {
+  width: 100%;
+  height: 100%;
+  border: none;
+  resize: none;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+  outline: none;
+  padding: 0;
+}
+
+.resumeSelect {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--cr-border);
+  border-radius: var(--cr-radius-sm);
+  margin-bottom: 1rem;
+}
+
+.emptyState {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--cr-text-muted);
+  padding: 4rem;
+  text-align: center;
+}
+
+.emptyIcon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .formCard {
+    position: static;
+  }
+}

@@ -2,10 +2,13 @@
 
 import { useResume, useResumeDispatch } from '@/context/ResumeContext';
 import styles from './FormSection.module.css';
+import { translations } from '@/lib/i18n';
 
 export default function PersonalInfo() {
-  const { personalInfo } = useResume();
+  const resume = useResume();
+  const { personalInfo, language } = resume;
   const dispatch = useResumeDispatch();
+  const t = translations[language || 'en'];
 
   const update = (field, value) => {
     dispatch({ type: 'UPDATE_PERSONAL_INFO', payload: { [field]: value } });
@@ -15,7 +18,7 @@ export default function PersonalInfo() {
     <div className={styles.formSection}>
       <div className={styles.sectionHeader}>
         <div className={styles.sectionMeta}>
-          <h3 className={styles.sectionName}>Personal Information</h3>
+          <h3 className={styles.sectionName}>{t.builder.personalInfo}</h3>
           <p className={styles.sectionDesc}>Your contact details and online presence</p>
         </div>
       </div>
@@ -27,31 +30,31 @@ export default function PersonalInfo() {
             id="fullName"
             className="cr-input"
             type="text"
-            placeholder="John Doe"
+            placeholder="e.g. Jane Doe"
             value={personalInfo.fullName}
             onChange={(e) => update('fullName', e.target.value)}
           />
         </div>
 
         <div className="cr-input-group">
-          <label className="cr-label" htmlFor="email">Email *</label>
+          <label className="cr-label" htmlFor="email">Email Address *</label>
           <input
             id="email"
             className="cr-input"
             type="email"
-            placeholder="john@example.com"
+            placeholder="e.g. jane.doe@example.com"
             value={personalInfo.email}
             onChange={(e) => update('email', e.target.value)}
           />
         </div>
 
         <div className="cr-input-group">
-          <label className="cr-label" htmlFor="phone">Phone</label>
+          <label className="cr-label" htmlFor="phone">Phone Number</label>
           <input
             id="phone"
             className="cr-input"
             type="tel"
-            placeholder="+91 98765 43210"
+            placeholder="e.g. +1 (555) 000-0000"
             value={personalInfo.phone}
             onChange={(e) => update('phone', e.target.value)}
           />
@@ -63,19 +66,19 @@ export default function PersonalInfo() {
             id="location"
             className="cr-input"
             type="text"
-            placeholder="Mumbai, India"
+            placeholder="e.g. San Francisco, CA"
             value={personalInfo.location}
             onChange={(e) => update('location', e.target.value)}
           />
         </div>
 
         <div className="cr-input-group">
-          <label className="cr-label" htmlFor="linkedin">LinkedIn</label>
+          <label className="cr-label" htmlFor="linkedin">LinkedIn Profile</label>
           <input
             id="linkedin"
             className="cr-input"
             type="url"
-            placeholder="linkedin.com/in/johndoe"
+            placeholder="linkedin.com/in/username"
             value={personalInfo.linkedin}
             onChange={(e) => update('linkedin', e.target.value)}
           />
@@ -87,7 +90,7 @@ export default function PersonalInfo() {
             id="portfolio"
             className="cr-input"
             type="url"
-            placeholder="johndoe.dev"
+            placeholder="github.com/username or yoursite.com"
             value={personalInfo.portfolio}
             onChange={(e) => update('portfolio', e.target.value)}
           />

@@ -1,10 +1,11 @@
 .formSection {
-  background: var(--cr-bg-card);
-  border: 1px solid var(--cr-border);
-  border-radius: var(--cr-radius-lg);
+  background: var(--cr-glass-bg);
+  backdrop-filter: var(--cr-glass-blur);
+  border: 1px solid var(--cr-glass-border);
+  border-radius: var(--cr-radius-xl);
   padding: var(--cr-space-xl);
-  animation: fadeIn 0.4s ease-out;
-  box-shadow: var(--cr-shadow-sm);
+  animation: slideUp 0.5s var(--cr-transition-spring) forwards;
+  box-shadow: var(--cr-glass-shadow);
 }
 
 .sectionHeader {
@@ -13,7 +14,7 @@
   gap: 4px;
   margin-bottom: var(--cr-space-xl);
   padding-bottom: var(--cr-space-md);
-  border-bottom: 2px solid var(--cr-bg-secondary);
+  border-bottom: 2px solid rgba(0, 184, 169, 0.1);
 }
 
 .sectionIcon {
@@ -61,13 +62,20 @@
 }
 
 .entryCard {
-  background: var(--cr-bg-elevated);
-  border: 1px solid var(--cr-border);
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(4px);
+  border: 1px solid var(--cr-glass-border);
   border-radius: var(--cr-radius-md);
   padding: var(--cr-space-lg);
   margin-bottom: var(--cr-space-md);
   position: relative;
-  animation: scaleIn 0.3s ease-out;
+  transition: all var(--cr-transition-normal);
+}
+
+.entryCard:hover {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: var(--cr-accent-primary);
+  transform: translateX(4px);
 }
 
 .entryHeader {

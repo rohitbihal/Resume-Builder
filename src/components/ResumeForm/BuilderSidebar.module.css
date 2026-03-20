@@ -1,0 +1,127 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cr-space-lg);
+  padding-bottom: var(--cr-space-xl);
+}
+
+.header {
+  margin-bottom: var(--cr-space-sm);
+}
+
+.title {
+  font-family: var(--cr-font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--cr-text-primary);
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  font-size: 0.75rem;
+  color: var(--cr-text-muted);
+}
+
+.navList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--cr-radius-md);
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: all var(--cr-transition-fast);
+}
+
+.navItem:hover {
+  background: var(--cr-bg-input);
+  border-color: var(--cr-border);
+}
+
+.navItem.active {
+  background: var(--cr-bg-card);
+  border-color: var(--cr-accent-primary);
+  box-shadow: var(--cr-shadow-sm);
+}
+
+.iconWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+.icon {
+  position: absolute;
+  font-size: 1rem;
+  z-index: 1;
+}
+
+.svg {
+  transform: rotate(-90deg);
+}
+
+.bgCircle {
+  stroke-dasharray: none;
+}
+
+.progressCircle {
+  transition: stroke-dashoffset 0.5s ease;
+}
+
+.itemMeta {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--cr-text-primary);
+}
+
+.status {
+  font-size: 0.65rem;
+  color: var(--cr-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.overallProgress {
+  margin-top: auto;
+  padding-top: var(--cr-space-lg);
+  border-top: 1px solid var(--cr-border);
+}
+
+.progressText {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--cr-text-secondary);
+  margin-bottom: 8px;
+}
+
+.progressBar {
+  height: 6px;
+  background: var(--cr-border);
+  border-radius: var(--cr-radius-full);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--cr-accent-gradient);
+  transition: width 0.5s ease;
+}

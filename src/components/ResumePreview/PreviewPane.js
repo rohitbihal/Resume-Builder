@@ -7,8 +7,10 @@ import GridMaster from './templates/GridMaster';
 import VivaColor from './templates/VivaColor';
 import TypeForge from './templates/TypeForge';
 import InkSplash from './templates/InkSplash';
+import ATSScore from './ATSScore';
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
+import { translations } from '@/lib/i18n';
 
 const TEMPLATES = [
   { id: 'bold-neo', name: 'Bold Neo', component: BoldNeo, premium: false },
@@ -18,13 +20,15 @@ const TEMPLATES = [
   { id: 'ink-splash', name: 'Ink Splash', component: InkSplash, premium: true },
 ];
 
-export default function PreviewPane() {
+export default function PreviewPane({ resumeId }) {
   const resumeState = useResume();
-  const { activeTemplate, ...resumeData } = resumeState;
+  const { activeTemplate, theme, is_public, ...resumeData } = resumeState;
   const dispatch = useResumeDispatch();
   const [hasPremiumAccess, setHasPremiumAccess] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [scale, setScale] = useState(0.6); // Default 60% Zoom
   const previewRef = useRef(null);
 
   useEffect(() => {
@@ -105,10 +109,65 @@ export default function PreviewPane() {
     }
   };
 
+  const shareUrl = typeof window !== 'undefined' 
+    ? `${window.location.origin}/share/${resumeState.slug || resumeId}` 
+    : '';
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(shareUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const t = translations[resumeState.language || 'en'];
+
   return (
     <div className={styles.previewWrapper}>
-      <div className={styles.previewHeader}>
-        <h3 className={styles.previewTitle}>Live Preview</h3>
+      <div className={styles.previewHeader} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.5rem' }}>
+        <h3 className={styles.previewTitle}>{t.builder.preview}</h3>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+            <label style={{ fontSize: '0.75rem', color: 'var(--cr-text-muted)' }}>Font:</label>
+            <select 
+              value={theme?.font || 'Inter'}
+              onChange={(e) => dispatch({ type: 'UPDATE_THEME', payload: { font: e.target.value }})}
+              style={{ fontSize: '0.75rem', padding: '2px', border: '1px solid var(--cr-border)', borderRadius: '4px' }}
+            >
+              <option value="Inter">Inter</option>
+              <option value="Roboto">Roboto</option>
+              <option value="Georgia">Georgia</option>
+              <option value="Space Grotesk">Space Grotesk</option>
+              <option value="Lora">Lora</option>
+            </select>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+            <label style={{ fontSize: '0.75rem', color: 'var(--cr-text-muted)' }}>Theme:</label>
+            <input 
+              type="color" 
+              value={theme?.color || '#00B8A9'}
+              onChange={(e) => dispatch({ type: 'UPDATE_THEME', payload: { color: e.target.value }})}
+              style={{ width: '24px', height: '20px', padding: 0, border: 'none', background: 'none', cursor: 'pointer' }}
+              title="Change Global Theme Color"
+            />
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+            <label style={{ fontSize: '0.75rem', color: 'var(--cr-text-muted)' }}>Zoom:</label>
+            <input 
+              type="range" 
+              min="0.3" 
+              max="1.2" 
+              step="0.1" 
+              value={scale} 
+              onChange={(e) => setScale(parseFloat(e.target.value))}
+              style={{ width: '60px', accentColor: 'var(--cr-accent-primary)' }}
+            />
+            <span style={{ fontSize: '0.75rem', fontWeight: 600, minWidth: '35px' }}>{Math.round(scale * 100)}%</span>
+          </div>
+        </div>
+        <ATSScore />
       </div>
 
       <div className={styles.templateTabs}>
@@ -126,7 +185,16 @@ export default function PreviewPane() {
       </div>
 
       <div className={styles.previewContainer}>
-        <div className={styles.previewScale} ref={previewRef}>
+        <div 
+          className={styles.previewScale} 
+          ref={previewRef}
+          style={{ 
+            transform: `scale(${scale})`, 
+            marginBottom: `${(scale - 1) * 297}mm`,
+            '--resume-primary': theme?.color || '#00B8A9',
+            '--resume-font': theme?.font || 'Inter'
+          }}
+        >
           <div className={styles.previewContent}>
             <TemplateComponent />
             {!hasPremiumAccess && (
@@ -140,7 +208,82 @@ export default function PreviewPane() {
 
       <div className={styles.downloadArea}>
         {isClient && (
-          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {/* Public Share Section */}
+            {resumeId && (
+              <div style={{ 
+                padding: '1rem', 
+                background: 'var(--cr-bg-card)', 
+                border: '1px solid var(--cr-border)', 
+                borderRadius: 'var(--cr-radius-md)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.75rem'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>🌐 {t.builder.share}</span>
+                  </div>
+                  <label className="cr-switch">
+                    <input 
+                      type="checkbox" 
+                      checked={is_public || false} 
+                      onChange={() => dispatch({ type: 'TOGGLE_PUBLIC' })} 
+                    />
+                    <span className="cr-slider"></span>
+                  </label>
+                </div>
+
+                <div className="cr-input-group" style={{ marginBottom: '0.5rem' }}>
+                  <label className="cr-label" style={{ fontSize: '0.7rem' }}>Custom URL Slug</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--cr-text-muted)' }}>/share/</span>
+                    <input 
+                      className="cr-input" 
+                      style={{ marginBottom: 0, padding: '4px 8px', fontSize: '0.75rem', flex: 1 }} 
+                      placeholder="your-unique-slug"
+                      value={resumeState.slug || ''}
+                      onChange={(e) => {
+                        const val = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '');
+                        dispatch({ type: 'UPDATE_SLUG', payload: val });
+                      }}
+                    />
+                  </div>
+                </div>
+                
+                {is_public && (
+                  <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                    <input 
+                      readOnly 
+                      value={shareUrl} 
+                      className="cr-input" 
+                      style={{ flex: 1, fontSize: '0.75rem', marginBottom: 0, padding: '0.5rem' }} 
+                    />
+                    <button 
+                      onClick={copyToClipboard}
+                      className="cr-btn cr-btn-primary cr-btn-sm" 
+                      style={{ whiteSpace: 'nowrap' }}
+                    >
+                      {copied ? '✅' : 'Copy'}
+                    </button>
+                    <a 
+                      href={shareUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="cr-btn cr-btn-outline cr-btn-sm"
+                    >
+                      ↗
+                    </a>
+                  </div>
+                )}
+                {!is_public && (
+                  <p style={{ fontSize: '0.7rem', color: 'var(--cr-text-muted)', margin: 0 }}>
+                    Enable public sharing to generate a viewable link for employers.
+                  </p>
+                )}
+              </div>
+            )}
+
             <button 
               className={`cr-btn ${hasPremiumAccess ? 'cr-btn-primary' : 'cr-btn-outline'} cr-btn-lg`}
               style={{ width: '100%' }} 
@@ -148,7 +291,7 @@ export default function PreviewPane() {
               disabled={isGeneratingPdf || (!hasPremiumAccess && !isGeneratingPdf)}
               onClick={handleDownloadPdf}
             >
-              {isGeneratingPdf ? '⏳ Generating PDF...' : hasPremiumAccess ? '⬇ Download PDF' : '🔒 Upgrade to Download'}
+              {isGeneratingPdf ? '⏳ ...' : hasPremiumAccess ? `⬇ ${t.builder.download}` : '🔒 Upgrade to Download'}
             </button>
             {!hasPremiumAccess && (
               <p style={{ fontSize: '0.75rem', color: 'var(--cr-text-muted)', textAlign: 'center' }}>

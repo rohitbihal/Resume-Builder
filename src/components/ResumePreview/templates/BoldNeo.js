@@ -30,6 +30,17 @@ export default function BoldNeo() {
           </div>
         </header>
 
+        {resume.is_public && resume.id && (
+          <div style={{ position: 'absolute', top: '28px', right: '28px', textAlign: 'center' }}>
+            <img 
+              src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${encodeURIComponent(window.location.origin + '/share/' + resume.id)}`} 
+              alt="Resume QR Code"
+              style={{ width: '60px', height: '60px', border: '1px solid #eee', padding: '2px' }}
+            />
+            <p style={{ fontSize: '6pt', color: '#888', marginTop: '2px', margin: 0 }}>Scan to view online</p>
+          </div>
+        )}
+
         {layoutOrder.map(sectionId => {
           switch (sectionId) {
             case 'executiveSummary':

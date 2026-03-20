@@ -78,12 +78,111 @@
   opacity: 0.5;
 }
 
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--cr-space-xs);
+  flex-direction: column;
+  gap: 5px;
+  z-index: 1001;
+}
+
+.hamburger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background-color: var(--cr-text-primary);
+  transition: all 0.3s;
+  border-radius: 2px;
+}
+
+.hamburger.open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.hamburger.open span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.desktopMenu {
+  display: flex;
+  align-items: center;
+  gap: var(--cr-space-xl);
+  flex: 1;
+  justify-content: flex-end;
+}
+
 @media (max-width: 768px) {
-  .navLinks {
-    display: none; /* simple for now, can add hamburger later */
+  .hamburger {
+    display: flex;
   }
   
-  .userEmail {
+  .desktopMenu {
     display: none;
+  }
+  
+  .mobileMenu {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 70px);
+    background: var(--cr-bg-primary);
+    padding: var(--cr-space-xl) var(--cr-space-lg);
+    gap: var(--cr-space-md);
+    box-shadow: var(--cr-shadow-md);
+    border-top: 1px solid var(--cr-border);
+    animation: slideDown 0.3s ease-out;
+    z-index: 999;
+  }
+  
+  .navLinks {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--cr-space-sm);
+    width: 100%;
+  }
+  
+  .navLink {
+    font-size: 1.1rem;
+    padding: var(--cr-space-sm) 0;
+    width: 100%;
+    border-bottom: 1px solid var(--cr-border);
+  }
+  
+  .authActions {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    margin-top: var(--cr-space-sm);
+  }
+
+  .userSection, .guestSection {
+    flex-direction: column;
+    width: 100%;
+    gap: var(--cr-space-md);
+  }
+
+  .userSection button, .guestSection a {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .userEmail {
+    display: block;
+    margin-bottom: var(--cr-space-sm);
+    font-size: 1rem;
+    padding: var(--cr-space-sm) 0;
+    border-bottom: 1px solid var(--cr-border);
+    width: 100%;
   }
 }

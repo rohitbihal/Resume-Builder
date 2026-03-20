@@ -16,8 +16,9 @@
 .sectionDivider::after {
   content: '';
   flex: 1;
-  border-bottom: 1px solid var(--cr-border);
+  border-bottom: 2px solid var(--cr-accent-primary);
   margin-left: var(--cr-space-md);
+  opacity: 0.15;
 }
 
 .sectionDividerText {
@@ -44,8 +45,8 @@
 }
 
 .dragHandle:hover {
-  background: var(--cr-surface);
-  color: var(--cr-text);
+  background: var(--cr-bg-secondary);
+  color: var(--cr-text-primary);
 }
 
 .dragHandle:active {
@@ -54,4 +55,9 @@
 
 .sortableContent {
   background: transparent;
+  padding: 0;
+}
+
+.dragging {
+  z-index: 1000;
 }

@@ -353,15 +353,27 @@
   .templateCards {
     grid-template-columns: repeat(3, 1fr);
   }
+  
+  .heroGlow {
+    width: 600px;
+    height: 400px;
+  }
 }
 
 @media (max-width: 768px) {
+  .hero {
+    padding: 120px var(--cr-space-md) 60px;
+  }
+
   .heroTitle {
     font-size: 2.5rem;
   }
 
   .heroStats {
     gap: var(--cr-space-xl);
+    flex-wrap: wrap;
+    padding-top: var(--cr-space-xl);
+    margin-top: var(--cr-space-2xl);
   }
 
   .featureGrid {
@@ -375,10 +387,38 @@
   .navLinks {
     gap: var(--cr-space-md);
   }
+
+  .ctaTitle {
+    font-size: 2rem;
+  }
+
+  .ctaSection {
+    padding: 80px var(--cr-space-md);
+  }
 }
 
 @media (max-width: 480px) {
+  .heroTitle {
+    font-size: 2rem;
+  }
+
+  .heroStats {
+    flex-direction: column;
+    gap: var(--cr-space-lg);
+  }
+
   .templateCards {
     grid-template-columns: 1fr;
+  }
+
+  .heroCtas {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .heroCtas > * {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
   }
 }

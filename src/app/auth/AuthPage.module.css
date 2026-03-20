@@ -67,3 +67,12 @@
   width: 18px;
   height: 18px;
 }
+
+@media (max-width: 480px) {
+  .authContainer {
+    padding: 1.5rem;
+  }
+  .title {
+    font-size: 1.5rem;
+  }
+}

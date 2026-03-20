@@ -14,6 +14,7 @@ export const ResumeDB = {
         template_id: templateId,
         title: `${state.personalInfo?.firstName || 'Untitled'} Resume`,
         track: track,
+        is_public: state.is_public || false,
         personal_info: state.personalInfo,
         education: state.education,
         skills: state.skills,
@@ -22,6 +23,7 @@ export const ResumeDB = {
         academic_projects: state.academicProjects,
         executive_summary: state.executiveSummary,
         certifications: state.certifications,
+        slug: state.slug || null,
         updated_at: new Date().toISOString()
       };
 

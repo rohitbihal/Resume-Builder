@@ -33,7 +33,7 @@ export default function LinkedInImport() {
       const data = await response.json();
       
       // Dispatch the parsed data to the context
-      dispatch({ type: 'LOAD_RESUME', payload: data });
+      dispatch({ type: 'LOAD_RESUME', payload: { ...data, onboardingComplete: true } });
       
       alert('Successfully imported data from profile link!');
       setProfileUrl('');

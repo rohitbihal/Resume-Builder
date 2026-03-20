@@ -1,0 +1,63 @@
+.scoreContainer {
+  display: flex;
+  flex-direction: column;
+  background: var(--cr-bg-card);
+  border: 1px solid var(--cr-border);
+  border-radius: var(--cr-radius-md);
+  padding: 8px 12px;
+  min-width: 140px;
+}
+
+.scoreHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--cr-space-md);
+  margin-bottom: 4px;
+}
+
+.scoreLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--cr-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.scoreBadge {
+  font-family: var(--cr-font-display);
+  font-size: 0.95rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: var(--cr-radius-full);
+}
+
+.scoreBadge.high {
+  background: rgba(47, 158, 68, 0.15);
+  color: #2b8a3e;
+}
+
+.scoreBadge.medium {
+  background: rgba(240, 140, 0, 0.15);
+  color: #e67700;
+}
+
+.scoreBadge.low {
+  background: rgba(224, 49, 49, 0.15);
+  color: #c92a2a;
+}
+
+.tipsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-top: 1px solid var(--cr-border);
+  padding-top: 6px;
+  margin-top: 2px;
+}
+
+.tip {
+  font-size: 0.65rem;
+  color: var(--cr-text-muted);
+  line-height: 1.3;
+}

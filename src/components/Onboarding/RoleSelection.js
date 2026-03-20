@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useResume, useResumeDispatch } from '@/context/ResumeContext';
 import { supabase } from '@/lib/supabase';
+import LinkedInImport from '@/components/ResumeForm/LinkedInImport';
 import styles from './RoleSelection.module.css';
 
 const ROLES = [
@@ -17,12 +18,19 @@ const ROLES = [
 export default function RoleSelection() {
   const { onboardingComplete } = useResume();
   const dispatch = useResumeDispatch();
-  const [loadingRole, setLoadingRole] = useState(null);
+  const [step, setStep] = useState(1);
+  const [selectedRole, setSelectedRole] = useState(null);
+  const [loadingRole, setLoadingRole] = useState(false);
 
   if (onboardingComplete) return null;
 
-  const handleSelect = async (roleId) => {
-    setLoadingRole(roleId);
+  const handleSelectRole = (roleId) => {
+    setSelectedRole(roleId);
+    setStep(2);
+  };
+
+  const finishOnboarding = async () => {
+    setLoadingRole(true);
     try {
       // Get current user if supabase is available
       if (supabase) {
@@ -32,46 +40,72 @@ export default function RoleSelection() {
           // Update profile in Supabase
           await supabase
             .from('profiles')
-            .update({ role: roleId })
+            .update({ role: selectedRole })
             .eq('id', user.id);
         }
       }
       
-      // Update local context
-      dispatch({ type: 'SET_TRACK', payload: roleId });
+      dispatch({ type: 'SET_TRACK', payload: selectedRole });
     } catch (err) {
       console.error('Error saving role:', err);
-      // Fallback: still update context so user can use the app
-      dispatch({ type: 'SET_TRACK', payload: roleId });
+      dispatch({ type: 'SET_TRACK', payload: selectedRole });
     } finally {
-      setLoadingRole(null);
+      setLoadingRole(false);
     }
   };
 
   return (
     <div className={styles.overlay}>
       <div className={styles.modal}>
-        <div className={styles.header}>
-          <h2 className={styles.title}>Welcome! Let’s set your track.</h2>
-          <p className={styles.subtitle}>Choose the role that best defines your current career stage. We’ll customize the builder for you.</p>
-        </div>
-        
-        <div className={styles.grid}>
-          {ROLES.map((role) => (
-            <button 
-              key={role.id} 
-              type="button"
-              className={`${styles.roleCard} ${loadingRole === role.id ? styles.loading : ''}`}
-              onClick={() => handleSelect(role.id)}
-              disabled={loadingRole !== null}
-            >
-              <div className={styles.text}>
-                <h3 className={styles.roleTitle}>{role.title}</h3>
-                <p className={styles.roleDesc}>{role.desc}</p>
+        {step === 1 && (
+          <>
+            <div className={styles.header}>
+              <h2 className={styles.title}>Welcome! Let’s set your track.</h2>
+              <p className={styles.subtitle}>Choose the role that best defines your current career stage. We’ll customize the builder for you.</p>
+            </div>
+            
+            <div className={styles.grid}>
+              {ROLES.map((role) => (
+                <button 
+                  key={role.id} 
+                  type="button"
+                  className={styles.roleCard}
+                  onClick={() => handleSelectRole(role.id)}
+                >
+                  <div className={styles.text}>
+                    <h3 className={styles.roleTitle}>{role.title}</h3>
+                    <p className={styles.roleDesc}>{role.desc}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+
+        {step === 2 && (
+          <>
+            <div className={styles.header} style={{ marginBottom: '2rem' }}>
+              <h2 className={styles.title}>Jumpstart your resume</h2>
+              <p className={styles.subtitle}>Import your entire public LinkedIn profile using our AI parser, or start from a blank slate.</p>
+            </div>
+
+            <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+              <LinkedInImport />
+              
+              <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+                <p style={{ fontSize: '0.9rem', color: 'var(--cr-text-muted)', marginBottom: '1rem' }}>Prefer to type it out yourself?</p>
+                <button 
+                  className="cr-btn cr-btn-primary cr-btn-lg" 
+                  onClick={finishOnboarding}
+                  disabled={loadingRole}
+                  style={{ width: '100%' }}
+                >
+                  {loadingRole ? 'Setting up workspace...' : 'Start from scratch'}
+                </button>
               </div>
-            </button>
-          ))}
-        </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

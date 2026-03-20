@@ -7,6 +7,7 @@ import LinkedInImport from '@/components/ResumeForm/LinkedInImport';
 import RoleSelection from '@/components/Onboarding/RoleSelection';
 import DraggableSectionList from '@/components/ResumeForm/DraggableSectionList';
 import PreviewPane from '@/components/ResumePreview/PreviewPane';
+import BuilderSidebar from '@/components/ResumeForm/BuilderSidebar';
 import styles from './builder.module.css';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
@@ -34,6 +35,7 @@ function BuilderInner() {
   const [toasts, setToasts] = useState([]);
   const [lastSavedState, setLastSavedState] = useState(null);
   const [isInitialLoading, setIsInitialLoading] = useState(!!idParam);
+  const [activeSection, setActiveSection] = useState('personalInfo');
 
   const addToast = (message, type = 'success') => {
     const id = Date.now();
@@ -62,13 +64,13 @@ function BuilderInner() {
   useEffect(() => {
     const loadResume = async () => {
       if (!idParam) return;
-      
+
       const { data, error } = await supabase
         .from('resumes')
         .select('*')
         .eq('id', idParam)
         .single();
-        
+
       if (data && !error) {
         // Map DB fields back to context state
         const loadedState = {
@@ -84,7 +86,7 @@ function BuilderInner() {
           certifications: data.certifications,
           onboardingComplete: true
         };
-        
+
         dispatch({ type: 'LOAD_RESUME', payload: loadedState });
         setLastSavedState(JSON.stringify(loadedState));
       } else {
@@ -156,7 +158,7 @@ function BuilderInner() {
       setIsAuthOpen(true);
       return;
     }
-    
+
     const result = await ResumeDB.saveResume(
       session.user.id,
       activeTemplate,
@@ -164,7 +166,7 @@ function BuilderInner() {
       dataState,
       currentResumeId
     );
-    
+
     if (result.success) {
       setCurrentResumeId(result.id);
       setLastSavedState(JSON.stringify(resumeState));
@@ -212,48 +214,47 @@ function BuilderInner() {
       <RoleSelection />
       <Navbar />
 
-      <div className={styles.builderContent}>
-        <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className={styles.builderTopBar}>
+        <div className={styles.topBarLeft}>
           <BackButton href="/dashboard" label="Back to Dashboard" />
+          <div className={styles.atsChip}>
+            <span className={styles.atsDot}></span>
+            Real-time ATS Score: <strong>{dataState.skills?.length > 5 ? '85%' : '45%'}</strong>
+          </div>
+        </div>
+        <div className={styles.topBarRight}>
           {!previewMode && (
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <button className="cr-btn cr-btn-primary cr-btn-sm" onClick={handleSave}>Save Resume</button>
-              {currentResumeId && (
-                <button className="cr-btn cr-btn-secondary cr-btn-sm" onClick={handleSaveVersion}>Save Version</button>
-              )}
-            </div>
+            <>
+              <div className={styles.saveIndicator}>
+                 {lastSavedState === JSON.stringify(resumeState) ? '✓ Auto-saved' : '● Saving...'}
+              </div>
+              <button className="cr-btn cr-btn-primary" onClick={handleSave} style={{ borderRadius: 'var(--cr-radius-full)', padding: '0 1.5rem' }}>
+                Save & Sync
+              </button>
+            </>
           )}
         </div>
-        
-        <h1 className={styles.builderTitle}>
-          {previewMode ? 'Resume Preview' : 'Build Your Resume'}
-        </h1>
-        <p className={styles.builderSubtitle}>
-          {previewMode ? 'Viewing your saved resume structure.' : 'Fill in your details below and watch your resume come alive in real-time.'}
-        </p>
+      </div>
 
-        <div className={`${styles.builderLayout} ${previewMode ? styles.previewOnly : ''}`}>
-          {!previewMode && (
-            <div className={styles.formColumn}>
+      <div className={`${styles.builderLayout} ${previewMode ? styles.previewOnly : ''}`}>
+        {!previewMode && (
+          <>
+            <aside className={styles.sidebarColumn}>
+              <BuilderSidebar activeSection={activeSection} onSectionChange={setActiveSection} />
+            </aside>
+            
+            <main className={styles.formColumn}>
               {versions.length > 0 && (
-                <div className={styles.sectionCard} style={{ marginBottom: '1rem', border: '1px solid var(--cr-border)' }}>
-                  <div className={styles.sectionHeader}>
-                    <h4 className={styles.sectionTitle}>Version History</h4>
+                <div className="cr-card cr-glass" style={{ marginBottom: '1rem' }}>
+                  <div style={{ paddingBottom: '0.5rem', borderBottom: '1px solid var(--cr-border)', marginBottom: '0.5rem' }}>
+                    <h4 style={{ fontSize: '0.9rem', fontWeight: 700 }}>Version History</h4>
                   </div>
-                  <div style={{ padding: '0.75rem', maxHeight: '150px', overflowY: 'auto' }}>
+                  <div style={{ maxHeight: '100px', overflowY: 'auto' }}>
                     {versions.map(v => (
                       <div 
                         key={v.id} 
                         onClick={() => handleLoadVersion(v)}
-                        style={{ 
-                          padding: '0.5rem', 
-                          cursor: 'pointer', 
-                          borderBottom: '1px solid var(--cr-border)',
-                          fontSize: '0.8rem',
-                          display: 'flex',
-                          justifyContent: 'space-between'
-                        }}
-                        className={styles.versionItem}
+                        style={{ padding: '0.4rem 0', cursor: 'pointer', borderBottom: '1px solid var(--cr-border)', fontSize: '0.75rem', display: 'flex', justifyContent: 'space-between' }}
                       >
                         <span>{v.version_name}</span>
                         <span style={{ color: 'var(--cr-text-muted)' }}>{new Date(v.created_at).toLocaleDateString()}</span>
@@ -262,16 +263,16 @@ function BuilderInner() {
                   </div>
                 </div>
               )}
-              <LinkedInImport />
-              <TrackSwitcher />
+              
+              <section className="animate-fade-in">
+                <DraggableSectionList filteredSection={activeSection} />
+              </section>
+            </main>
+          </>
+        )}
 
-              <DraggableSectionList />
-            </div>
-          )}
-
-          <div className={previewMode ? styles.previewCentered : styles.previewColumn}>
-            <PreviewPane />
-          </div>
+        <div className={previewMode ? styles.previewCentered : styles.previewColumn}>
+          <PreviewPane resumeId={currentResumeId} />
         </div>
       </div>
 

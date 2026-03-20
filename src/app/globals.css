@@ -14,10 +14,10 @@
   --cr-text-muted: #868e96;
   --cr-text-inverse: #ffffff;
 
-  --cr-accent-primary: #4c6ef5;
-  --cr-accent-secondary: #748ffc;
-  --cr-accent-gradient: linear-gradient(135deg, #4c6ef5 0%, #15aabf 100%);
-  --cr-accent-glow: 0 4px 12px rgba(76, 110, 245, 0.2);
+  --cr-accent-primary: #00B8A9;
+  --cr-accent-secondary: #00D1C1;
+  --cr-accent-gradient: linear-gradient(135deg, #00B8A9 0%, #009688 100%);
+  --cr-accent-glow: 0 4px 12px rgba(0, 184, 169, 0.2);
 
   --cr-success: #2f9e44;
   --cr-warning: #f08c00;
@@ -25,7 +25,13 @@
   --cr-info: #15aabf;
 
   --cr-border: #e9ecef;
-  --cr-border-active: #4c6ef5;
+  --cr-border-active: #00B8A9;
+
+  /* Glassmorphism */
+  --cr-glass-bg: rgba(255, 255, 255, 0.7);
+  --cr-glass-blur: blur(12px);
+  --cr-glass-border: rgba(255, 255, 255, 0.3);
+  --cr-glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
 
   /* Typography */
   --cr-font-display: 'Space Grotesk', sans-serif;
@@ -262,7 +268,22 @@ a:hover {
 
 .cr-input:focus {
   border-color: var(--cr-accent-primary);
-  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15);
+  box-shadow: 0 0 0 3px rgba(0, 184, 169, 0.15);
+}
+
+/* Glassmorphism Utilities */
+.cr-glass {
+  background: var(--cr-glass-bg);
+  backdrop-filter: var(--cr-glass-blur);
+  -webkit-backdrop-filter: var(--cr-glass-blur);
+  border: 1px solid var(--cr-glass-border);
+  box-shadow: var(--cr-glass-shadow);
+}
+
+.cr-glass-input {
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .cr-input::placeholder {

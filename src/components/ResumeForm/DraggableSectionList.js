@@ -100,25 +100,20 @@ function SortableItem({ id, children, label, isSortable, index }) {
   );
 }
 
-export default function DraggableSectionList() {
+export default function DraggableSectionList({ filteredSection }) {
   const { track, layoutOrder } = useResume();
   const dispatch = useResumeDispatch();
   const [activeItems, setActiveItems] = useState([]);
 
   useEffect(() => {
-    // If layoutOrder is empty, or the track changed and we want to enforce defaults (optional)
-    // For now, let's just initialize if it's empty.
     if (!layoutOrder || layoutOrder.length === 0) {
       dispatch({ type: 'SET_LAYOUT_ORDER', payload: TRACK_DEFAULTS[track] || TRACK_DEFAULTS['fresher'] });
     }
   }, [track, layoutOrder, dispatch]);
 
   useEffect(() => {
-    // We update local state when context layout stringifies over
     if (layoutOrder && layoutOrder.length > 0) {
       const currentDefaults = TRACK_DEFAULTS[track] || TRACK_DEFAULTS['fresher'];
-      
-      // Filter out invalid ones, and add any missing ones from default for safety
       let merged = layoutOrder.filter(id => currentDefaults.includes(id));
       currentDefaults.forEach(id => {
         if (!merged.includes(id)) merged.push(id);
@@ -137,16 +132,30 @@ export default function DraggableSectionList() {
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
-
     if (active.id !== over.id) {
       const oldIndex = activeItems.indexOf(active.id);
       const newIndex = activeItems.indexOf(over.id);
-      
       const newOrder = arrayMove(activeItems, oldIndex, newIndex);
       setActiveItems(newOrder);
       dispatch({ type: 'SET_LAYOUT_ORDER', payload: newOrder });
     }
   };
+
+  if (filteredSection) {
+    const config = SECTION_COMPONENTS[filteredSection];
+    if (!config) return <div style={{ padding: '2rem', textAlign: 'center' }}>Section coming soon...</div>;
+    const ComponentToRender = config.component;
+    return (
+      <div className="reveal-entry">
+        <div className={styles.sectionDivider}>
+          <span className={styles.sectionDividerText}>{config.label}</span>
+        </div>
+        <div className={styles.sortableContent} style={{ padding: '0 1rem' }}>
+          <ComponentToRender />
+        </div>
+      </div>
+    );
+  }
 
   if (!activeItems.length) return null;
 

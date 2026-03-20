@@ -29,6 +29,16 @@ export default function InkSplash() {
           </div>
         </header>
 
+        {resume.is_public && resume.id && (
+          <div style={{ position: 'absolute', top: '35px', right: '35px', textAlign: 'center' }}>
+            <img 
+              src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${encodeURIComponent(window.location.origin + '/share/' + resume.id)}`} 
+              alt="Resume QR Code"
+              style={{ width: '60px', height: '60px', opacity: 0.8 }}
+            />
+          </div>
+        )}
+
         {layoutOrder.map(sectionId => {
           switch (sectionId) {
             case 'executiveSummary':

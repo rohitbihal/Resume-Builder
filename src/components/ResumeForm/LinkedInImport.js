@@ -25,12 +25,12 @@ export default function LinkedInImport() {
         body: JSON.stringify({ url: profileUrl }),
       });
 
-      if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
-        throw new Error(data.error || 'Failed to parse profile link. Please ensure it is a valid public profile.');
-      }
+      const data = await response.json().catch(() => ({}));
 
-      const data = await response.json();
+      if (!response.ok) {
+        const errorMessage = data.error || 'Failed to parse profile link. LinkedIn often blocks automated imports; try exporting your profile as a PDF and uploading it instead.';
+        throw new Error(errorMessage);
+      }
       
       // Dispatch the parsed data to the context
       dispatch({ type: 'LOAD_RESUME', payload: { ...data, onboardingComplete: true } });
@@ -48,11 +48,11 @@ export default function LinkedInImport() {
   return (
     <div className={styles.sectionCard} style={{ marginBottom: '2rem', border: '1px dashed var(--cr-accent-primary)', background: 'rgba(37, 99, 235, 0.02)' }}>
       <div className={styles.sectionHeader}>
-        <h3 className={styles.sectionTitle}>AI Profile Link Import</h3>
+        <h3 className={styles.sectionTitle}>AI Profile Import</h3>
       </div>
       <div className={styles.sectionContent} style={{ padding: '1.5rem' }}>
         <p style={{ fontSize: '0.85rem', color: 'var(--cr-text-muted)', marginBottom: '1.25rem', textAlign: 'center' }}>
-          Import your details instantly from a public profile link (e.g., LinkedIn, Portfolio).
+          Import your details instantly from a public profile link or LinkedIn URL.
         </p>
         
         <form onSubmit={handleImport} style={{ display: 'flex', gap: '0.5rem' }}>
@@ -77,7 +77,7 @@ export default function LinkedInImport() {
         </form>
 
         {error && (
-          <p style={{ color: 'var(--cr-error)', fontSize: '0.8rem', marginTop: '1rem', textAlign: 'center' }}>
+          <p style={{ color: 'var(--cr-danger)', fontSize: '0.8rem', marginTop: '1rem', textAlign: 'center', lineHeight: '1.4' }}>
             {error}
           </p>
         )}

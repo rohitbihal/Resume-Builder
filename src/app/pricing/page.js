@@ -116,7 +116,7 @@ export default function PricingPage() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         alert('Please login to continue');
-        window.location.href = '/auth?redirect=/pricing';
+        window.location.href = `/auth?redirect=/pricing`;
         return;
       }
 
@@ -124,11 +124,11 @@ export default function PricingPage() {
       const res = await fetch('/api/razorpay/order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: plan.amount, planId: plan.id }),
+        body: JSON.stringify({ amount: plan.amount, planId: plan.id, userId: session.user.id }),
       });
       const order = await res.json();
 
-      if (!order.id) throw new Error('Failed to create order');
+      if (!order.id) throw new Error(order.error || 'Failed to create order');
 
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
@@ -138,28 +138,33 @@ export default function PricingPage() {
         description: `${plan.name} Plan`,
         order_id: order.id,
         handler: async function (response) {
-          const verifyRes = await fetch('/api/razorpay/verify', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              ...response,
-              userId: session.user.id,
-              planId: plan.id
-            }),
-          });
-          const verifyData = await verifyRes.json();
-          if (verifyData.status === 'ok') {
-            alert('Payment successful! You are now a PRO user.');
-            window.location.href = '/builder';
-          } else {
-            alert('Payment verification failed.');
+          try {
+            const verifyRes = await fetch('/api/razorpay/verify', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                ...response,
+                userId: session.user.id,
+                planId: plan.id
+              }),
+            });
+            const verifyData = await verifyRes.json();
+            if (verifyData.status === 'ok') {
+              alert('Payment successful! Your premium access is now active.');
+              window.location.href = '/builder';
+            } else {
+              alert('Payment verification failed: ' + (verifyData.error || 'Unknown error'));
+            }
+          } catch (err) {
+            console.error('Verification call failed:', err);
+            alert('Payment was successful but we could not verify it. Please contact support with your payment ID: ' + response.razorpay_payment_id);
           }
         },
         prefill: {
           email: session.user.email,
         },
         theme: {
-          color: '#2563eb',
+          color: '#00B8A9',
         },
       };
 
@@ -167,79 +172,82 @@ export default function PricingPage() {
       rzp1.open();
     } catch (error) {
       console.error('Subscription error:', error);
-      alert('Something went wrong. Please try again.');
+      alert('Error: ' + error.message);
     } finally {
       setLoading(null);
     }
   };
 
   return (
-    <main className={styles.pricing}>
-      <Script src="https://checkout.razorpay.com/v1/checkout.js" />
+    <main className={styles.pricing} style={{ minHeight: '100vh', paddingBottom: '4rem' }}>
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
       <Navbar />
 
       <section className={styles.hero}>
-        <h1 className={styles.title}>Simple, Transparent Pricing</h1>
+        <h1 className={styles.title}>Premium Resume Templates</h1>
         <p className={styles.subtitle}>
-          Build for free. Pay only when you download. Cancel anytime.
+          Choose the plan that fits your career goals.
         </p>
       </section>
 
-      <section className={styles.grid}>
-        {PLANS.map((plan) => (
-          <div
-            key={plan.name}
-            className={`${styles.card} ${plan.popular ? styles.popular : ''}`}
-            style={{ '--plan-accent': plan.accent }}
-            id={`plan-${plan.name.toLowerCase().replace(/\s/g, '-')}`}
-          >
-            {plan.popular && <div className={styles.popularBadge}>Most Popular</div>}
-            <h3 className={styles.planName}>{plan.name}</h3>
-            <div className={styles.priceRow}>
-              <span className={styles.price}>{plan.price}</span>
-              <span className={styles.period}>{plan.period}</span>
-            </div>
-            <p className={styles.planDesc}>{plan.description}</p>
-            <ul className={styles.features}>
-              {plan.features.map((f) => (
-                <li key={f} className={styles.feature}>
-                  <span className={styles.featureCheck}>✓</span>
-                  {f}
-                </li>
-              ))}
-            </ul>
-            {plan.id === 'free' ? (
-              <Link href={plan.href} className={`${styles.planCta} ${plan.popular ? styles.planCtaPrimary : ''}`}>
-                {plan.cta}
-              </Link>
-            ) : (
-              <button 
-                onClick={() => handleSubscription(plan)}
-                disabled={loading === plan.id}
-                className={`${styles.planCta} ${plan.popular ? styles.planCtaPrimary : ''}`}
-                style={{ width: '100%', border: 'none', cursor: 'pointer' }}
-              >
-                {loading === plan.id ? 'Loading...' : plan.cta}
-              </button>
-            )}
-          </div>
-        ))}
-      </section>
-
-      <section className={styles.faq}>
-        <h2 className={styles.faqTitle}>Frequently Asked Questions</h2>
-        <div className={styles.faqGrid}>
-          {[
-            { q: 'Can I try before I pay?', a: 'Yes! Build and preview your resume with all templates completely free. You only pay when you download.' },
-            { q: 'What payment methods do you accept?', a: 'We accept all major credit/debit cards, UPI, and net banking via Razorpay.' },
-            { q: 'Can I cancel my subscription?', a: 'Absolutely. Cancel anytime from your dashboard. You\'ll retain access until the end of your billing period.' },
-            { q: 'What happens to my data?', a: 'Your resume data is stored securely in your account. Even on the free plan, your data is never deleted.' },
-          ].map((item) => (
-            <div key={item.q} className={styles.faqItem}>
-              <h4 className={styles.faqQuestion}>{item.q}</h4>
-              <p className={styles.faqAnswer}>{item.a}</p>
+      <div className="cr-container">
+        <section className={styles.grid}>
+          {PLANS.map((plan) => (
+            <div
+              key={plan.name}
+              className={`${styles.card} ${plan.popular ? styles.popular : ''}`}
+              style={{ '--plan-accent': plan.accent }}
+            >
+              {plan.popular && <div className={styles.popularBadge}>Most Popular</div>}
+              <h3 className={styles.planName}>{plan.name}</h3>
+              <div className={styles.priceRow}>
+                <span className={styles.price}>{plan.price}</span>
+                <span className={styles.period}>{plan.period}</span>
+              </div>
+              <p className={styles.planDesc}>{plan.description}</p>
+              <ul className={styles.features}>
+                {plan.features.map((f) => (
+                  <li key={f} className={styles.feature}>
+                    <span className={styles.featureCheck}>✓</span>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              {plan.id === 'free' ? (
+                <Link href={plan.href} className={`${styles.planCta} ${plan.popular ? styles.planCtaPrimary : ''}`}>
+                  {plan.cta}
+                </Link>
+              ) : (
+                <button 
+                  onClick={() => handleSubscription(plan)}
+                  disabled={loading === plan.id}
+                  className={`${styles.planCta} ${plan.popular ? styles.planCtaPrimary : ''}`}
+                  style={{ width: '100%', border: 'none', cursor: 'pointer' }}
+                >
+                  {loading === plan.id ? 'Processing...' : plan.cta}
+                </button>
+              )}
             </div>
           ))}
+        </section>
+      </div>
+
+      <section className={styles.faq}>
+        <div className="cr-container">
+          <h2 className={styles.faqTitle}>Frequently Asked Questions</h2>
+          <div className={styles.faqGrid}>
+            {[
+              { q: 'Can I try before I pay?', a: 'Yes! Build and preview your resume with all templates completely free.' },
+              { q: 'What happens after payment?', a: 'Your account is immediately upgraded to PRO, enabling watermark-free downloads.' },
+              { q: 'Is it a one-time payment?', a: 'We offer both one-time "Single Download" and recurring subscription options.' },
+              { q: 'Need help?', a: 'Contact our support team if you face any issues with your payment.' },
+            ].map((item) => (
+              <div key={item.q} className={styles.faqItem}>
+                <h4 className={styles.faqQuestion}>{item.q}</h4>
+                <p className={styles.faqAnswer}>{item.a}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
     </main>

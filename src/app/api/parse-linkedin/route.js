@@ -22,14 +22,14 @@ export async function POST(req) {
       const isLocal = process.env.NODE_ENV === 'development';
       const launchOptions = isLocal
         ? {
-            args: ['--no-sandbox', '--disable-setuid-sandbox'],
+            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
             executablePath: process.platform === 'win32' 
               ? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe' 
               : '/usr/bin/google-chrome',
-            headless: true,
+            headless: 'new',
           }
         : {
-            args: chromium.args,
+            args: [...chromium.args, '--no-sandbox', '--disable-setuid-sandbox'],
             defaultViewport: chromium.defaultViewport,
             executablePath: await chromium.executablePath(
               'https://github.com/Sparticuz/chromium/releases/download/v131.0.1/chromium-v131.0.1-pack.tar'
@@ -42,12 +42,48 @@ export async function POST(req) {
       const page = await browser.newPage();
       
       // Set user agent to avoid basic bot detection
-      await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+      await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36');
+      await page.setViewport({ width: 1280, height: 800 });
       
-      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+      const response = await page.goto(url, { 
+        waitUntil: 'domcontentloaded', 
+        timeout: 45000 
+      });
       
-      // Extract text content
-      rawText = await page.evaluate(() => document.body.innerText);
+      const status = response.status();
+      if (status === 999) {
+        return NextResponse.json({ 
+          error: 'LinkedIn is blocking the request (999). Please export your LinkedIn profile as a PDF and upload it for better results.' 
+        }, { status: 429 });
+      }
+
+      if (status >= 400) {
+        return NextResponse.json({ 
+          error: `Failed to fetch profile (Status ${status}). Please ensure it is public.` 
+        }, { status });
+      }
+
+      // Wait a bit for JS content if any
+      await new Promise(r => setTimeout(r, 2000));
+      
+      // Extract text content and check for auth wall
+      rawText = await page.evaluate(() => {
+        const bodyText = document.body.innerText;
+        if (bodyText.includes('authwall') || bodyText.includes('Sign in') || document.title.includes('Sign In')) {
+          return 'AUTH_WALL_DETECTED';
+        }
+        // Remove noise
+        const scripts = document.querySelectorAll('script, style, nav, footer, iframe');
+        scripts.forEach(s => s.remove());
+        return document.body.innerText;
+      });
+
+      if (rawText === 'AUTH_WALL_DETECTED') {
+        return NextResponse.json({ 
+          error: 'LinkedIn is requesting a login to view this profile. Try uploading your LinkedIn PDF resume instead.' 
+        }, { status: 403 });
+      }
+
       await browser.close();
       browser = null;
     } else {
@@ -66,13 +102,15 @@ export async function POST(req) {
       rawText = pdfData.text;
     }
 
-    if (!rawText || rawText.trim().length === 0) {
-      return NextResponse.json({ error: 'Could not extract text content' }, { status: 422 });
+    if (!rawText || rawText.trim().replace(/\s/g, '').length < 100) {
+      return NextResponse.json({ 
+        error: 'Could not extract enough meaningful text from the profile. Please ensure it is a public profile or upload a PDF.' 
+      }, { status: 422 });
     }
 
     // Call Gemini to parse the text into our schema
     const prompt = `
-      You are an expert resume parser. I will provide you with raw text extracted from a LinkedIn PDF resume.
+      You are an expert resume parser. I will provide you with raw text extracted from a LinkedIn profile or PDF resume.
       Your goal is to extract the information and return it in a strictly valid JSON format that matches the following schema:
 
       {
@@ -124,7 +162,7 @@ export async function POST(req) {
       }
 
       Rules:
-      1. Return ONLY the JSON object. No preamble, no explanation, no markdown backticks like \`\`\`json.
+      1. Return ONLY the JSON object. No preamble, no explanation, no markdown backticks.
       2. Generate unique IDs (short strings) for each item in arrays.
       3. If a field is not found, leave it as an empty string or empty array.
       4. Ensure dates are in a readable format (e.g., "Jan 2020").
@@ -137,12 +175,11 @@ export async function POST(req) {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     
     const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const content = response.text();
+    const responseArr = await result.response;
+    const content = responseArr.text();
     
     // Attempt to parse the JSON
     try {
-      // Clean possible markdown wrapper if Gemini adds it
       const jsonString = content.replace(/```json/g, '').replace(/```/g, '').trim();
       const parsedData = JSON.parse(jsonString);
       return NextResponse.json(parsedData);

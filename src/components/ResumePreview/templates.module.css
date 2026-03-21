@@ -676,10 +676,11 @@
 /* ===== Preview Pane Wrapper ===== */
 .previewWrapper {
   position: sticky;
-  top: 90px; /* Adjusted for shared Navbar (70px) + 20px margin */
-  height: calc(100vh - 110px);
+  top: 140px; 
+  height: calc(100vh - 160px);
   display: flex;
   flex-direction: column;
+  min-height: 400px;
 }
 
 .previewHeader {
@@ -687,6 +688,7 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: var(--cr-space-sm);
+  flex-shrink: 0;
 }
 
 .previewTitle {
@@ -701,6 +703,7 @@
   gap: var(--cr-space-xs);
   flex-wrap: wrap;
   margin-bottom: var(--cr-space-sm);
+  flex-shrink: 0;
 }
 
 .templateTab {
@@ -736,10 +739,11 @@
   flex: 1;
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* Start from top but center horizontally */
-  min-height: 500px;
+  align-items: flex-start;
+  min-height: 0; /* Important for flex-shrink */
   box-shadow: var(--cr-shadow-sm);
 }
+
 
 .previewScale {
   transform: scale(0.6); /* Reduced scale for better visibility */

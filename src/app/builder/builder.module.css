@@ -1,9 +1,12 @@
 .builderLayout {
   display: grid;
-  grid-template-columns: 280px 1.2fr 1fr;
+  grid-template-columns: 280px minmax(0, 1.2fr) minmax(400px, 1fr);
   gap: var(--cr-space-lg);
   min-height: calc(100vh - 70px);
   position: relative;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 .sidebarColumn {
@@ -14,6 +17,7 @@
   border-right: 1px solid var(--cr-border);
   padding: var(--cr-space-lg) var(--cr-space-md);
   overflow-y: auto;
+  z-index: 10;
 }
 
 .builderTopBar {
@@ -79,18 +83,20 @@
   gap: var(--cr-space-lg);
   padding: var(--cr-space-lg);
   padding-bottom: var(--cr-space-3xl);
-  overflow-y: auto;
+  min-width: 0;
 }
 
 .previewColumn {
   position: sticky;
   top: 130px;
   height: calc(100vh - 130px);
+  padding-right: var(--cr-space-lg);
+  min-width: 0;
 }
 
 .previewOnly {
   grid-template-columns: 1fr;
-  max-width: 900px;
+  max-width: 1000px;
   margin: 0 auto;
 }
 
@@ -100,15 +106,26 @@
   width: 100%;
 }
 
+@media (max-width: 1400px) {
+  .builderLayout {
+    grid-template-columns: 250px 1fr 450px;
+  }
+}
+
 @media (max-width: 1200px) {
   .builderLayout {
-    grid-template-columns: 240px 1fr 1fr;
+    grid-template-columns: 80px 1fr 420px;
+  }
+  .sidebarColumn {
+    padding: var(--cr-space-lg) var(--cr-space-xs);
   }
 }
 
 @media (max-width: 1024px) {
   .builderLayout {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
   }
 
   .sidebarColumn {
@@ -117,12 +134,18 @@
     height: auto;
     border-right: none;
     border-bottom: 1px solid var(--cr-border);
+    width: 100%;
+  }
+
+  .formColumn {
+    padding: var(--cr-space-md);
   }
   
   .previewColumn {
-    order: -1;
     position: relative;
     top: 0;
     height: auto;
+    padding: var(--cr-space-md);
+    order: -1;
   }
 }

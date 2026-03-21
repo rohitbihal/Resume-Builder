@@ -21,7 +21,7 @@ export default function TypeForge() {
           <h1 className={styles.tfName}>{personalInfo.fullName || 'Your Name'}</h1>
         </div>
 
-        {resume.is_public && resume.id && (
+        {resume.is_public && resume.id && typeof window !== 'undefined' && (
           <div style={{ position: 'absolute', top: '30px', right: '30px', textAlign: 'center' }}>
             <img 
               src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${encodeURIComponent(window.location.origin + '/share/' + resume.id)}`} 

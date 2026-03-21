@@ -66,7 +66,7 @@
   backdrop-filter: blur(4px);
   border: 1px solid var(--cr-glass-border);
   border-radius: var(--cr-radius-md);
-  padding: var(--cr-space-lg);
+  padding: var(--cr-space-md) var(--cr-space-lg); /* Reduced vertical padding */
   margin-bottom: var(--cr-space-md);
   position: relative;
   transition: all var(--cr-transition-normal);
@@ -75,21 +75,22 @@
 .entryCard:hover {
   background: rgba(255, 255, 255, 0.6);
   border-color: var(--cr-accent-primary);
-  transform: translateX(4px);
+  transform: translateY(-2px); /* Changed to translateY for better feel */
+  box-shadow: var(--cr-shadow-md);
 }
 
 .entryHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--cr-space-md);
+  margin-bottom: var(--cr-space-sm);
 }
 
 .entryTitle {
   font-family: var(--cr-font-display);
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: var(--cr-text-secondary);
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--cr-text-primary);
 }
 
 .removeBtn {
@@ -97,15 +98,15 @@
   border: none;
   color: var(--cr-text-muted);
   cursor: pointer;
-  font-size: 1.1rem;
+  font-size: 1rem;
   padding: 4px;
-  border-radius: 4px;
+  border-radius: var(--cr-radius-sm);
   transition: all var(--cr-transition-fast);
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
 }
 
 .removeBtn:hover {
@@ -118,23 +119,25 @@
   align-items: center;
   gap: var(--cr-space-sm);
   padding: var(--cr-space-sm) var(--cr-space-md);
-  background: transparent;
+  background: var(--cr-bg-card);
   border: 1px dashed var(--cr-border);
   border-radius: var(--cr-radius-md);
-  color: var(--cr-text-muted);
+  color: var(--cr-text-secondary);
   font-family: var(--cr-font-body);
   font-size: 0.85rem;
+  font-weight: 600;
   cursor: pointer;
   transition: all var(--cr-transition-fast);
   width: 100%;
   justify-content: center;
-  height: 44px;
+  height: 48px;
 }
 
 .addBtn:hover {
   border-color: var(--cr-accent-primary);
-  color: var(--cr-accent-secondary);
-  background: rgba(108, 92, 231, 0.05);
+  color: var(--cr-accent-primary);
+  background: rgba(0, 184, 169, 0.05);
+  transform: translateY(-1px);
 }
 
 .dateRow {
@@ -166,7 +169,7 @@
   background: var(--cr-bg-input);
   border: 1px solid var(--cr-border);
   border-radius: var(--cr-radius-sm);
-  padding: 8px var(--cr-space-md);
+  padding: 0 var(--cr-space-md);
   font-family: var(--cr-font-body);
   font-size: 0.85rem;
   color: var(--cr-text-primary);
@@ -181,12 +184,16 @@
 
 .skillGrid {
   display: grid;
-  grid-template-columns: 2fr 1fr auto;
+  grid-template-columns: 1.5fr 1fr auto;
   gap: var(--cr-space-sm);
-  align-items: start;
+  align-items: center;
   margin-bottom: var(--cr-space-sm);
-  animation: scaleIn 0.3s ease-out;
+  background: var(--cr-bg-card);
+  padding: 8px 12px;
+  border-radius: var(--cr-radius-md);
+  border: 1px solid var(--cr-border);
 }
+
 
 /* Custom section styles */
 .customTitleInput {

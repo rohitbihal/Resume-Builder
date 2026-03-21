@@ -212,17 +212,33 @@ export default function PreviewPane({ resumeId }) {
             {/* Public Share Section */}
             {resumeId && (
               <div style={{ 
-                padding: '1rem', 
-                background: 'var(--cr-bg-card)', 
+                padding: '1.25rem', 
+                background: 'var(--cr-bg-secondary)', 
                 border: '1px solid var(--cr-border)', 
-                borderRadius: 'var(--cr-radius-md)',
+                borderRadius: 'var(--cr-radius-lg)',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '0.75rem'
+                gap: '1rem',
+                boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>🌐 {t.builder.share}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <div style={{ 
+                      width: '32px', 
+                      height: '32px', 
+                      borderRadius: '50%', 
+                      background: is_public ? 'rgba(0, 184, 169, 0.1)' : 'rgba(0,0,0,0.05)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '1rem'
+                    }}>
+                      {is_public ? '🌐' : '🔒'}
+                    </div>
+                    <div>
+                      <span style={{ fontSize: '0.9rem', fontWeight: 700, display: 'block', color: 'var(--cr-text-primary)' }}>{t.builder.share}</span>
+                      <span style={{ fontSize: '0.7rem', color: 'var(--cr-text-muted)' }}>{is_public ? 'Visible to everyone' : 'Only you can see this'}</span>
+                    </div>
                   </div>
                   <label className="cr-switch">
                     <input 
@@ -234,14 +250,23 @@ export default function PreviewPane({ resumeId }) {
                   </label>
                 </div>
 
-                <div className="cr-input-group" style={{ marginBottom: '0.5rem' }}>
-                  <label className="cr-label" style={{ fontSize: '0.7rem' }}>Custom URL Slug</label>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--cr-text-muted)' }}>/share/</span>
+                <div className="cr-input-group" style={{ gap: '6px' }}>
+                  <label className="cr-label" style={{ fontSize: '0.7rem', opacity: 0.8 }}>Custom Link Name</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--cr-bg-input)', padding: '2px 8px', borderRadius: 'var(--cr-radius-md)', border: '1px solid var(--cr-border)' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--cr-text-muted)', fontWeight: 500 }}>/share/</span>
                     <input 
                       className="cr-input" 
-                      style={{ marginBottom: 0, padding: '4px 8px', fontSize: '0.75rem', flex: 1 }} 
-                      placeholder="your-unique-slug"
+                      style={{ 
+                        marginBottom: 0, 
+                        padding: '6px 0', 
+                        fontSize: '0.8rem', 
+                        flex: 1, 
+                        border: 'none', 
+                        background: 'transparent',
+                        height: 'auto',
+                        fontWeight: 600
+                      }} 
+                      placeholder="your-name-2024"
                       value={resumeState.slug || ''}
                       onChange={(e) => {
                         const val = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '');
@@ -252,37 +277,41 @@ export default function PreviewPane({ resumeId }) {
                 </div>
                 
                 {is_public && (
-                  <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', animation: 'fadeIn 0.3s ease-out' }}>
                     <input 
                       readOnly 
                       value={shareUrl} 
                       className="cr-input" 
-                      style={{ flex: 1, fontSize: '0.75rem', marginBottom: 0, padding: '0.5rem' }} 
+                      style={{ 
+                        flex: 1, 
+                        fontSize: '0.75rem', 
+                        marginBottom: 0, 
+                        padding: '0.6rem',
+                        background: 'var(--cr-bg-card)',
+                        borderStyle: 'dashed'
+                      }} 
                     />
                     <button 
                       onClick={copyToClipboard}
                       className="cr-btn cr-btn-primary cr-btn-sm" 
-                      style={{ whiteSpace: 'nowrap' }}
+                      style={{ height: '38px', borderRadius: 'var(--cr-radius-md)', minWidth: '70px' }}
                     >
-                      {copied ? '✅' : 'Copy'}
+                      {copied ? 'Copied!' : 'Copy'}
                     </button>
                     <a 
                       href={shareUrl} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="cr-btn cr-btn-outline cr-btn-sm"
+                      className="cr-btn cr-btn-secondary cr-btn-sm"
+                      style={{ height: '38px', width: '38px', padding: 0 }}
                     >
                       ↗
                     </a>
                   </div>
                 )}
-                {!is_public && (
-                  <p style={{ fontSize: '0.7rem', color: 'var(--cr-text-muted)', margin: 0 }}>
-                    Enable public sharing to generate a viewable link for employers.
-                  </p>
-                )}
               </div>
             )}
+
 
             <button 
               className={`cr-btn ${hasPremiumAccess ? 'cr-btn-primary' : 'cr-btn-outline'} cr-btn-lg`}

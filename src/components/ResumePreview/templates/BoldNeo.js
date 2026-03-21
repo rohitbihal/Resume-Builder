@@ -30,7 +30,7 @@ export default function BoldNeo() {
           </div>
         </header>
 
-        {resume.is_public && resume.id && (
+        {resume.is_public && resume.id && typeof window !== 'undefined' && (
           <div style={{ position: 'absolute', top: '28px', right: '28px', textAlign: 'center' }}>
             <img 
               src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${encodeURIComponent(window.location.origin + '/share/' + resume.id)}`} 

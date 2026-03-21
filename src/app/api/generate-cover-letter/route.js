@@ -3,6 +3,8 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
+export const maxDuration = 60; // Allow up to 60 seconds on Vercel
+
 export async function POST(req) {
   try {
     const { resumeData, jobDescription } = await req.json();

@@ -115,13 +115,12 @@ export async function POST(req) {
 
       {
         "personalInfo": {
-          "firstName": "",
-          "lastName": "",
+          "fullName": "",
           "email": "",
           "phone": "",
           "location": "",
           "linkedin": "",
-          "website": "",
+          "portfolio": "",
           "jobTitle": ""
         },
         "executiveSummary": "",
@@ -129,7 +128,7 @@ export async function POST(req) {
           {
             "id": "unique-id",
             "company": "",
-            "position": "",
+            "title": "",
             "location": "",
             "startDate": "",
             "endDate": "",
@@ -139,7 +138,7 @@ export async function POST(req) {
         "education": [
           {
             "id": "unique-id",
-            "school": "",
+            "institution": "",
             "degree": "",
             "field": "",
             "location": "",
@@ -153,11 +152,11 @@ export async function POST(req) {
           {
             "id": "unique-id",
             "name": "",
-            "level": "Beginner|Intermediate|Advanced|Expert"
+            "level": "beginner|intermediate|advanced|expert"
           }
         ],
         "certifications": [
-           {"id": "id", "name": "", "issuer": "", "date": ""}
+           {"id": "unique-id", "name": "", "issuer": "", "date": ""}
         ]
       }
 

@@ -63,7 +63,11 @@ function BuilderInner() {
   // Load existing resume if ID is present
   useEffect(() => {
     const loadResume = async () => {
-      if (!idParam) return;
+      if (!idParam) {
+        dispatch({ type: 'RESET' });
+        setIsInitialLoading(false);
+        return;
+      }
 
       const { data, error } = await supabase
         .from('resumes')
@@ -84,6 +88,11 @@ function BuilderInner() {
           academicProjects: data.academic_projects,
           executiveSummary: data.executive_summary,
           certifications: data.certifications,
+          clientProjects: data.client_projects || [],
+          researchPapers: data.research_papers || [],
+          portfolio: data.portfolio || [],
+          layoutOrder: data.layout_order || [],
+          slug: data.slug,
           onboardingComplete: true
         };
 

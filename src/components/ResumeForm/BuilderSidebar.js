@@ -31,7 +31,13 @@ export default function BuilderSidebar({ activeSection, onSectionChange }) {
     }
 
     if (Array.isArray(data)) {
-      return data.length > 0 ? 100 : 0;
+      if (data.length === 0) return 0;
+      // Check if at least one item has some meaningful data (not just an empty initial object)
+      const hasContent = data.some(item => {
+        const { id, ...rest } = item;
+        return Object.values(rest).some(val => typeof val === 'string' && val.trim().length > 0);
+      });
+      return hasContent ? 100 : 0;
     }
 
     return 0;

@@ -28,13 +28,27 @@ export default function PreviewPane({ resumeId }) {
   const [copied, setCopied] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
-  const [scale, setScale] = useState(0.6); // Default 60% Zoom
+  const [scale, setScale] = useState(0.75);
   const previewRef = useRef(null);
+  const containerRef = useRef(null);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsClient(true);
-    // Check if user has an active sub or single download purchase
+    
+    const handleAutoFit = () => {
+      if (containerRef.current) {
+        const containerWidth = containerRef.current.offsetWidth - 32; // padding
+        const resumeWidth = 800;
+        if (containerWidth < resumeWidth * 0.75) {
+          const newScale = containerWidth / resumeWidth;
+          setScale(Math.max(0.3, Math.min(newScale, 0.75)));
+        }
+      }
+    };
+
+    handleAutoFit();
+    window.addEventListener('resize', handleAutoFit);
+
     const checkAccess = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
@@ -50,6 +64,8 @@ export default function PreviewPane({ resumeId }) {
       }
     };
     checkAccess();
+
+    return () => window.removeEventListener('resize', handleAutoFit);
   }, []);
 
   const current = TEMPLATES.find(t => t.id === activeTemplate) || TEMPLATES[0];
@@ -184,7 +200,7 @@ export default function PreviewPane({ resumeId }) {
         ))}
       </div>
 
-      <div className={styles.previewContainer}>
+      <div className={styles.previewContainer} ref={containerRef}>
         <div 
           className={styles.previewScale} 
           ref={previewRef}

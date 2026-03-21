@@ -57,7 +57,7 @@ const TRACK_DEFAULTS = {
   'career-switcher': ['personalInfo', 'executiveSummary', 'workExperience', 'academicProjects', 'skills', 'education', 'certifications', 'customSections'],
 };
 
-function SortableItem({ id, children, label, isSortable, index }) {
+function SortableItem({ id, children, label, isSortable, index, progress }) {
   const {
     attributes,
     listeners,
@@ -78,19 +78,33 @@ function SortableItem({ id, children, label, isSortable, index }) {
 
   return (
     <div ref={setNodeRef} style={style} className="reveal-entry">
+      <div className={styles.sectionDivider}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span className={styles.sectionDividerText}>{label}</span>
+          {progress === 100 && (
+            <span style={{ 
+              fontSize: '0.65rem', 
+              background: 'rgba(0, 184, 169, 0.1)', 
+              color: 'var(--cr-accent-primary)', 
+              padding: '2px 8px', 
+              borderRadius: 'var(--cr-radius-full)',
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px'
+            }}>
+              ✓ Complete
+            </span>
+          )}
+        </div>
+      </div>
       {isSortable && (
         <div className={styles.dragHandleContainer}>
-           <div className={styles.sectionDivider}>
-            <span className={styles.sectionDividerText}>{label}</span>
-          </div>
           <button {...attributes} {...listeners} className={styles.dragHandle}>
             ⋮⋮
           </button>
-        </div>
-      )}
-      {!isSortable && (
-         <div className={styles.sectionDivider}>
-          <span className={styles.sectionDividerText}>{label}</span>
         </div>
       )}
       <div className={styles.sortableContent}>
@@ -130,6 +144,32 @@ export default function DraggableSectionList({ filteredSection }) {
     })
   );
 
+  const calculateSectionProgress = (sectionId) => {
+    const data = useResume()[sectionId];
+    if (!data) return 0;
+
+    if (sectionId === 'personalInfo') {
+      const fields = ['fullName', 'email', 'phone', 'location'];
+      const filled = fields.filter(f => data[f]?.trim()).length;
+      return (filled / fields.length) * 100;
+    }
+
+    if (sectionId === 'executiveSummary') {
+      return typeof data === 'string' && data.trim() ? 100 : 0;
+    }
+
+    if (Array.isArray(data)) {
+      if (data.length === 0) return 0;
+      const hasContent = data.some(item => {
+        const { id, ...rest } = item;
+        return Object.values(rest).some(val => typeof val === 'string' && val.trim().length > 0);
+      });
+      return hasContent ? 100 : 0;
+    }
+
+    return 0;
+  };
+
   const handleDragEnd = (event) => {
     const { active, over } = event;
     if (active.id !== over.id) {
@@ -145,10 +185,31 @@ export default function DraggableSectionList({ filteredSection }) {
     const config = SECTION_COMPONENTS[filteredSection];
     if (!config) return <div style={{ padding: '2rem', textAlign: 'center' }}>Section coming soon...</div>;
     const ComponentToRender = config.component;
+    const progress = calculateSectionProgress(filteredSection);
+
     return (
       <div className="reveal-entry">
         <div className={styles.sectionDivider}>
-          <span className={styles.sectionDividerText}>{config.label}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span className={styles.sectionDividerText}>{config.label}</span>
+            {progress === 100 && (
+              <span style={{ 
+                fontSize: '0.65rem', 
+                background: 'rgba(0, 184, 169, 0.1)', 
+                color: 'var(--cr-accent-primary)', 
+                padding: '2px 8px', 
+                borderRadius: 'var(--cr-radius-full)',
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}>
+                ✓ Complete
+              </span>
+            )}
+          </div>
         </div>
         <div className={styles.sortableContent} style={{ padding: '0 1rem' }}>
           <ComponentToRender />
@@ -175,7 +236,14 @@ export default function DraggableSectionList({ filteredSection }) {
           const ComponentToRender = config.component;
           
           return (
-            <SortableItem key={id} id={id} label={config.label} isSortable={config.isSortable} index={index}>
+            <SortableItem 
+              key={id} 
+              id={id} 
+              label={config.label} 
+              isSortable={config.isSortable} 
+              index={index}
+              progress={calculateSectionProgress(id)}
+            >
               <ComponentToRender />
             </SortableItem>
           );

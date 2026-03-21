@@ -23,6 +23,10 @@ export const ResumeDB = {
         academic_projects: state.academicProjects,
         executive_summary: state.executiveSummary,
         certifications: state.certifications,
+        client_projects: state.clientProjects || [],
+        research_papers: state.researchPapers || [],
+        portfolio: state.portfolio || [],
+        layout_order: state.layoutOrder || [],
         slug: state.slug || null,
         updated_at: new Date().toISOString()
       };

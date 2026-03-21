@@ -1,6 +1,6 @@
 .builderLayout {
   display: grid;
-  grid-template-columns: 280px minmax(0, 1.2fr) minmax(400px, 1fr);
+  grid-template-columns: 260px 1.1fr 1.6fr;
   gap: var(--cr-space-lg);
   min-height: calc(100vh - 70px);
   position: relative;
@@ -92,6 +92,9 @@
   height: calc(100vh - 130px);
   padding-right: var(--cr-space-lg);
   min-width: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--cr-border) transparent;
 }
 
 .previewOnly {

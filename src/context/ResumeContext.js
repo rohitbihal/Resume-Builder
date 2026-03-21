@@ -25,7 +25,7 @@ const createInitialState = (isClient = false) => {
     is_public: false,
     slug: '',
     language: 'en',
-    layoutOrder: [],
+    layoutOrder: ['executiveSummary', 'workExperience', 'education', 'skills', 'academicProjects', 'certifications'],
     onboardingComplete: false,
     personalInfo: {
       fullName: '',

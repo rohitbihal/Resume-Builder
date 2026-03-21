@@ -1,6 +1,6 @@
 .builderLayout {
   display: grid;
-  grid-template-columns: 260px 1fr 2.5fr;
+  grid-template-columns: 260px 1.2fr 1.5fr;
   gap: var(--cr-space-lg);
   min-height: calc(100vh - 70px);
   position: relative;
@@ -111,13 +111,13 @@
 
 @media (max-width: 1400px) {
   .builderLayout {
-    grid-template-columns: 250px 1fr 600px;
+    grid-template-columns: 250px 1.2fr 1fr;
   }
 }
 
 @media (max-width: 1200px) {
   .builderLayout {
-    grid-template-columns: 80px 1fr 500px;
+    grid-template-columns: 80px 1.2fr 1fr;
   }
   .sidebarColumn {
     padding: var(--cr-space-lg) var(--cr-space-xs);

@@ -109,8 +109,8 @@ export default function WorkExperience() {
           </div>
 
           <div className="cr-input-group" style={{ marginTop: 'var(--cr-space-md)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-              <label className="cr-label" style={{ marginBottom: '0.25rem' }}>Description & Achievements</label>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: '4px' }}>
+              <label className="cr-label" style={{ marginBottom: 0 }}>Description & Achievements</label>
               <button 
                 className="cr-btn cr-btn-ghost cr-btn-sm" 
                 style={{ color: 'var(--cr-accent-primary)', padding: '2px 8px', fontSize: '0.75rem', height: '28px' }}

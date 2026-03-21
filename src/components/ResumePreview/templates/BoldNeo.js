@@ -5,13 +5,24 @@ import styles from '../templates.module.css';
 
 export default function BoldNeo() {
   const resume = useResume();
-  const { personalInfo, education, skills, workExperience, internships, academicProjects, executiveSummary, certifications, customSections, track, layoutOrder } = resume;
+  const { personalInfo, education, skills, workExperience, academicProjects, certifications, layoutOrder, executiveSummary } = resume;
 
   const formatDate = (d) => {
     if (!d) return '';
     const [y, m] = d.split('-');
     const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     return `${months[parseInt(m) - 1]} ${y}`;
+  };
+
+  const renderStars = (level) => {
+    const stars = level === 'expert' ? 5 : level === 'advanced' ? 4 : level === 'intermediate' ? 3 : 2;
+    return (
+      <div style={{ color: 'var(--resume-primary, #00B8A9)', fontSize: '10pt', display: 'flex' }}>
+        {[1, 2, 3, 4, 5].map(i => (
+          <span key={i} style={{ opacity: i <= stars ? 1 : 0.2 }}>★</span>
+        ))}
+      </div>
+    );
   };
 
   return (
@@ -166,13 +177,11 @@ export default function BoldNeo() {
               return skills.some(s => s.name) && (
                 <section key="skills" className={styles.bnSection}>
                   <h2 className={styles.bnSectionTitle}>SKILLS</h2>
-                  <div className={styles.bnSkills}>
+                  <div className={styles.bnSkills} style={{ gridTemplateColumns: '1fr 1fr', gap: '8px 24px' }}>
                     {skills.filter(s => s.name).map(skill => (
-                      <div key={skill.id} className={styles.bnSkillBar}>
-                        <span className={styles.bnSkillName}>{skill.name}</span>
-                        <div className={styles.bnSkillTrack}>
-                          <div className={styles.bnSkillFill} style={{ width: skill.level === 'expert' ? '100%' : skill.level === 'advanced' ? '80%' : skill.level === 'intermediate' ? '60%' : '40%' }} />
-                        </div>
+                      <div key={skill.id} className={styles.bnSkillBar} style={{ justifyContent: 'space-between' }}>
+                        <span className={styles.bnSkillName} style={{ fontWeight: 600 }}>{skill.name}</span>
+                        {renderStars(skill.level)}
                       </div>
                     ))}
                   </div>

@@ -14,9 +14,19 @@ export default function VivaColor() {
     return `${months[parseInt(m) - 1]} ${y}`;
   };
 
-  const levelToDots = (level) => {
-    const map = { beginner: 1, intermediate: 2, advanced: 3, expert: 4 };
-    return map[level] || 2;
+  const renderStars = (level) => {
+    const stars = level === 'expert' ? 5 : level === 'advanced' ? 4 : level === 'intermediate' ? 3 : 2;
+    return (
+      <div style={{ color: '#5BBFB5', fontSize: '10pt', display: 'flex' }}>
+        {[1, 2, 3, 4, 5].map(i => (
+          <span key={i} style={{ opacity: i <= stars ? 1 : 0.2 }}>★</span>
+        ))}
+      </div>
+    );
+  };
+
+  const levelToStars = (level) => {
+    return level === 'expert' ? 5 : level === 'advanced' ? 4 : level === 'intermediate' ? 3 : 2;
   };
 
   return (
@@ -52,11 +62,11 @@ export default function VivaColor() {
           <div className={styles.vcSideSection}>
             <h3 className={styles.vcSideTitle}>Skills</h3>
             {skills.filter(s => s.name).map(skill => (
-              <div key={skill.id} className={styles.vcSkillDot}>
+              <div key={skill.id} className={styles.vcSkillDot} style={{ justifyContent: 'space-between' }}>
                 <span className={styles.vcSkillLabel}>{skill.name}</span>
-                <div className={styles.vcDotTrack}>
-                  {[1, 2, 3, 4].map(i => (
-                    <div key={i} className={`${styles.vcDot} ${i <= levelToDots(skill.level) ? styles.filled : ''}`} />
+                <div style={{ display: 'flex', gap: '2px', color: '#fff' }}>
+                  {[1, 2, 3, 4, 5].map(i => (
+                    <span key={i} style={{ opacity: i <= levelToStars(skill.level) ? 1 : 0.3, fontSize: '8pt' }}>★</span>
                   ))}
                 </div>
               </div>

@@ -14,6 +14,17 @@ export default function TypeForge() {
     return `${months[parseInt(m) - 1]} ${y}`;
   };
 
+  const renderStars = (level) => {
+    const stars = level === 'expert' ? 5 : level === 'advanced' ? 4 : level === 'intermediate' ? 3 : 2;
+    return (
+      <div style={{ color: '#1a1a1a', fontSize: '8pt', display: 'flex', gap: '2px' }}>
+        {[1, 2, 3, 4, 5].map(i => (
+          <span key={i} style={{ opacity: i <= stars ? 1 : 0.2 }}>★</span>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className={`${styles.resumePage} ${styles.typeForge}`}>
       <div className={styles.tfContent}>
@@ -162,10 +173,13 @@ export default function TypeForge() {
               return skills.some(s => s.name) && (
                 <div key="skills" className={styles.tfSection}>
                   <h2 className={styles.tfSectionTitle}>SKILLS</h2>
-                  <div className={styles.tfSectionBg}>
-                    <span className={styles.tfSkillLine}>
-                      {skills.filter(s => s.name).map(s => s.name).join(', ')}
-                    </span>
+                  <div className={styles.tfSectionBg} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px 30px' }}>
+                    {skills.filter(s => s.name).map(skill => (
+                      <div key={skill.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span className={styles.tfSkillLine} style={{ fontWeight: 600 }}>{skill.name}</span>
+                        {renderStars(skill.level)}
+                      </div>
+                    ))}
                   </div>
                 </div>
               );

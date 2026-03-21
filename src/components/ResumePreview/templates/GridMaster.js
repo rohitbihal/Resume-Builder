@@ -14,6 +14,17 @@ export default function GridMaster() {
     return `${months[parseInt(m) - 1]} ${y}`;
   };
 
+  const renderStars = (level) => {
+    const stars = level === 'expert' ? 5 : level === 'advanced' ? 4 : level === 'intermediate' ? 3 : 2;
+    return (
+      <div style={{ color: '#7C6BB5', fontSize: '8pt', display: 'flex', gap: '1px' }}>
+        {[1, 2, 3, 4, 5].map(i => (
+          <span key={i} style={{ opacity: i <= stars ? 1 : 0.2 }}>★</span>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className={`${styles.resumePage} ${styles.gridMaster}`}>
       {/* Sidebar */}
@@ -30,9 +41,12 @@ export default function GridMaster() {
         {skills.some(s => s.name) && (
           <div className={styles.gmSideSection}>
             <h3 className={styles.gmSideTitle}>Skills</h3>
-            <div className={styles.gmSkillTags}>
+            <div className={styles.gmSkillTags} style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
               {skills.filter(s => s.name).map(skill => (
-                <span key={skill.id} className={styles.gmTag}>{skill.name}</span>
+                <div key={skill.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span className={styles.gmTag} style={{ background: 'transparent', padding: 0, color: '#2D1B69' }}>{skill.name}</span>
+                  {renderStars(skill.level)}
+                </div>
               ))}
             </div>
           </div>

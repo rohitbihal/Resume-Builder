@@ -226,6 +226,23 @@ export default function PreviewPane({ resumeId }) {
         {isClient && (
           <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {/* Public Share Section */}
+            <button 
+              className={`cr-btn ${hasPremiumAccess ? 'cr-btn-primary' : 'cr-btn-outline'} cr-btn-lg`}
+              style={{ width: '100%', padding: '0.8rem' }} 
+              id="download-pdf-btn"
+              disabled={isGeneratingPdf || (!hasPremiumAccess && !isGeneratingPdf)}
+              onClick={handleDownloadPdf}
+            >
+              {isGeneratingPdf ? '⏳ ...' : hasPremiumAccess ? `⬇ ${t.builder.download}` : '🔒 Upgrade to Download'}
+            </button>
+
+            {!hasPremiumAccess && (
+              <p style={{ fontSize: '0.75rem', color: 'var(--cr-text-muted)', textAlign: 'center', marginBottom: '1rem' }}>
+                You are currently on the Free plan. <a href="/pricing" style={{ color: 'var(--cr-accent-primary)', fontWeight: 600 }}>Upgrade to Pro</a> to remove watermark and download.
+              </p>
+            )}
+
+            {/* Public Share Section - Moved Down */}
             {resumeId && (
               <div style={{ 
                 padding: '1.25rem', 
@@ -235,7 +252,8 @@ export default function PreviewPane({ resumeId }) {
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '1rem',
-                boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
+                boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)',
+                marginTop: '1rem'
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -326,22 +344,6 @@ export default function PreviewPane({ resumeId }) {
                   </div>
                 )}
               </div>
-            )}
-
-
-            <button 
-              className={`cr-btn ${hasPremiumAccess ? 'cr-btn-primary' : 'cr-btn-outline'} cr-btn-lg`}
-              style={{ width: '100%' }} 
-              id="download-pdf-btn"
-              disabled={isGeneratingPdf || (!hasPremiumAccess && !isGeneratingPdf)}
-              onClick={handleDownloadPdf}
-            >
-              {isGeneratingPdf ? '⏳ ...' : hasPremiumAccess ? `⬇ ${t.builder.download}` : '🔒 Upgrade to Download'}
-            </button>
-            {!hasPremiumAccess && (
-              <p style={{ fontSize: '0.75rem', color: 'var(--cr-text-muted)', textAlign: 'center' }}>
-                You are currently on the Free plan. <a href="/pricing" style={{ color: 'var(--cr-accent-primary)', fontWeight: 600 }}>Upgrade to Pro</a> to remove watermark and download.
-              </p>
             )}
           </div>
         )}

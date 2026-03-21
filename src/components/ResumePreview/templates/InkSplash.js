@@ -14,6 +14,17 @@ export default function InkSplash() {
     return `${months[parseInt(m) - 1]} ${y}`;
   };
 
+  const renderStars = (level) => {
+    const stars = level === 'expert' ? 5 : level === 'advanced' ? 4 : level === 'intermediate' ? 3 : 2;
+    return (
+      <div style={{ color: '#5BBFB5', fontSize: '10pt', display: 'flex' }}>
+        {[1, 2, 3, 4, 5].map(i => (
+          <span key={i} style={{ opacity: i <= stars ? 1 : 0.2 }}>★</span>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className={`${styles.resumePage} ${styles.inkSplash}`}>
       <div className={styles.isContent}>
@@ -160,13 +171,11 @@ export default function InkSplash() {
               return skills.some(s => s.name) && (
                 <div key="skills" className={styles.isSection}>
                   <h2 className={styles.isSectionTitle}>Skills</h2>
-                  <div className={styles.isSkills}>
+                  <div className={styles.isSkills} style={{ gridTemplateColumns: '1fr 1fr', gap: '8px 20px' }}>
                     {skills.filter(s => s.name).map(skill => (
-                      <div key={skill.id} className={styles.isSkillItem}>
-                        <span style={{ minWidth: '70px', fontSize: '8.5pt' }}>{skill.name}</span>
-                        <div className={styles.isSkillBarTrack}>
-                          <div className={styles.isSkillBarFill} style={{ width: skill.level === 'expert' ? '100%' : skill.level === 'advanced' ? '80%' : skill.level === 'intermediate' ? '60%' : '40%' }} />
-                        </div>
+                      <div key={skill.id} className={styles.isSkillItem} style={{ justifyContent: 'space-between' }}>
+                        <span style={{ fontSize: '8.5pt', fontWeight: 600 }}>{skill.name}</span>
+                        {renderStars(skill.level)}
                       </div>
                     ))}
                   </div>

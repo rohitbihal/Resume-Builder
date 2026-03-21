@@ -204,8 +204,14 @@ function resumeReducer(state, action) {
       return { ...state, customSections: action.payload };
     }
 
-    case 'LOAD_RESUME':
-      return { ...state, ...action.payload };
+    case 'LOAD_RESUME': {
+      const payload = action.payload;
+      // Ensure executiveSummary is in layoutOrder if missing (migration)
+      if (payload.layoutOrder && Array.isArray(payload.layoutOrder) && !payload.layoutOrder.includes('executiveSummary')) {
+        payload.layoutOrder = ['executiveSummary', ...payload.layoutOrder];
+      }
+      return { ...state, ...payload };
+    }
 
     case 'RESET':
       return createInitialState();

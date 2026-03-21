@@ -746,7 +746,7 @@
 
 
 .previewScale {
-  transform: scale(0.6); /* Reduced scale for better visibility */
+  transform: scale(0.8); /* Adjusted scale for better default visibility */
   transform-origin: top center;
   width: 210mm; /* Fixed A4 width */
   height: 297mm; /* Fixed A4 height */

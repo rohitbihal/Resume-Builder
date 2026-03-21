@@ -28,7 +28,7 @@ export default function PreviewPane({ resumeId }) {
   const [copied, setCopied] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
-  const [scale, setScale] = useState(0.75);
+  const [scale, setScale] = useState(0.85);
   const previewRef = useRef(null);
   const containerRef = useRef(null);
 
@@ -39,9 +39,9 @@ export default function PreviewPane({ resumeId }) {
       if (containerRef.current) {
         const containerWidth = containerRef.current.offsetWidth - 32; // padding
         const resumeWidth = 800;
-        if (containerWidth < resumeWidth * 0.75) {
+        if (containerWidth < resumeWidth * 0.85) {
           const newScale = containerWidth / resumeWidth;
-          setScale(Math.max(0.3, Math.min(newScale, 0.75)));
+          setScale(Math.max(0.3, Math.min(newScale, 0.85)));
         }
       }
     };

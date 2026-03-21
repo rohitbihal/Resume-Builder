@@ -60,13 +60,13 @@ export async function POST(req) {
       // Update user profile to pro
       const { error } = await supabase
         .from('profiles')
-        .update({ 
+        .upsert({ 
+          id: userId,
           subscription_tier: 'pro',
           last_payment_id: payment.id,
           last_payment_amount: payment.amount / 100,
           updated_at: new Date().toISOString()
-        })
-        .eq('id', userId);
+        }, { onConflict: 'id' });
 
       if (error) {
         console.error('Webhook: Failed to update profile:', error);

@@ -57,11 +57,11 @@ export async function POST(req) {
       // We also store the planId if needed in the future
       const { error } = await supabase
         .from('profiles')
-        .update({ 
+        .upsert({ 
+          id: userId,
           subscription_tier: 'pro',
           updated_at: new Date().toISOString()
-        })
-        .eq('id', userId);
+        }, { onConflict: 'id' });
 
       if (error) {
         console.error('Supabase update error:', error);

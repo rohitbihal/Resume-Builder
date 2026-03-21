@@ -40,8 +40,12 @@ export default function RoleSelection() {
           // Update profile in Supabase
           await supabase
             .from('profiles')
-            .update({ role: selectedRole })
-            .eq('id', user.id);
+            .upsert({ 
+              id: user.id,
+              email: user.email,
+              role: selectedRole,
+              updated_at: new Date().toISOString()
+            }, { onConflict: 'id' });
         }
       }
       

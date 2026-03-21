@@ -9,7 +9,7 @@
   font-size: 11pt; /* Increased from 9.5pt */
   line-height: 1.6;
   position: relative;
-  overflow: hidden;
+  /* Removed overflow: hidden to allow multi-page scaling */
   box-sizing: border-box;
 }
 
@@ -749,7 +749,8 @@
   transform: scale(0.8); /* Adjusted scale for better default visibility */
   transform-origin: top center;
   width: 210mm; /* Fixed A4 width */
-  height: 297mm; /* Fixed A4 height */
+  min-height: 297mm; /* Changed from fixed height to min-height for multi-page */
+  height: auto;
   position: relative;
   box-shadow: 0 0 40px rgba(0,0,0,0.1);
 }

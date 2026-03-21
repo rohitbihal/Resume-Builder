@@ -29,6 +29,7 @@ export default function PreviewPane({ resumeId }) {
   const [isClient, setIsClient] = useState(false);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const [scale, setScale] = useState(0.85);
+  const [pageCount, setPageCount] = useState(1);
   const previewRef = useRef(null);
   const containerRef = useRef(null);
 
@@ -65,7 +66,22 @@ export default function PreviewPane({ resumeId }) {
     };
     checkAccess();
 
-    return () => window.removeEventListener('resize', handleAutoFit);
+    const observer = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        // -5px buffer to prevent standard A4 height from spilling into page 2
+        const pages = Math.max(1, Math.ceil((entry.contentRect.height - 5) / 1122.5));
+        setPageCount(pages);
+      }
+    });
+
+    if (previewRef.current) {
+      observer.observe(previewRef.current);
+    }
+
+    return () => {
+      window.removeEventListener('resize', handleAutoFit);
+      observer.disconnect();
+    };
   }, []);
 
   const current = TEMPLATES.find(t => t.id === activeTemplate) || TEMPLATES[0];
@@ -237,9 +253,20 @@ export default function PreviewPane({ resumeId }) {
             </button>
 
             {!hasPremiumAccess && (
-              <p style={{ fontSize: '0.75rem', color: 'var(--cr-text-muted)', textAlign: 'center', marginBottom: '1rem' }}>
+              <p style={{ fontSize: '0.75rem', color: 'var(--cr-text-muted)', textAlign: 'center', marginBottom: '0.5rem' }}>
                 You are currently on the Free plan. <a href="/pricing" style={{ color: 'var(--cr-accent-primary)', fontWeight: 600 }}>Upgrade to Pro</a> to remove watermark and download.
               </p>
+            )}
+
+            {!hasPremiumAccess && pageCount > 1 && (
+              <div style={{ padding: '10px', background: 'rgba(255, 217, 61, 0.1)', border: '1px solid #FFD93D', borderRadius: '8px', textAlign: 'center' }}>
+                <span style={{ fontSize: '0.8rem', color: '#B38F00', fontWeight: 600 }}>
+                  📄 Multi-Page Detected ({pageCount} Pages)
+                </span>
+                <p style={{ fontSize: '0.75rem', color: 'var(--cr-text-muted)', marginTop: '4px', marginBottom: 0 }}>
+                  Multi-page resumes are a Pro feature. Upgrade to successfully download large resumes without cropping.
+                </p>
+              </div>
             )}
 
             {/* Public Share Section - Moved Down */}

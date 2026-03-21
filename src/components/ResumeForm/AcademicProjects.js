@@ -48,11 +48,11 @@ export default function AcademicProjects() {
           </div>
 
           <div className={styles.fieldGrid}>
-            <div className="cr-input-group">
+            <div className={`cr-input-group ${styles.fieldFull}`}>
               <label className="cr-label">Project Name *</label>
               <input className="cr-input" placeholder="AI Chat Application" value={proj.name} onChange={(e) => updateItem(proj.id, 'name', e.target.value)} />
             </div>
-            <div className="cr-input-group">
+            <div className={`cr-input-group ${styles.fieldFull}`}>
               <label className="cr-label">Technologies Used</label>
               <input className="cr-input" placeholder="React, Node.js, GPT-4" value={proj.technologies} onChange={(e) => updateItem(proj.id, 'technologies', e.target.value)} />
             </div>
@@ -64,7 +64,7 @@ export default function AcademicProjects() {
 
           <div className="cr-input-group" style={{ marginTop: 'var(--cr-space-md)' }}>
             <label className="cr-label">Description</label>
-            <textarea className="cr-input cr-textarea" placeholder="What the project does, your contributions, and key results..." value={proj.description} onChange={(e) => updateItem(proj.id, 'description', e.target.value)} />
+            <textarea className="cr-input cr-textarea" rows={5} placeholder="What the project does, your contributions, and key results..." value={proj.description} onChange={(e) => updateItem(proj.id, 'description', e.target.value)} />
           </div>
         </div>
       ))}

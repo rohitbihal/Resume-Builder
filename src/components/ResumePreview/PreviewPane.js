@@ -32,6 +32,7 @@ export default function PreviewPane({ resumeId }) {
   const [pageCount, setPageCount] = useState(1);
   const previewRef = useRef(null);
   const containerRef = useRef(null);
+  const pdfRef = useRef(null); // hidden div for clean PDF capture (no scale wrapper)
 
   useEffect(() => {
     setIsClient(true);
@@ -108,7 +109,9 @@ export default function PreviewPane({ resumeId }) {
       const watermarkHtml = !hasPremiumAccess 
         ? '<div style="position: absolute; bottom: 10px; right: 20px; color: #a0aec0; font-size: 10px; font-family: sans-serif; z-index: 9999;">Created with CreativeResume (Free)</div>'
         : '';
-      const htmlString = previewRef.current.innerHTML + watermarkHtml;
+      // Use the hidden pdfRef (clean, no scale transform, no page-break markers)
+      const captureEl = pdfRef.current || previewRef.current;
+      const htmlString = captureEl.innerHTML + watermarkHtml;
 
       const response = await fetch('/api/generate-pdf', {
         method: 'POST',
@@ -235,6 +238,12 @@ export default function PreviewPane({ resumeId }) {
               </div>
             )}
           </div>
+        {/* Hidden full-scale render for PDF — no transform, no page break markers */}
+        <div ref={pdfRef} style={{ position: 'absolute', top: 0, left: 0, width: '210mm', visibility: 'hidden', pointerEvents: 'none', zIndex: -1 }}>
+          <div style={{ '--resume-primary': theme?.color || '#00B8A9', '--resume-font': theme?.font || 'Inter' }}>
+            <TemplateComponent />
+          </div>
+        </div>
           {/* Visual page break dividers */}
           {pageCount > 1 && Array.from({ length: pageCount - 1 }, (_, i) => (
             <div key={i} style={{

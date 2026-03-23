@@ -14,16 +14,35 @@ export async function POST(req) {
       return NextResponse.json({ error: 'HTML content is required' }, { status: 400 });
     }
 
-    // Multi-page CSS additions: allow content to flow across A4 pages naturally
+    // Multi-page CSS: let content flow naturally across A4 pages.
+    // IMPORTANT: Do NOT use page-break-after:always on .resumePage —
+    // that forces Puppeteer to repeat the wrapper div as a new "page".
     const multiPageStyles = multiPage ? `
-      /* Multi-page support: allow natural page breaks */
-      .resumePage { page-break-after: always; break-after: page; }
-      .noBreak, h2, h3 { page-break-inside: avoid; break-inside: avoid; }
-      body { height: auto !important; overflow: visible !important; }
+      /* Strip the fixed A4 height so content flows to page 2, 3, etc. */
+      .resumePage, [class*="resumePage"] {
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        overflow: visible !important;
+        page-break-after: avoid !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+      }
+      body, html {
+        height: auto !important;
+        overflow: visible !important;
+      }
+      /* Prevent section headings and entries from being split across pages */
+      h2, h3, [class*="SectionTitle"], [class*="sectionTitle"], [class*="Entry"], [class*="entry"] {
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
     ` : `
       /* Single page: clamp to one A4 page */
       body { height: 297mm; overflow: hidden; }
     `;
+
 
     const fullHtml = `
       <!DOCTYPE html>

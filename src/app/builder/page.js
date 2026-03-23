@@ -269,7 +269,7 @@ function BuilderInner() {
             </aside>
             
             {/* Form column: hidden on mobile when preview tab is active */}
-          <main className={styles.formColumn} style={{ display: mobileTab === 'preview' ? 'none' : undefined }}>
+          <main className={`${styles.formColumn} ${mobileTab === 'preview' ? styles.mobileHidden : ''}`}>
             {versions.length > 0 && (
               <div className="cr-card cr-glass" style={{ marginBottom: '1rem' }}>
                 <div style={{ paddingBottom: '0.5rem', borderBottom: '1px solid var(--cr-border)', marginBottom: '0.5rem' }}>
@@ -299,8 +299,7 @@ function BuilderInner() {
 
         {/* Preview column: hidden on mobile when form tab is active */}
         <div 
-          className={previewMode ? styles.previewCentered : styles.previewColumn}
-          style={{ display: !previewMode && mobileTab === 'form' ? 'none' : undefined }}
+          className={`${previewMode ? styles.previewCentered : styles.previewColumn} ${!previewMode && mobileTab === 'form' ? styles.mobileHidden : ''}`}
         >
           <PreviewPane resumeId={currentResumeId} />
         </div>

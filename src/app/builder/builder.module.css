@@ -226,9 +226,13 @@
     top: 122px; /* 70px navbar + 52px topbar */
   }
 
+  .mobileHidden {
+    display: none !important;
+  }
+
   /* Hide sidebarColumn inline position on mobile */
   .sidebarColumn {
-    display: none;
+    display: none !important;
   }
 
   .builderLayout {

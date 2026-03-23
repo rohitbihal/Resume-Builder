@@ -5,7 +5,7 @@ import styles from '../templates.module.css';
 
 export default function BoldNeo() {
   const resume = useResume();
-  const { personalInfo, education, skills, workExperience, academicProjects, certifications, layoutOrder, executiveSummary } = resume;
+  const { personalInfo, education, skills, workExperience, internships, academicProjects, certifications, layoutOrder, executiveSummary, customSections } = resume;
 
   const formatDate = (d) => {
     if (!d) return '';

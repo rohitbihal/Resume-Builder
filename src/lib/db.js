@@ -12,9 +12,12 @@ export const ResumeDB = {
       const resumeDataToSave = {
         user_id: userId,
         template_id: templateId,
-        title: `${state.personalInfo?.firstName || 'Untitled'} Resume`,
+        title: `${state.personalInfo?.fullName || state.personalInfo?.firstName || 'Untitled'} Resume`,
         track: track,
         is_public: state.is_public || false,
+        slug: state.slug || null,
+        theme: state.theme || { color: '#00B8A9', font: 'Inter' },
+        language: state.language || 'en',
         personal_info: state.personalInfo,
         education: state.education,
         skills: state.skills,
@@ -27,7 +30,6 @@ export const ResumeDB = {
         research_papers: state.researchPapers || [],
         portfolio: state.portfolio || [],
         layout_order: state.layoutOrder || [],
-        slug: state.slug || null,
         updated_at: new Date().toISOString()
       };
 

@@ -143,3 +143,35 @@
     position: static;
   }
 }
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  .title {
+    font-size: 1.8rem;
+  }
+  .previewContent {
+    padding: 2rem 1.5rem;
+    min-height: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.5rem;
+  }
+  .subtitle {
+    font-size: 0.95rem;
+  }
+  .previewContent {
+    padding: 1.25rem 1rem;
+    font-size: 10pt;
+  }
+  .previewHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+  }
+}

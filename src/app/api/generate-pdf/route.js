@@ -8,11 +8,22 @@ export const maxDuration = 60;
 export async function POST(req) {
   let browser = null;
   try {
-    const { html, css } = await req.json();
+    const { html, css, multiPage = false } = await req.json();
 
     if (!html) {
       return NextResponse.json({ error: 'HTML content is required' }, { status: 400 });
     }
+
+    // Multi-page CSS additions: allow content to flow across A4 pages naturally
+    const multiPageStyles = multiPage ? `
+      /* Multi-page support: allow natural page breaks */
+      .resumePage { page-break-after: always; break-after: page; }
+      .noBreak, h2, h3 { page-break-inside: avoid; break-inside: avoid; }
+      body { height: auto !important; overflow: visible !important; }
+    ` : `
+      /* Single page: clamp to one A4 page */
+      body { height: 297mm; overflow: hidden; }
+    `;
 
     const fullHtml = `
       <!DOCTYPE html>
@@ -31,6 +42,7 @@ export async function POST(req) {
               font-family: 'Inter', sans-serif;
             }
             .resumePage { box-shadow: none !important; margin: 0 !important; border: none !important; }
+            ${multiPageStyles}
           </style>
         </head>
         <body>${html}</body>
@@ -61,12 +73,12 @@ export async function POST(req) {
 
     try {
       const page = await browser.newPage();
-      await page.setViewport({ width: 1240, height: 1754, deviceScaleFactor: 2 });
+      // Use A4 width; height is flexible for multi-page content
+      await page.setViewport({ width: 794, height: 1123, deviceScaleFactor: 2 });
       
-      // Use networkidle2 instead of networkidle0 to be less sensitive to background font/analytics calls
       await page.setContent(fullHtml, { waitUntil: 'networkidle2', timeout: 30000 });
       
-      // Explicitly wait for fonts to load
+      // Wait for fonts to load
       await page.evaluate(async () => {
         await document.fonts.ready;
       });
@@ -74,7 +86,7 @@ export async function POST(req) {
       const pdfBuffer = await page.pdf({
         format: 'A4',
         printBackground: true,
-        preferCSSPageSize: true,
+        preferCSSPageSize: false,
         margin: { top: '0', right: '0', bottom: '0', left: '0' },
       });
 
@@ -101,3 +113,4 @@ export async function POST(req) {
     }, { status: 500 });
   }
 }
+

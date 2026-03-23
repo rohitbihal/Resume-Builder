@@ -115,7 +115,8 @@ function SortableItem({ id, children, label, isSortable, index, progress }) {
 }
 
 export default function DraggableSectionList({ filteredSection }) {
-  const { track, layoutOrder } = useResume();
+  const resumeState = useResume();
+  const { track, layoutOrder } = resumeState;
   const dispatch = useResumeDispatch();
   const [activeItems, setActiveItems] = useState([]);
 
@@ -144,8 +145,9 @@ export default function DraggableSectionList({ filteredSection }) {
     })
   );
 
+  // Fixed: no longer calls useResume() inside — receives state as parameter
   const calculateSectionProgress = (sectionId) => {
-    const data = useResume()[sectionId];
+    const data = resumeState[sectionId];
     if (!data) return 0;
 
     if (sectionId === 'personalInfo') {

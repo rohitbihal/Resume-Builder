@@ -113,7 +113,7 @@ export default function PreviewPane({ resumeId }) {
       const response = await fetch('/api/generate-pdf', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ html: htmlString, css: cssString }),
+        body: JSON.stringify({ html: htmlString, css: cssString, multiPage: hasPremiumAccess }),
       });
 
       if (!response.ok) {
@@ -235,6 +235,32 @@ export default function PreviewPane({ resumeId }) {
               </div>
             )}
           </div>
+          {/* Visual page break dividers */}
+          {pageCount > 1 && Array.from({ length: pageCount - 1 }, (_, i) => (
+            <div key={i} style={{
+              position: 'absolute',
+              top: `${(i + 1) * 1122.5}px`,
+              left: 0,
+              right: 0,
+              height: '3px',
+              background: 'repeating-linear-gradient(90deg, #FF6B6B 0, #FF6B6B 8px, transparent 8px, transparent 16px)',
+              zIndex: 10,
+              pointerEvents: 'none'
+            }}>
+              <span style={{
+                position: 'absolute',
+                right: '8px',
+                top: '-10px',
+                fontSize: '9px',
+                fontWeight: 700,
+                color: '#FF6B6B',
+                background: 'white',
+                padding: '1px 4px',
+                borderRadius: '3px',
+                border: '1px solid #FF6B6B'
+              }}>PAGE {i + 2}</span>
+            </div>
+          ))}
         </div>
       </div>
 

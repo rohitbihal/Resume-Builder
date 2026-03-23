@@ -208,6 +208,53 @@
   }
 }
 
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.6rem;
+  }
+
+  .subtitle {
+    font-size: 0.95rem;
+  }
+
+  .content {
+    padding: 1.5rem 0.75rem;
+  }
+
+  .resumeGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .resumeCardActions {
+    grid-template-columns: 1fr;
+  }
+
+  .emptyState {
+    padding: 2.5rem 1rem;
+  }
+
+  .emptyTitle {
+    font-size: 1.3rem;
+  }
+
+  .welcome {
+    margin-bottom: 1.5rem;
+  }
+
+  .card {
+    padding: 1.25rem;
+  }
+
+  .modalActions {
+    flex-direction: column;
+  }
+
+  .modal {
+    padding: 1.25rem;
+    width: 95%;
+  }
+}
+
 /* Modal Styles */
 .modalOverlay {
   position: fixed;

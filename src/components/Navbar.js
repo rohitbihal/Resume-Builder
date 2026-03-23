@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import Logo from './Branding/Logo';
 import { useResume, useResumeDispatch } from '@/context/ResumeContext';
-import { translations } from '@/lib/i18n';
+import { translations, SUPPORTED_LANGUAGES } from '@/lib/i18n';
 import styles from './Navbar.module.css';
 
 export default function Navbar() {
@@ -82,8 +82,9 @@ export default function Navbar() {
                 onChange={(e) => dispatch({ type: 'SET_LANGUAGE', payload: e.target.value })}
                 className={styles.langSelect}
               >
-                <option value="en">English</option>
-                <option value="hi">हिंदी (Hindi)</option>
+                {SUPPORTED_LANGUAGES.map(lang => (
+                  <option key={lang.code} value={lang.code}>{lang.nativeLabel}</option>
+                ))}
               </select>
               <span className={styles.userEmail}>{user.email}</span>
               <button 
@@ -101,8 +102,9 @@ export default function Navbar() {
                 className={styles.langSelect}
                 style={{ marginRight: '10px' }}
               >
-                <option value="en">EN</option>
-                <option value="hi">HI</option>
+                {SUPPORTED_LANGUAGES.map(lang => (
+                  <option key={lang.code} value={lang.code}>{lang.nativeLabel}</option>
+                ))}
               </select>
               <Link href="/auth?mode=login" className="cr-btn cr-btn-ghost cr-btn-sm" onClick={closeMenu}>
                 Sign In

@@ -479,4 +479,53 @@ a:hover {
     --cr-space-2xl: 32px;
     --cr-space-3xl: 48px;
   }
+
+  /* Touch-friendly tap targets */
+  .cr-btn {
+    min-height: 44px;
+  }
+
+  .cr-input {
+    min-height: 44px;
+    font-size: 1rem; /* prevent iOS zoom on focus */
+  }
+
+  .cr-card {
+    padding: var(--cr-space-md);
+  }
+
+  .cr-section-title {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --cr-space-lg: 16px;
+    --cr-space-xl: 20px;
+    --cr-space-2xl: 28px;
+    --cr-space-3xl: 40px;
+  }
+
+  .cr-container {
+    padding: 0 var(--cr-space-sm);
+  }
+
+  .cr-btn {
+    font-size: 0.85rem;
+  }
+
+  .cr-btn-lg {
+    height: 48px;
+    padding: 0 var(--cr-space-lg);
+  }
+
+  /* Stack double-column grid inputs */
+  .cr-grid-2 {
+    grid-template-columns: 1fr !important;
+  }
+
+  .tiptap-toolbar {
+    flex-wrap: wrap;
+  }
 }

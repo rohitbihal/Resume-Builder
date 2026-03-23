@@ -36,6 +36,7 @@ function BuilderInner() {
   const [lastSavedState, setLastSavedState] = useState(null);
   const [isInitialLoading, setIsInitialLoading] = useState(!!idParam);
   const [activeSection, setActiveSection] = useState('personalInfo');
+  const [mobileTab, setMobileTab] = useState('form'); // 'form' | 'preview'
 
   const addToast = (message, type = 'success') => {
     const id = Date.now();
@@ -80,6 +81,10 @@ function BuilderInner() {
         const loadedState = {
           track: data.track,
           activeTemplate: data.template_id,
+          theme: data.theme || { color: '#00B8A9', font: 'Inter' },
+          is_public: data.is_public || false,
+          slug: data.slug || '',
+          language: data.language || 'en',
           personalInfo: data.personal_info,
           education: data.education,
           skills: data.skills,
@@ -92,7 +97,6 @@ function BuilderInner() {
           researchPapers: data.research_papers || [],
           portfolio: data.portfolio || [],
           layoutOrder: data.layout_order || [],
-          slug: data.slug,
           onboardingComplete: true
         };
 
@@ -245,6 +249,18 @@ function BuilderInner() {
         </div>
       </div>
 
+      {/* Mobile Tab Switcher - only visible on mobile */}
+      <div className={styles.mobileTabs}>
+        <button
+          className={`${styles.mobileTabBtn} ${mobileTab === 'form' ? styles.activeTab : ''}`}
+          onClick={() => setMobileTab('form')}
+        >✏️ Edit Form</button>
+        <button
+          className={`${styles.mobileTabBtn} ${mobileTab === 'preview' ? styles.activeTab : ''}`}
+          onClick={() => setMobileTab('preview')}
+        >👁️ Preview</button>
+      </div>
+
       <div className={`${styles.builderLayout} ${previewMode ? styles.previewOnly : ''}`}>
         {!previewMode && (
           <>
@@ -252,35 +268,40 @@ function BuilderInner() {
               <BuilderSidebar activeSection={activeSection} onSectionChange={setActiveSection} />
             </aside>
             
-            <main className={styles.formColumn}>
-              {versions.length > 0 && (
-                <div className="cr-card cr-glass" style={{ marginBottom: '1rem' }}>
-                  <div style={{ paddingBottom: '0.5rem', borderBottom: '1px solid var(--cr-border)', marginBottom: '0.5rem' }}>
-                    <h4 style={{ fontSize: '0.9rem', fontWeight: 700 }}>Version History</h4>
-                  </div>
-                  <div style={{ maxHeight: '100px', overflowY: 'auto' }}>
-                    {versions.map(v => (
-                      <div 
-                        key={v.id} 
-                        onClick={() => handleLoadVersion(v)}
-                        style={{ padding: '0.4rem 0', cursor: 'pointer', borderBottom: '1px solid var(--cr-border)', fontSize: '0.75rem', display: 'flex', justifyContent: 'space-between' }}
-                      >
-                        <span>{v.version_name}</span>
-                        <span style={{ color: 'var(--cr-text-muted)' }}>{new Date(v.created_at).toLocaleDateString()}</span>
-                      </div>
-                    ))}
-                  </div>
+            {/* Form column: hidden on mobile when preview tab is active */}
+          <main className={styles.formColumn} style={{ display: mobileTab === 'preview' ? 'none' : undefined }}>
+            {versions.length > 0 && (
+              <div className="cr-card cr-glass" style={{ marginBottom: '1rem' }}>
+                <div style={{ paddingBottom: '0.5rem', borderBottom: '1px solid var(--cr-border)', marginBottom: '0.5rem' }}>
+                  <h4 style={{ fontSize: '0.9rem', fontWeight: 700 }}>Version History</h4>
                 </div>
-              )}
-              
-              <section className="animate-fade-in">
-                <DraggableSectionList filteredSection={activeSection} />
-              </section>
-            </main>
-          </>
+                <div style={{ maxHeight: '100px', overflowY: 'auto' }}>
+                  {versions.map(v => (
+                    <div 
+                      key={v.id} 
+                      onClick={() => handleLoadVersion(v)}
+                      style={{ padding: '0.4rem 0', cursor: 'pointer', borderBottom: '1px solid var(--cr-border)', fontSize: '0.75rem', display: 'flex', justifyContent: 'space-between' }}
+                    >
+                      <span>{v.version_name}</span>
+                      <span style={{ color: 'var(--cr-text-muted)' }}>{new Date(v.created_at).toLocaleDateString()}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            <section className="animate-fade-in">
+              <DraggableSectionList filteredSection={activeSection} />
+            </section>
+          </main>
+        </>
         )}
 
-        <div className={previewMode ? styles.previewCentered : styles.previewColumn}>
+        {/* Preview column: hidden on mobile when form tab is active */}
+        <div 
+          className={previewMode ? styles.previewCentered : styles.previewColumn}
+          style={{ display: !previewMode && mobileTab === 'form' ? 'none' : undefined }}
+        >
           <PreviewPane resumeId={currentResumeId} />
         </div>
       </div>

@@ -2,7 +2,7 @@
   display: grid;
   grid-template-columns: 260px 1.2fr 1.5fr;
   gap: var(--cr-space-lg);
-  min-height: calc(100vh - 70px);
+  min-height: calc(100vh - 130px);
   position: relative;
   width: 100%;
   max-width: 100vw;
@@ -11,8 +11,8 @@
 
 .sidebarColumn {
   position: sticky;
-  top: 70px;
-  height: calc(100vh - 70px);
+  top: 130px;
+  height: calc(100vh - 130px);
   background: var(--cr-bg-secondary);
   border-right: 1px solid var(--cr-border);
   padding: var(--cr-space-lg) var(--cr-space-md);
@@ -31,6 +31,7 @@
   top: 70px;
   z-index: 90;
   height: 60px;
+  gap: var(--cr-space-sm);
 }
 
 .topBarLeft, .topBarRight {
@@ -109,6 +110,44 @@
   width: 100%;
 }
 
+/* Mobile Tab Switcher */
+.mobileTabs {
+  display: none;
+  position: sticky;
+  top: 130px;
+  z-index: 80;
+  background: var(--cr-bg-primary);
+  border-bottom: 2px solid var(--cr-border);
+}
+
+.mobileTabBtn {
+  flex: 1;
+  padding: 12px;
+  background: transparent;
+  border: none;
+  font-family: var(--cr-font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--cr-text-muted);
+  cursor: pointer;
+  transition: all var(--cr-transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+}
+
+.mobileTabBtn.activeTab {
+  color: var(--cr-accent-primary);
+  border-bottom-color: var(--cr-accent-primary);
+}
+
+/* ===================== */
+/* Responsive Breakpoints */
+/* ===================== */
+
 @media (max-width: 1400px) {
   .builderLayout {
     grid-template-columns: 250px 1.2fr 1fr;
@@ -138,6 +177,8 @@
     border-right: none;
     border-bottom: 1px solid var(--cr-border);
     width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
   }
 
   .formColumn {
@@ -149,6 +190,76 @@
     top: 0;
     height: auto;
     padding: var(--cr-space-md);
-    order: -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .builderTopBar {
+    padding: var(--cr-space-xs) var(--cr-space-md);
+    height: auto;
+    min-height: 52px;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .topBarLeft {
+    gap: var(--cr-space-sm);
+    flex: 1;
+  }
+
+  .topBarRight {
+    gap: var(--cr-space-sm);
+  }
+
+  .atsChip {
+    font-size: 0.72rem;
+    padding: 4px 10px;
+  }
+
+  .saveIndicator {
+    display: none;
+  }
+
+  /* Show mobile tabs */
+  .mobileTabs {
+    display: flex;
+    top: 122px; /* 70px navbar + 52px topbar */
+  }
+
+  /* Hide sidebarColumn inline position on mobile */
+  .sidebarColumn {
+    display: none;
+  }
+
+  .builderLayout {
+    gap: 0;
+  }
+
+  .formColumn {
+    padding: var(--cr-space-sm);
+    gap: var(--cr-space-md);
+  }
+
+  .previewColumn {
+    padding: var(--cr-space-sm);
+    padding-bottom: var(--cr-space-2xl);
+  }
+}
+
+@media (max-width: 480px) {
+  .builderTopBar {
+    padding: 6px var(--cr-space-sm);
+  }
+
+  .atsChip {
+    display: none;
+  }
+
+  .formColumn {
+    padding: var(--cr-space-xs);
+  }
+
+  .previewColumn {
+    padding: var(--cr-space-xs);
   }
 }

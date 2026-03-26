@@ -22,7 +22,7 @@ export async function POST(req) {
       Example format: ["React.js", "Node.js", "Project Management", "Agile", "SQL"]
     `;
 
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-preview-04-17" });
     
     const result = await model.generateContent(prompt);
     const response = await result.response;

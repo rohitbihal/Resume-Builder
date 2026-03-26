@@ -1,12 +1,19 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
 export const maxDuration = 60; // Allow up to 60 seconds on Vercel
 
 export async function POST(req) {
   try {
+    if (!process.env.GEMINI_API_KEY) {
+      console.error('GEMINI_API_KEY environment variable is not set.');
+      return NextResponse.json(
+        { error: 'Server configuration error: GEMINI_API_KEY is not set. Please add it to your Vercel environment variables.' },
+        { status: 500 }
+      );
+    }
+
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const { resumeData, jobDescription } = await req.json();
 
     if (!resumeData || !jobDescription) {
@@ -33,7 +40,7 @@ export async function POST(req) {
       7. Format with clear line breaks between paragraphs.
     `;
 
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     
     const result = await model.generateContent(prompt);
     const response = await result.response;

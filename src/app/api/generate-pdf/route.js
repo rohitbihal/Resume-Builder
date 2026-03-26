@@ -52,8 +52,14 @@ export async function POST(req) {
           <style>
             @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Lora:wght@400;500;600;700&display=swap');
             
+            * {
+              box-sizing: border-box;
+            }
             ${css || ''}
-            @page { margin: 0; size: A4; }
+            @page { 
+              margin: 20mm; 
+              size: A4; 
+            }
             body { 
               margin: 0; padding: 0;
               -webkit-print-color-adjust: exact !important; 
@@ -106,7 +112,7 @@ export async function POST(req) {
         format: 'A4',
         printBackground: true,
         preferCSSPageSize: false,
-        margin: { top: '0', right: '0', bottom: '0', left: '0' },
+        margin: { top: '20mm', right: '20mm', bottom: '20mm', left: '20mm' },
       });
 
       return new Response(pdfBuffer, {

@@ -11,6 +11,7 @@ import ATSScore from './ATSScore';
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { translations } from '@/lib/i18n';
+import { canDownloadPdf, canDownloadTemplate, hasNoWatermark, canUseMultiPage, getBlockedMessage } from '@/lib/planAccess';
 
 const TEMPLATES = [
   { id: 'bold-neo', name: 'Bold Neo', component: BoldNeo, premium: false },
@@ -24,7 +25,7 @@ export default function PreviewPane({ resumeId }) {
   const resumeState = useResume();
   const { activeTemplate, theme, is_public, ...resumeData } = resumeState;
   const dispatch = useResumeDispatch();
-  const [hasPremiumAccess, setHasPremiumAccess] = useState(false);
+  const [planContext, setPlanContext] = useState(null);
   const [copied, setCopied] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
@@ -32,14 +33,14 @@ export default function PreviewPane({ resumeId }) {
   const [pageCount, setPageCount] = useState(1);
   const previewRef = useRef(null);
   const containerRef = useRef(null);
-  const pdfRef = useRef(null); // hidden div for clean PDF capture (no scale wrapper)
+  const pdfRef = useRef(null);
 
   useEffect(() => {
     setIsClient(true);
     
     const handleAutoFit = () => {
       if (containerRef.current) {
-        const containerWidth = containerRef.current.offsetWidth - 32; // padding
+        const containerWidth = containerRef.current.offsetWidth - 32;
         const resumeWidth = 800;
         if (containerWidth < resumeWidth * 0.85) {
           const newScale = containerWidth / resumeWidth;
@@ -51,19 +52,36 @@ export default function PreviewPane({ resumeId }) {
     handleAutoFit();
     window.addEventListener('resize', handleAutoFit);
 
+    let profileSubscription = null;
+
     const checkAccess = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
-      
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('subscription_tier')
-        .eq('id', session.user.id)
-        .single();
-        
-      if (profile && profile.subscription_tier === 'pro') {
-        setHasPremiumAccess(true);
+      if (!session) {
+        import('@/lib/planAccess').then(p => setPlanContext(p.getUserPlanContext(null)));
+        return;
       }
+      
+      const fetchProfile = async () => {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+        import('@/lib/planAccess').then(p => setPlanContext(p.getUserPlanContext(profile)));
+      };
+      
+      await fetchProfile();
+
+      profileSubscription = supabase
+        .channel('custom-update-channel')
+        .on(
+          'postgres_changes',
+          { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `id=eq.${session.user.id}` },
+          (payload) => {
+             import('@/lib/planAccess').then(p => setPlanContext(p.getUserPlanContext(payload.new)));
+          }
+        )
+        .subscribe();
     };
     checkAccess();
 
@@ -89,7 +107,22 @@ export default function PreviewPane({ resumeId }) {
   const TemplateComponent = current.component;
 
   const handleDownloadPdf = async () => {
-    if (!previewRef.current) return;
+    if (!previewRef.current || !planContext) return;
+    
+    // Check template constraint
+    if (!canDownloadTemplate(planContext, current.premium)) {
+       alert(getBlockedMessage(planContext));
+       window.location.href = '/pricing';
+       return;
+    }
+
+    // Check plan constraints
+    if (!canDownloadPdf(planContext)) {
+       alert(getBlockedMessage(planContext));
+       window.location.href = '/pricing';
+       return;
+    }
+
     setIsGeneratingPdf(true);
     try {
       // Collect all styles including link tags (external stylesheets)
@@ -106,21 +139,29 @@ export default function PreviewPane({ resumeId }) {
       );
       
       const cssString = [...stylesArr, ...linksArr].join('\n');
-      const watermarkHtml = !hasPremiumAccess 
-        ? '<div style="position: absolute; bottom: 10px; right: 20px; color: #a0aec0; font-size: 10px; font-family: sans-serif; z-index: 9999;">Created with CreativeResume (Free)</div>'
-        : '';
+      
       // Use the hidden pdfRef (clean, no scale transform, no page-break markers)
       const captureEl = pdfRef.current || previewRef.current;
-      const htmlString = captureEl.innerHTML + watermarkHtml;
+      const htmlString = captureEl.innerHTML; // Web-based watermark removed, injected securely by API
 
       const response = await fetch('/api/generate-pdf', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ html: htmlString, css: cssString, multiPage: hasPremiumAccess }),
+        body: JSON.stringify({ 
+          html: htmlString, 
+          css: cssString, 
+          multiPage: canUseMultiPage(planContext),
+          isPreview: false
+        }),
       });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
+        if (response.status === 403) {
+          alert('Access Denied: ' + (errorData.details || 'Your plan has expired or limits reached.'));
+          window.location.href = '/pricing';
+          return;
+        }
         throw new Error(errorData.details || 'Failed to generate PDF');
       }
 
@@ -232,7 +273,7 @@ export default function PreviewPane({ resumeId }) {
         >
           <div className={styles.previewContent}>
             <TemplateComponent />
-            {!hasPremiumAccess && (
+            {planContext && !hasNoWatermark(planContext) && (
               <div className={styles.watermark}>
                 PREVIEW ONLY
               </div>
@@ -274,26 +315,26 @@ export default function PreviewPane({ resumeId }) {
       </div>
 
       <div className={styles.downloadArea}>
-        {isClient && (
+        {isClient && planContext && (
           <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {/* Public Share Section */}
             <button 
-              className={`cr-btn ${hasPremiumAccess ? 'cr-btn-primary' : 'cr-btn-outline'} cr-btn-lg`}
+              className={`cr-btn ${canDownloadPdf(planContext) && canDownloadTemplate(planContext, current.premium) ? 'cr-btn-primary' : 'cr-btn-outline'} cr-btn-lg`}
               style={{ width: '100%', padding: '0.8rem' }} 
               id="download-pdf-btn"
-              disabled={isGeneratingPdf || (!hasPremiumAccess && !isGeneratingPdf)}
+              disabled={isGeneratingPdf}
               onClick={handleDownloadPdf}
             >
-              {isGeneratingPdf ? '⏳ ...' : hasPremiumAccess ? `⬇ ${t.builder.download}` : '🔒 Upgrade to Download'}
+              {isGeneratingPdf ? '⏳ ...' : canDownloadPdf(planContext) && canDownloadTemplate(planContext, current.premium) ? `⬇ ${t.builder.download}` : '🔒 Upgrade to Download'}
             </button>
 
-            {!hasPremiumAccess && (
+            {!hasNoWatermark(planContext) && (
               <p style={{ fontSize: '0.75rem', color: 'var(--cr-text-muted)', textAlign: 'center', marginBottom: '0.5rem' }}>
-                You are currently on the Free plan. <a href="/pricing" style={{ color: 'var(--cr-accent-primary)', fontWeight: 600 }}>Upgrade to Pro</a> to remove watermark and download.
+                You are currently on the Free plan. <a href="/pricing" style={{ color: 'var(--cr-accent-primary)', fontWeight: 600 }}>Upgrade to Pro</a> to remove watermark and download premium templates.
               </p>
             )}
 
-            {!hasPremiumAccess && pageCount > 1 && (
+            {!canUseMultiPage(planContext) && pageCount > 1 && (
               <div style={{ padding: '10px', background: 'rgba(255, 217, 61, 0.1)', border: '1px solid #FFD93D', borderRadius: '8px', textAlign: 'center' }}>
                 <span style={{ fontSize: '0.8rem', color: '#B38F00', fontWeight: 600 }}>
                   📄 Multi-Page Detected ({pageCount} Pages)

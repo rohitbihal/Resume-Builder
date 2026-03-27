@@ -53,15 +53,34 @@ export async function POST(req) {
         process.env.SUPABASE_SERVICE_ROLE_KEY
       );
 
-      // Update user profile to pro
-      // We also store the planId if needed in the future
+      let expiresAt = null;
+      let downloadsUsed = undefined;
+
+      if (planId === 'single_download') {
+        downloadsUsed = 0; // Reset downloads
+      } else if (planId === 'monthly_subscription') {
+        const d = new Date(); d.setMonth(d.getMonth() + 1);
+        expiresAt = d.toISOString();
+      } else if (planId === 'quarterly_subscription') {
+        const d = new Date(); d.setMonth(d.getMonth() + 3);
+        expiresAt = d.toISOString();
+      } else if (planId === 'annual_subscription') {
+        const d = new Date(); d.setFullYear(d.getFullYear() + 1);
+        expiresAt = d.toISOString();
+      }
+
+      const updatePayload = {
+        id: userId,
+        subscription_tier: planId,
+        updated_at: new Date().toISOString()
+      };
+      
+      if (expiresAt) updatePayload.plan_expires_at = expiresAt;
+      if (downloadsUsed !== undefined) updatePayload.downloads_used = downloadsUsed;
+
       const { error } = await supabase
         .from('profiles')
-        .upsert({ 
-          id: userId,
-          subscription_tier: 'pro',
-          updated_at: new Date().toISOString()
-        }, { onConflict: 'id' });
+        .upsert(updatePayload, { onConflict: 'id' });
 
       if (error) {
         console.error('Supabase update error:', error);

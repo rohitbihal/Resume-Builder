@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import puppeteer from 'puppeteer-core';
 import chromium from '@sparticuz/chromium-min';
+import { createServerClient } from '@supabase/ssr';
+import { createClient } from '@supabase/supabase-js';
+import { getUserPlanContext, canDownloadPdf, hasNoWatermark, logAccessAttempt } from '@/lib/planAccess';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
@@ -13,6 +16,65 @@ export async function POST(req) {
     if (!html) {
       return NextResponse.json({ error: 'HTML content is required' }, { status: 400 });
     }
+
+    // --- RBAC & Plan Verification ---
+    const supabaseClient = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      {
+        cookies: {
+          getAll() { return req.cookies.getAll(); },
+          setAll(cookiesToSet) { }
+        },
+      }
+    );
+
+    const adminSupabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    
+    let profile = null;
+    if (user) {
+      const { data } = await supabaseClient.from('profiles').select('*').eq('id', user.id).single();
+      profile = data;
+    }
+
+    const planContext = getUserPlanContext(profile);
+    
+    if (!canDownloadPdf(planContext)) {
+      if (user) await logAccessAttempt(adminSupabase, user.id, 'download_pdf', 'blocked', 'Single download exhausted');
+      return NextResponse.json({ 
+        error: 'Access Denied', 
+        details: 'You have used your single download. Upgrade to Monthly for unlimited downloads.' 
+      }, { status: 403 });
+    }
+
+    const injectWatermark = !hasNoWatermark(planContext);
+    const watermarkHtml = '<div style="position: absolute; bottom: 10px; right: 20px; color: #a0aec0; font-size: 10px; font-family: sans-serif; z-index: 9999;">Created with CreativeResume (Free)</div>';
+    
+    // Clean out frontend watermark if it passed one, so we don't double up, and enforce our own if required.
+    let contentHtml = html.replace(/<div[^>]*>Created with CreativeResume \(Free\)<\/div>/gi, '');
+    if (injectWatermark) {
+      contentHtml += watermarkHtml;
+    }
+
+    // Process Single Download increment
+    if (user && planContext.tier === 'single_download') {
+      const { error: updateError } = await adminSupabase
+        .from('profiles')
+        .update({ downloads_used: planContext.downloadsUsed + 1 })
+        .eq('id', user.id);
+      
+      if (updateError) {
+        console.error('Failed to increment download counter:', updateError);
+        return NextResponse.json({ error: 'Failed to process plan tracking' }, { status: 500 });
+      }
+    }
+
+    if (user) await logAccessAttempt(adminSupabase, user.id, 'download_pdf', 'granted', `Downloaded under plan: ${planContext.tier}`);
 
     // Multi-page CSS: let content flow naturally across A4 pages.
     // IMPORTANT: Do NOT use page-break-after:always on .resumePage —
@@ -70,7 +132,7 @@ export async function POST(req) {
             ${multiPageStyles}
           </style>
         </head>
-        <body>${html}</body>
+        <body>${contentHtml}</body>
       </html>
     `;
 

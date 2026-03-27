@@ -35,25 +35,32 @@ export async function POST(req) {
 
       if (!userId || userId === 'guest_id') break;
 
-      if (session.mode === 'subscription') {
-        // Save Subscription
-        await supabase.from('subscriptions').upsert({
-          user_id: userId,
-          stripe_customer_id: session.customer,
-          stripe_subscription_id: session.subscription,
-          plan: planId,
-          status: 'active',
-        }, { onConflict: 'user_id' });
-      } else if (session.mode === 'payment' && planId === 'single_download') {
-        // Save Purchase
-        await supabase.from('purchases').insert({
-          user_id: userId,
-          resume_id: resumeId,
-          stripe_payment_intent_id: session.payment_intent,
-          amount_cents: session.amount_total,
-          status: 'succeeded'
-        });
+      let expiresAt = null;
+      let downloadsUsed = undefined;
+
+      if (planId === 'single_download') {
+        downloadsUsed = 0; // Reset downloads
+      } else if (planId === 'monthly_subscription') {
+        const d = new Date(); d.setMonth(d.getMonth() + 1);
+        expiresAt = d.toISOString();
+      } else if (planId === 'quarterly_subscription') {
+        const d = new Date(); d.setMonth(d.getMonth() + 3);
+        expiresAt = d.toISOString();
+      } else if (planId === 'annual_subscription') {
+        const d = new Date(); d.setFullYear(d.getFullYear() + 1);
+        expiresAt = d.toISOString();
       }
+
+      const updatePayload = {
+        id: userId,
+        subscription_tier: planId,
+        updated_at: new Date().toISOString()
+      };
+      
+      if (expiresAt) updatePayload.plan_expires_at = expiresAt;
+      if (downloadsUsed !== undefined) updatePayload.downloads_used = downloadsUsed;
+
+      await supabase.from('profiles').upsert(updatePayload, { onConflict: 'id' });
       break;
     }
     case 'invoice.payment_succeeded': {

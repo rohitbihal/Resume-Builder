@@ -27,6 +27,7 @@ const createInitialState = (isClient = false) => {
     language: 'en',
     layoutOrder: ['executiveSummary', 'workExperience', 'education', 'skills', 'academicProjects', 'certifications'],
     onboardingComplete: false,
+    importedFieldsHighlight: false, // New flag for glowing animation on import
     personalInfo: {
       fullName: '',
       email: '',
@@ -78,6 +79,9 @@ function resumeReducer(state, action) {
 
     case 'COMPLETE_ONBOARDING':
       return { ...state, onboardingComplete: true };
+
+    case 'SET_IMPORTED_HIGHLIGHT':
+      return { ...state, importedFieldsHighlight: action.payload };
 
     case 'SET_TEMPLATE':
       return { ...state, activeTemplate: action.payload };

@@ -18,6 +18,11 @@ export async function POST(req) {
       const { url } = await req.json();
       if (!url) return NextResponse.json({ error: 'No URL provided' }, { status: 400 });
 
+      // Check URL validity
+      if (!url.toLowerCase().includes('linkedin.com/in/')) {
+        return NextResponse.json({ error: 'Please enter a valid LinkedIn profile URL' }, { status: 400 });
+      }
+
       // Fetch content from URL using Puppeteer
       const isLocal = process.env.NODE_ENV === 'development';
       const launchOptions = isLocal
@@ -48,18 +53,21 @@ export async function POST(req) {
       const response = await page.goto(url, { 
         waitUntil: 'domcontentloaded', 
         timeout: 45000 
+      }).catch(e => {
+        console.error('Puppeteer goto error', e);
+        return { status: () => 999 };
       });
       
       const status = response.status();
-      if (status === 999) {
+      if (status === 999 || status === 429) {
         return NextResponse.json({ 
-          error: 'LinkedIn is blocking the request (999). Please export your LinkedIn profile as a PDF and upload it for better results.' 
+          error: 'LinkedIn is blocking direct import. Please export your LinkedIn profile as a PDF and upload it here' 
         }, { status: 429 });
       }
 
       if (status >= 400) {
         return NextResponse.json({ 
-          error: `Failed to fetch profile (Status ${status}). Please ensure it is public.` 
+          error: 'LinkedIn is blocking direct import. Please export your LinkedIn profile as a PDF and upload it here' 
         }, { status });
       }
 
@@ -80,7 +88,7 @@ export async function POST(req) {
 
       if (rawText === 'AUTH_WALL_DETECTED') {
         return NextResponse.json({ 
-          error: 'LinkedIn is requesting a login to view this profile. Try uploading your LinkedIn PDF resume instead.' 
+          error: 'LinkedIn is blocking direct import. Please export your LinkedIn profile as a PDF and upload it here' 
         }, { status: 403 });
       }
 
@@ -97,22 +105,30 @@ export async function POST(req) {
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
 
-      // Extract text from PDF
-      const pdfData = await pdf(buffer);
-      rawText = pdfData.text;
+      try {
+        // Extract text from PDF
+        const pdfData = await pdf(buffer);
+        rawText = pdfData.text;
+      } catch (pdfError) {
+        console.error('PDF Parse Error', pdfError);
+        return NextResponse.json({ 
+          error: 'Could not read the PDF. Please make sure you uploaded your LinkedIn profile PDF and not a custom resume' 
+        }, { status: 422 });
+      }
     }
 
     if (!rawText || rawText.trim().replace(/\s/g, '').length < 100) {
       return NextResponse.json({ 
-        error: 'Could not extract enough meaningful text from the profile. Please ensure it is a public profile or upload a PDF.' 
+        error: 'Could not extract enough meaningful text from the profile. If you used a PDF, please make sure you uploaded your LinkedIn profile PDF and not a custom resume.' 
       }, { status: 422 });
     }
 
     // Call Gemini to parse the text into our schema
     const prompt = `
       You are an expert resume parser. I will provide you with raw text extracted from a LinkedIn profile or PDF resume.
-      Your goal is to extract the information and return it in a strictly valid JSON format that matches the following schema:
+      Your goal is to extract the information and return it in a strictly valid JSON format that matches the following schema.
 
+      Required Schema:
       {
         "personalInfo": {
           "fullName": "",
@@ -126,7 +142,7 @@ export async function POST(req) {
         "executiveSummary": "",
         "workExperience": [
           {
-            "id": "unique-id",
+            "id": "unique-id-work-1",
             "company": "",
             "title": "",
             "location": "",
@@ -137,7 +153,7 @@ export async function POST(req) {
         ],
         "education": [
           {
-            "id": "unique-id",
+            "id": "unique-id-edu-1",
             "institution": "",
             "degree": "",
             "field": "",
@@ -150,13 +166,31 @@ export async function POST(req) {
         ],
         "skills": [
           {
-            "id": "unique-id",
+            "id": "unique-id-skill-1",
             "name": "",
-            "level": "beginner|intermediate|advanced|expert"
+            "level": "intermediate"
           }
         ],
         "certifications": [
-           {"id": "unique-id", "name": "", "issuer": "", "date": ""}
+           {"id": "unique-id-cert-1", "name": "", "issuer": "", "date": ""}
+        ],
+        "academicProjects": [
+          {
+             "id": "unique-id-proj-1",
+             "name": "",
+             "technologies": "",
+             "link": "",
+             "description": ""
+          }
+        ],
+        "customSections": [
+          {
+             "id": "volunteer-section-1",
+             "title": "Volunteer / Extra-Curricular",
+             "items": [
+               { "id": "volunteer-item-1", "content": "Role at Organization: Description" }
+             ]
+          }
         ]
       }
 

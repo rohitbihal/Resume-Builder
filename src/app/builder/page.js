@@ -269,7 +269,7 @@ function BuilderInner() {
             </aside>
             
             {/* Form column: hidden on mobile when preview tab is active */}
-          <main className={`${styles.formColumn} ${mobileTab === 'preview' ? styles.mobileHidden : ''}`}>
+          <main className={`${styles.formColumn} ${mobileTab === 'preview' ? styles.mobileHidden : ''} ${dataState.importedFieldsHighlight ? 'imported-active' : ''}`}>
             {versions.length > 0 && (
               <div className="cr-card cr-glass" style={{ marginBottom: '1rem' }}>
                 <div style={{ paddingBottom: '0.5rem', borderBottom: '1px solid var(--cr-border)', marginBottom: '0.5rem' }}>

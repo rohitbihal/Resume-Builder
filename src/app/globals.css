@@ -296,6 +296,34 @@ a:hover {
   resize: vertical;
 }
 
+/* --- Highlighting Form Fields on Import --- */
+.imported-active .cr-input:not(:placeholder-shown),
+.imported-active .cr-textarea:not(:placeholder-shown) {
+  animation: cr-glow-green 10s ease-out forwards;
+}
+
+@keyframes cr-glow-green {
+  0% { 
+    box-shadow: 0 0 0 transparent; 
+    background-color: var(--cr-bg-input); 
+  }
+  5% { 
+    box-shadow: 0 0 12px rgba(0, 184, 169, 0.4); 
+    background-color: rgba(0, 184, 169, 0.08); 
+    border-color: var(--cr-accent-primary); 
+  }
+  90% { 
+    box-shadow: 0 0 12px rgba(0, 184, 169, 0.4); 
+    background-color: rgba(0, 184, 169, 0.08); 
+    border-color: var(--cr-accent-primary); 
+  }
+  100% { 
+    box-shadow: 0 0 0 transparent; 
+    background-color: var(--cr-bg-input); 
+    border-color: var(--cr-border); 
+  }
+}
+
 .cr-input-optional::after {
   content: ' (optional)';
   font-weight: 400;

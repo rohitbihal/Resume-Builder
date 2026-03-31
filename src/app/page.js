@@ -14,12 +14,12 @@ export default function Home() {
         <div className={styles.heroContent}>
           <div className={styles.heroBadge}>✨ Free to build, preview & customize</div>
           <h1 className={styles.heroTitle}>
-            Build Resumes That<br />
-            <span className={styles.heroGradient}>Actually Get Noticed</span>
+            Free <span className={styles.heroGradient}>Resume Builder</span><br />
+            Create Your Professional Resume in Minutes
           </h1>
           <p className={styles.heroDesc}>
-            Choose from 5 stunning creative templates. Toggle between Fresher and Experienced tracks.
-            Add unlimited custom sections. Download premium PDFs.
+            Our free resume builder helps you build beautiful, ATS-friendly resumes with stunning creative templates. 
+            Choose your track, customize every section, and download premium PDFs for free.
           </p>
           <div className={styles.heroCtas}>
             <Link href="/builder" className="cr-btn cr-btn-primary cr-btn-lg" id="hero-cta-btn">
@@ -109,6 +109,13 @@ export default function Home() {
           <div className={styles.footerLinks}>
             <Link href="/privacy">Privacy Policy</Link>
             <Link href="/terms">Terms of Service</Link>
+          </div>
+          <div className={styles.footerBlogLinks} style={{ marginTop: '1rem', display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+            <Link href="/blog/how-to-write-resume" style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Resume Guide</Link>
+            <Link href="/blog/best-resume-templates" style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Best Templates</Link>
+            <Link href="/blog/resume-tips" style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Resume Tips</Link>
+            <Link href="/blog/ats-friendly-resume" style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>ATS Guide</Link>
+            <Link href="/blog/college-student-resume" style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Student Guide</Link>
           </div>
           <span className={styles.footerText}>© 2026 CreativeResume. Craft your story.</span>
     </main>

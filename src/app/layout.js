@@ -19,18 +19,21 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
-  title: "CreativeResume — Build Stunning Resumes",
-  description: "Build beautiful, ATS-friendly resumes with creative templates. Choose your track, customize every section, and download premium PDFs.",
-  keywords: "resume builder, creative resume, CV maker, professional resume, fresher resume, experienced resume",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://creativeresume.vercel.app'),
+  title: {
+    default: "Free Resume Builder - Create Professional Resumes Online | CreativeResume",
+    template: "%s | CreativeResume"
+  },
+  description: "Build a professional resume in minutes with our free online resume builder. Choose from stunning creative templates, customize every section, and download ATS-friendly PDFs.",
+  keywords: "resume builder, free resume builder, online resume maker, resume templates, creative resume, ATS-friendly resume, professional CV maker",
   openGraph: {
     type: 'website',
     url: '/',
-    title: 'CreativeResume — Build Stunning Resumes',
-    description: 'Build beautiful, ATS-friendly resumes with creative templates.',
+    title: 'Free Resume Builder - Create Professional Resumes Online',
+    description: 'Build beautiful, ATS-friendly resumes in minutes with our free online resume builder.',
     siteName: 'CreativeResume',
     images: [{
-      url: '/og-image.png', // Fallback image (if provided)
+      url: '/og-image.png',
       width: 1200,
       height: 630,
       alt: 'CreativeResume Preview'
@@ -38,8 +41,8 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'CreativeResume — Build Stunning Resumes',
-    description: 'Build beautiful, ATS-friendly resumes with creative templates.',
+    title: 'Free Resume Builder - Create Professional Resumes Online',
+    description: 'Build beautiful, ATS-friendly resumes in minutes with our free online resume builder.',
   },
   icons: {
     icon: '/favicon.ico',

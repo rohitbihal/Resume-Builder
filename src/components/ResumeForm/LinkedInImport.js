@@ -45,7 +45,9 @@ export default function LinkedInImport() {
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to import profile.');
+        console.error('Import API error:', data);
+        const errorMessage = data.error || 'Failed to import profile. Please try uploading the PDF export instead.';
+        throw new Error(errorMessage);
       }
       
       setParsedData(data);

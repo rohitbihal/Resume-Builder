@@ -108,7 +108,10 @@ export async function POST(req) {
       });
 
       const status = response.status();
+      log.info('LinkedIn navigation status', { requestId, status });
+
       if (status === 999 || status === 429 || status >= 400) {
+        log.error('LinkedIn blocked request', { requestId, status });
         return NextResponse.json(
           errorResponse('LinkedIn is blocking direct import. Please export your LinkedIn profile as a PDF and upload it here.', requestId),
           { status: 422, headers: rateLimitHeaders }
@@ -127,10 +130,17 @@ export async function POST(req) {
         return document.body.innerText;
       });
 
+      log.info('URL Scrape complete', { 
+        requestId, 
+        textLength: rawText.length,
+        isAuthWall: rawText === 'AUTH_WALL_DETECTED' 
+      });
+
       await browser.close();
       browser = null;
 
       if (rawText === 'AUTH_WALL_DETECTED') {
+        log.warn('LinkedIn Authwall hit', { requestId });
         return NextResponse.json(
           errorResponse('LinkedIn requires login to view this profile. Please export your profile as a PDF and upload it here.', requestId),
           { status: 403, headers: rateLimitHeaders }
@@ -168,6 +178,12 @@ export async function POST(req) {
       try {
         const pdfData = await pdf(buffer);
         rawText = pdfData.text;
+        
+        log.info('PDF parsed successfully', { 
+          requestId, 
+          textLength: rawText.length,
+          preview: rawText.substring(0, 200) 
+        });
       } catch (pdfError) {
         log.error('PDF parse error', { requestId, error: pdfError.message });
         return NextResponse.json(
@@ -281,26 +297,50 @@ export async function POST(req) {
     const controller = new AbortController();
     const aiTimeout = setTimeout(() => controller.abort(), 60_000);
 
+    /**
+     * Robust JSON extraction helper.
+     * Finds the first '{' and last '}' to extract the JSON block,
+     * ignoring any markdown backticks or conversational text.
+     */
+    function extractJson(text) {
+      const start = text.indexOf('{');
+      const end = text.lastIndexOf('}');
+      if (start === -1 || end === -1) return null;
+      return text.substring(start, end + 1);
+    }
+
     let parsedData;
     try {
       const result = await model.generateContent(prompt);
       clearTimeout(aiTimeout);
-      const responseArr = await result.response;
-      const content = responseArr.text();
-      const jsonString = content.replace(/```json/g, '').replace(/```/g, '').trim();
+      const response = await result.response;
+      const content = response.text();
+      
+      log.info('Gemini AI response received', { 
+        requestId, 
+        contentLength: content.length,
+        textPreview: content.substring(0, 100) 
+      });
+
+      const jsonString = extractJson(content);
+      if (!jsonString) {
+        log.error('No JSON found in Gemini response', { requestId, rawContent: content.substring(0, 500) });
+        throw new Error('Creative AI returned a malformed response. Please try again.');
+      }
+
       parsedData = JSON.parse(jsonString);
     } catch (aiError) {
       clearTimeout(aiTimeout);
       if (aiError.name === 'AbortError') {
         log.error('Gemini timed out', { requestId });
         return NextResponse.json(
-          errorResponse('Parsing timed out. Please try again.', requestId),
+          errorResponse('The AI model took too long to respond. Please try a simpler profile or try again.', requestId),
           { status: 504, headers: rateLimitHeaders }
         );
       }
-      log.error('Gemini JSON parse error', { requestId, error: aiError.message });
+      log.error('Gemini processing error', { requestId, error: aiError.message });
       return NextResponse.json(
-        errorResponse('Failed to parse AI response into profile data.', requestId),
+        errorResponse(aiError.message || 'Failed to parse profile data. Please try uploading your PDF again.', requestId),
         { status: 500, headers: rateLimitHeaders }
       );
     }

@@ -1,5 +1,5 @@
 /**
- * Next.js Unified Middleware
+ * Next.js Unified Proxy (formerly Middleware)
  *
  * Execution order (runs before every matched request):
  *   1. Skip non-page/api routes (static assets handled by Next.js)
@@ -58,9 +58,9 @@ const CSP = [
   "upgrade-insecure-requests",
 ].join('; ');
 
-// ─── Middleware ───────────────────────────────────────────────────────────────
+// ─── Proxy ───────────────────────────────────────────────────────────────────
 
-export async function middleware(request) {
+export async function proxy(request) {
   const { pathname } = request.nextUrl;
   const isApiRoute = pathname.startsWith('/api/');
   const isProtectedPage = PROTECTED_PAGE_PREFIXES.some(p => pathname.startsWith(p));

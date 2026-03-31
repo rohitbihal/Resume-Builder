@@ -49,7 +49,7 @@ export default function CookieConsent() {
         <div>
           <h3 style={{ fontSize: '1.1rem', marginBottom: '0.5rem', fontWeight: 600 }}>We Value Your Privacy</h3>
           <p style={{ fontSize: '0.85rem', color: 'var(--cr-text-muted)', lineHeight: '1.5' }}>
-            We use cookies to enhance your browsing experience, analyze site traffic, and manage secure sessions (including Stripe/Razorpay payments). By clicking &quot;Accept All&quot;, you consent to our use of cookies. Read our <Link href="/privacy" style={{ textDecoration: 'underline', color: 'var(--cr-primary)' }}>Privacy Policy</Link> for more information.
+            We use cookies to enhance your browsing experience, analyze site traffic, and manage secure sessions (including Razorpay payments). By clicking &quot;Accept All&quot;, you consent to our use of cookies. Read our <Link href="/privacy" style={{ textDecoration: 'underline', color: 'var(--cr-primary)' }}>Privacy Policy</Link> for more information.
           </p>
         </div>
         <div style={{ display: 'flex', gap: '1rem', alignSelf: 'flex-end' }}>

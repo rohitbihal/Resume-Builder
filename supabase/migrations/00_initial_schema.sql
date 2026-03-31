@@ -9,8 +9,9 @@ CREATE TABLE profiles (
   email TEXT UNIQUE NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::TEXT, NOW()) NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::TEXT, NOW()) NOT NULL,
-  subscription_tier TEXT DEFAULT 'free' CHECK (subscription_tier IN ('free', 'pro')),
-  stripe_customer_id TEXT
+  subscription_tier TEXT DEFAULT 'free' CHECK (subscription_tier IN ('free', 'pro', 'single_download', 'monthly_subscription', 'quarterly_subscription', 'annual_subscription')),
+  plan_expires_at TIMESTAMP WITH TIME ZONE,
+  downloads_used INTEGER DEFAULT 0
 );
 
 -- Enable RLS for Profiles

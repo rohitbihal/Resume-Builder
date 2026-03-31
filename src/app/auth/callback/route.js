@@ -1,5 +1,8 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
+import { logger, getRequestId } from '@/lib/logger';
+
+const log = logger('auth/callback');
 
 export async function GET(request) {
   const requestUrl = new URL(request.url);
@@ -14,8 +17,10 @@ export async function GET(request) {
   const errorParam = requestUrl.searchParams.get('error');
   const errorDescription = requestUrl.searchParams.get('error_description');
 
+  const requestId = getRequestId(request);
+
   if (errorParam) {
-    console.error('OAuth: Provider error:', errorParam, errorDescription);
+    log.error('OAuth Provider error', { requestId, error: errorParam, description: errorDescription });
     return NextResponse.redirect(`${origin}/auth/auth-code-error?error=${encodeURIComponent(errorDescription || errorParam)}`);
   }
 
@@ -39,14 +44,14 @@ export async function GET(request) {
     );
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      console.log('OAuth: Session exchanged successfully');
+      log.info('OAuth session exchanged successfully', { requestId });
       return response;
     } else {
-      console.error('OAuth: Code exchange error:', error.message);
+      log.error('OAuth code exchange error', { requestId, error: error.message });
       return NextResponse.redirect(`${origin}/auth/auth-code-error?error=${encodeURIComponent(error.message)}`);
     }
   } else {
-    console.warn('OAuth: No code found in query parameters. URL:', request.url);
+    log.warn('No OAuth code received', { requestId, url: request.url });
     return NextResponse.redirect(`${origin}/auth/auth-code-error?error=No+authentication+code+received+at+${encodeURIComponent(request.url)}`);
   }
 }

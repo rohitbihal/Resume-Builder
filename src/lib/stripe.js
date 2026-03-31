@@ -1,10 +1,17 @@
 import Stripe from 'stripe';
 
-// This will be pulled from .env.local
-const stripeSecretKey = process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder';
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 
-export const stripe = new Stripe(stripeSecretKey, {
-  apiVersion: '2023-10-16', // Ensure this matches your typed definitions
+if (!stripeSecretKey && process.env.NODE_ENV === 'production') {
+  throw new Error('STRIPE_SECRET_KEY is missing. Stripe integration will not function.');
+}
+
+// Fallback to a clear, invalid string for development to avoid crash during dev init if env not set yet,
+// but ensure it's logged or handled.
+const finalKey = stripeSecretKey || 'sk_test_missing_in_development';
+
+export const stripe = new Stripe(finalKey, {
+  apiVersion: '2023-10-16',
   appInfo: {
     name: 'CreativeResume',
     version: '0.1.0',

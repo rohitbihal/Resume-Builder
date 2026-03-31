@@ -42,7 +42,7 @@ export default function Certifications() {
         <div key={cert.id} className={styles.entryCard}>
           <div className={styles.entryHeader}>
             <span className={styles.entryTitle}>Certificate #{index + 1}</span>
-            <button className={styles.removeBtn} onClick={() => removeItem(cert.id)} title="Remove">✕</button>
+            <button className={styles.removeBtn} onClick={() => removeItem(cert.id)} title="Remove" aria-label="Remove entry">✕</button>
           </div>
 
           <div className={styles.fieldGrid}>

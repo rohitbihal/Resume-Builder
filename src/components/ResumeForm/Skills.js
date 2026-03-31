@@ -93,7 +93,7 @@ export default function Skills() {
             <option value="advanced">Advanced</option>
             <option value="expert">Expert</option>
           </select>
-          <button className={styles.removeBtn} onClick={() => removeItem(skill.id)} title="Remove">✕</button>
+          <button className={styles.removeBtn} onClick={() => removeItem(skill.id)} title="Remove" aria-label="Remove entry">✕</button>
         </div>
       ))}
 

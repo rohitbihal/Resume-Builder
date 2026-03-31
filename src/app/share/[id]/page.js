@@ -1,6 +1,7 @@
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import ShareClient from './ShareClient';
+import Link from 'next/link';
 import styles from './SharePage.module.css';
 
 // Dynamic Metadata for SEO
@@ -32,7 +33,13 @@ export async function generateMetadata({ params }) {
       title: `${name}'s Resume`,
       description: `Check out this professional ${resume.track || ''} resume.`,
       type: 'profile',
+      siteName: 'CreativeResume',
     },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${name}'s Resume`,
+      description: `Check out this professional ${resume.track || ''} resume.`,
+    }
   };
 }
 
@@ -97,7 +104,7 @@ export default async function Page({ params }) {
       <div className={styles.errorContainer}>
         <h1>Oops!</h1>
         <p>{err.message === 'This resume is private' ? 'This resume is no longer public.' : 'We couldn\'t find the resume you\'re looking for.'}</p>
-        <a href="/" className="cr-btn cr-btn-primary">Build Your Own Resume</a>
+        <Link href="/" className="cr-btn cr-btn-primary">Build Your Own Resume</Link>
       </div>
     );
   }

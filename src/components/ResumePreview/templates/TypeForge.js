@@ -2,6 +2,7 @@
 
 import { useResume } from '@/context/ResumeContext';
 import styles from '../templates.module.css';
+import Image from 'next/image';
 
 export default function TypeForge() {
   const resume = useResume();
@@ -34,10 +35,13 @@ export default function TypeForge() {
 
         {resume.is_public && resume.id && typeof window !== 'undefined' && (
           <div style={{ position: 'absolute', top: '30px', right: '30px', textAlign: 'center' }}>
-            <img 
+            <Image 
               src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${encodeURIComponent(window.location.origin + '/share/' + resume.id)}`} 
               alt="Resume QR Code"
-              style={{ width: '50px', height: '50px', filter: 'grayscale(1)', opacity: 0.6 }}
+              width={50}
+              height={50}
+              style={{ filter: 'grayscale(1)', opacity: 0.6 }}
+              unoptimized
             />
           </div>
         )}

@@ -43,7 +43,7 @@ export default function Education() {
           <div className={styles.entryHeader}>
             <span className={styles.entryTitle}>Education #{index + 1}</span>
             {education.length > 1 && (
-              <button className={styles.removeBtn} onClick={() => removeItem(edu.id)} title="Remove">✕</button>
+              <button className={styles.removeBtn} onClick={() => removeItem(edu.id)} title="Remove" aria-label="Remove entry">✕</button>
             )}
           </div>
 

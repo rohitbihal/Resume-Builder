@@ -1,13 +1,63 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { createClient } from '@supabase/supabase-js';
+import { rateLimiter } from '@/lib/rateLimit';
+import { logger, getRequestId } from '@/lib/logger';
+import { validateVerifyInput, errorResponse } from '@/lib/validate';
 
 export const maxDuration = 60;
 
+const log = logger('api/razorpay/verify');
+
 export async function POST(req) {
+  const requestId = getRequestId(req);
+
+  // ─── Rate Limiting ───────────────────────────────────────────────────
+  const authHeader = req.headers.get('authorization') || '';
+  let jwtUserId = null;
+  if (authHeader.startsWith('Bearer ')) {
+    try {
+      const payloadBase64 = authHeader.split('.')[1];
+      if (payloadBase64) {
+        const payloadJson = Buffer.from(payloadBase64, 'base64').toString('utf8');
+        const payload = JSON.parse(payloadJson);
+        jwtUserId = payload.sub || null;
+      }
+    } catch {
+      // Ignore invalid JWTs for rate limiting purposes
+    }
+  }
+
+  const { success: rateLimitOk, headers: rateLimitHeaders } = rateLimiter(req, 'payment', jwtUserId);
+  if (!rateLimitOk) {
+    log.warn('Payment verify rate limit exceeded', { requestId });
+    return NextResponse.json(
+      errorResponse('Too many verification requests. Please wait.', requestId),
+      { status: 429, headers: rateLimitHeaders }
+    );
+  }
+
   try {
     const bodyText = await req.text();
-    const data = JSON.parse(bodyText);
+    let data;
+    try {
+      data = JSON.parse(bodyText);
+    } catch {
+      return NextResponse.json(
+        errorResponse('Invalid request body.', requestId),
+        { status: 400, headers: rateLimitHeaders }
+      );
+    }
+
+    // ─── Input Validation ──────────────────────────────────────────────
+    const { valid: isValid, errors: validationErrors } = validateVerifyInput(data);
+    if (!isValid) {
+      log.warn('Verify validation failed', { requestId, errors: validationErrors });
+      return NextResponse.json(
+        errorResponse(`Validation failed: ${validationErrors.join('; ')}`, requestId),
+        { status: 400, headers: rateLimitHeaders }
+      );
+    }
     
     const { 
       razorpay_order_id, 
@@ -17,17 +67,14 @@ export async function POST(req) {
       planId
     } = data;
 
-    console.log('Verifying Payment:', { razorpay_order_id, razorpay_payment_id, userId, planId });
+    log.info('Verifying payment', { requestId, razorpay_order_id, userId, planId });
 
-    if (!razorpay_signature) {
-      console.error('Missing razorpay_signature');
-      return NextResponse.json({ error: 'Missing payment signature' }, { status: 400 });
-    }
+
 
     const secret = process.env.RAZORPAY_KEY_SECRET;
     if (!secret) {
-      console.error('RAZORPAY_KEY_SECRET is not defined in environment');
-      return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
+      log.error('RAZORPAY_KEY_SECRET is not defined', { requestId });
+      return NextResponse.json(errorResponse('Server configuration error', requestId), { status: 500, headers: rateLimitHeaders });
     }
 
     const verificationBody = razorpay_order_id + "|" + razorpay_payment_id;
@@ -37,7 +84,7 @@ export async function POST(req) {
       .update(verificationBody)
       .digest('hex');
 
-    console.log('Signatures:', { expected: expectedSignature, received: razorpay_signature });
+    // Signature comparison — do NOT log the actual signature values in production
 
     const expectedBuffer = Buffer.from(expectedSignature, 'utf-8');
     const receivedBuffer = Buffer.from(razorpay_signature, 'utf-8');
@@ -46,7 +93,7 @@ export async function POST(req) {
       crypto.timingSafeEqual(expectedBuffer, receivedBuffer);
 
     if (isAuthentic) {
-      console.log('Signature Verified. Updating Supabase for user:', userId);
+      log.info('Signature verified, updating profile', { requestId, userId, planId });
       
       const supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -83,18 +130,18 @@ export async function POST(req) {
         .upsert(updatePayload, { onConflict: 'id' });
 
       if (error) {
-        console.error('Supabase update error:', error);
-        return NextResponse.json({ error: 'Payment verified but profile update failed: ' + error.message }, { status: 500 });
+        log.error('Supabase profile update failed', { requestId, userId, error: error.message });
+        return NextResponse.json(errorResponse('Payment verified but profile update failed.', requestId), { status: 500, headers: rateLimitHeaders });
       }
 
-      console.log('Profile updated successfully to pro');
-      return NextResponse.json({ status: 'ok' });
+      log.info('Profile updated successfully', { requestId, userId, planId });
+      return NextResponse.json({ status: 'ok', requestId, timestamp: new Date().toISOString() }, { headers: rateLimitHeaders });
     } else {
-      console.error('Invalid signature');
-      return NextResponse.json({ error: 'Invalid payment signature. Verification failed.' }, { status: 400 });
+      log.warn('Invalid payment signature', { requestId, userId });
+      return NextResponse.json(errorResponse('Invalid payment signature. Verification failed.', requestId), { status: 401, headers: rateLimitHeaders });
     }
   } catch (error) {
-    console.error('Verification Error:', error);
-    return NextResponse.json({ error: 'Internal server error: ' + error.message }, { status: 500 });
+    log.error('Verification error', { requestId, error: error.message });
+    return NextResponse.json(errorResponse('Internal server error.', requestId), { status: 500 });
   }
 }

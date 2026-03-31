@@ -1,0 +1,85 @@
+﻿
+> creative-resume@0.1.0 lint
+> eslint
+
+
+C:\Users\rohit\OneDrive\Desktop\Resume Builder\creative-resume\src\app\auth\page.js
+  19:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  17 |     const targetView = mode === 'signup' ? 'sign_up' : 'sign_in';
+  18 |     if (view !== targetView) {
+> 19 |       setView(targetView);
+     |       ^^^^^^^ Avoid calling setState() directly within an effect
+  20 |     }
+  21 |   }, [mode, view]);
+  22 |  react-hooks/set-state-in-effect
+
+C:\Users\rohit\OneDrive\Desktop\Resume Builder\creative-resume\src\app\builder\page.js
+  206:6  warning  React Hook useEffect has a missing dependency: 'loadVersions'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\rohit\OneDrive\Desktop\Resume Builder\creative-resume\src\app\error.js
+  24:19  error  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+  22 |
+  23 |   // Generate a short reference code from the error for support
+> 24 |   const refCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+     |                   ^^^^^^^^^^^^^ Cannot call impure function
+  25 |
+  26 |   return (
+  27 |     <html lang="en">  react-hooks/purity
+
+C:\Users\rohit\OneDrive\Desktop\Resume Builder\creative-resume\src\app\share\[id]\ShareClient.js
+  59:11  error  Do not use an `<a>` element to navigate to `/`. Use `<Link />` from `next/link` instead. See: https://nextjs.org/docs/messages/no-html-link-for-pages  @next/next/no-html-link-for-pages
+
+C:\Users\rohit\OneDrive\Desktop\Resume Builder\creative-resume\src\app\share\[id]\page.js
+  106:9  error  Do not use an `<a>` element to navigate to `/`. Use `<Link />` from `next/link` instead. See: https://nextjs.org/docs/messages/no-html-link-for-pages  @next/next/no-html-link-for-pages
+
+C:\Users\rohit\OneDrive\Desktop\Resume Builder\creative-resume\src\components\CookieConsent.js
+  12:7    error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  10 |     const consent = localStorage.getItem('cr_cookie_consent');
+  11 |     if (!consent) {
+> 12 |       setIsVisible(true);
+     |       ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  13 |     }
+  14 |   }, []);
+  15 |  react-hooks/set-state-in-effect
+  52:164  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         react/no-unescaped-entities
+  52:175  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         react/no-unescaped-entities
+
+C:\Users\rohit\OneDrive\Desktop\Resume Builder\creative-resume\src\components\ResumeForm\ClientProjects.js
+  37:34  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+C:\Users\rohit\OneDrive\Desktop\Resume Builder\creative-resume\src\components\ResumeForm\DraggableSectionList.js
+  142:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  140 |         if (!merged.includes(id)) merged.push(id);
+  141 |       });
+> 142 |       setActiveItems(merged);
+      |       ^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  143 |     }
+  144 |   }, [layoutOrder, track]);
+  145 |  react-hooks/set-state-in-effect
+
+Γ£û 10 problems (9 errors, 1 warning)
+

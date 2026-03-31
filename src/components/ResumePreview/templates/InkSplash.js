@@ -2,6 +2,7 @@
 
 import { useResume } from '@/context/ResumeContext';
 import styles from '../templates.module.css';
+import Image from 'next/image';
 
 export default function InkSplash() {
   const resume = useResume();
@@ -42,10 +43,13 @@ export default function InkSplash() {
 
         {resume.is_public && resume.id && typeof window !== 'undefined' && (
           <div style={{ position: 'absolute', top: '35px', right: '35px', textAlign: 'center' }}>
-            <img 
+            <Image 
               src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${encodeURIComponent(window.location.origin + '/share/' + resume.id)}`} 
               alt="Resume QR Code"
-              style={{ width: '60px', height: '60px', opacity: 0.8 }}
+              width={60}
+              height={60}
+              style={{ opacity: 0.8 }}
+              unoptimized
             />
           </div>
         )}

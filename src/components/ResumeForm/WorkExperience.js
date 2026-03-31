@@ -78,7 +78,7 @@ export default function WorkExperience() {
           <div className={styles.entryHeader}>
             <span className={styles.entryTitle}>Position #{index + 1}</span>
             {workExperience.length > 1 && (
-              <button className={styles.removeBtn} onClick={() => removeItem(exp.id)} title="Remove">✕</button>
+              <button className={styles.removeBtn} onClick={() => removeItem(exp.id)} title="Remove" aria-label="Remove entry">✕</button>
             )}
           </div>
 

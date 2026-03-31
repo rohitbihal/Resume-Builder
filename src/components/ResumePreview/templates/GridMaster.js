@@ -2,6 +2,7 @@
 
 import { useResume } from '@/context/ResumeContext';
 import styles from '../templates.module.css';
+import Image from 'next/image';
 
 export default function GridMaster() {
   const resume = useResume();
@@ -66,10 +67,13 @@ export default function GridMaster() {
 
         {resume.is_public && resume.id && typeof window !== 'undefined' && (
           <div style={{ marginTop: 'auto', textAlign: 'center', paddingTop: '1rem' }}>
-            <img 
+            <Image 
               src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${encodeURIComponent(window.location.origin + '/share/' + resume.id)}`} 
               alt="Resume QR Code"
-              style={{ width: '60px', height: '60px', border: '1px solid #ddd', padding: '2px', background: '#fff' }}
+              width={60}
+              height={60}
+              style={{ border: '1px solid #ddd', padding: '2px', background: '#fff' }}
+              unoptimized
             />
             <p style={{ fontSize: '6pt', color: '#666', marginTop: '4px', margin: 0 }}>Scan to view online</p>
           </div>

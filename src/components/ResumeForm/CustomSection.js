@@ -61,7 +61,7 @@ export default function CustomSection() {
               <div className={styles.entryHeader}>
                 <span className={styles.entryTitle}>Bullet #{index + 1}</span>
                 {section.items.length > 1 && (
-                  <button className={styles.removeBtn} onClick={() => removeItem(section.id, item.id)} title="Remove">✕</button>
+                  <button className={styles.removeBtn} onClick={() => removeItem(section.id, item.id)} title="Remove" aria-label="Remove entry">✕</button>
                 )}
               </div>
               <div className="cr-input-group">

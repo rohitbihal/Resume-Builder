@@ -1,4 +1,7 @@
 import { createBrowserClient } from '@supabase/ssr';
+import { logger } from './logger';
+
+const log = logger('lib/supabase');
 
 // These will be pulled from .env.local
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -10,7 +13,7 @@ export const supabase = (supabaseUrl && supabaseAnonKey)
   : null;
 
 if (!supabase) {
-  console.warn('Supabase client not initialized: Missing environment variables.');
+  log.warn('Supabase client not initialized: Missing environment variables.');
 }
 
 /**
@@ -18,7 +21,7 @@ if (!supabase) {
  */
 export async function getSession() {
   const { data: { session }, error } = await supabase.auth.getSession();
-  if (error) console.error('Error getting session:', error);
+  if (error) log.error('Error getting session', { error: error.message });
   return session;
 }
 
@@ -27,7 +30,7 @@ export async function getSession() {
  */
 export async function getUser() {
   const { data: { user }, error } = await supabase.auth.getUser();
-  if (error) console.error('Error getting user:', error);
+  if (error) log.error('Error getting user', { error: error.message });
   return user;
 }
 
@@ -36,5 +39,5 @@ export async function getUser() {
  */
 export async function signOut() {
   const { error } = await supabase.auth.signOut();
-  if (error) console.error('Error signing out:', error);
+  if (error) log.error('Error signing out', { error: error.message });
 }

@@ -189,8 +189,8 @@ export default function LinkedInImport() {
             <h3 style={{ marginBottom: '1rem' }}>How to Export LinkedIn PDF</h3>
             <ol style={{ paddingLeft: '1.5rem', marginBottom: '1.5rem', fontSize: '0.9rem', lineHeight: '1.8' }}>
               <li><strong>Step 1:</strong> Go to your LinkedIn profile.</li>
-              <li><strong>Step 2:</strong> Click the <strong>"More"</strong> button below your profile picture.</li>
-              <li><strong>Step 3:</strong> Select <strong>"Save to PDF"</strong>.</li>
+              <li><strong>Step 2:</strong> Click the <strong>&quot;More&quot;</strong> button below your profile picture.</li>
+              <li><strong>Step 3:</strong> Select <strong>&quot;Save to PDF&quot;</strong>.</li>
               <li><strong>Step 4:</strong> Upload the downloaded PDF here.</li>
             </ol>
             <button className="cr-btn cr-btn-primary" style={{ width: '100%' }} onClick={() => setShowExportGuide(false)}>Got it</button>

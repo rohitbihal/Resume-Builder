@@ -2,6 +2,7 @@
 
 import { useResume } from '@/context/ResumeContext';
 import styles from '../templates.module.css';
+import Image from 'next/image';
 
 export default function BoldNeo() {
   const resume = useResume();
@@ -43,10 +44,13 @@ export default function BoldNeo() {
 
         {resume.is_public && resume.id && typeof window !== 'undefined' && (
           <div style={{ position: 'absolute', top: '28px', right: '28px', textAlign: 'center' }}>
-            <img 
+            <Image 
               src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${encodeURIComponent(window.location.origin + '/share/' + resume.id)}`} 
               alt="Resume QR Code"
-              style={{ width: '60px', height: '60px', border: '1px solid #eee', padding: '2px' }}
+              width={60}
+              height={60}
+              style={{ border: '1px solid #eee', padding: '2px' }}
+              unoptimized // QR codes don't need resizing/optimization, they are tiny
             />
             <p style={{ fontSize: '6pt', color: '#888', marginTop: '2px', margin: 0 }}>Scan to view online</p>
           </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { useResume, useResumeDispatch } from '@/context/ResumeContext';
 import TrackSwitcher from '@/components/TrackSwitcher';
 import LinkedInImport from '@/components/ResumeForm/LinkedInImport';
@@ -37,6 +38,7 @@ function BuilderInner() {
   const [isInitialLoading, setIsInitialLoading] = useState(!!idParam);
   const [activeSection, setActiveSection] = useState('personalInfo');
   const [mobileTab, setMobileTab] = useState('form'); // 'form' | 'preview'
+  const [isSaving, setIsSaving] = useState(false); // Prevents double-submission
 
   const addToast = (message, type = 'success') => {
     const id = Date.now();
@@ -60,6 +62,27 @@ function BuilderInner() {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // Cross-Tab Synchronization
+  useEffect(() => {
+    if (!currentResumeId || previewMode) return;
+    
+    const channel = new BroadcastChannel(`resume_sync_${currentResumeId}`);
+    channel.onmessage = (event) => {
+      try {
+        const incomingState = JSON.parse(event.data);
+        const currentStateStr = JSON.stringify(resumeState);
+        if (event.data !== currentStateStr) {
+          dispatch({ type: 'LOAD_RESUME', payload: incomingState });
+          setLastSavedState(event.data);
+          addToast('Changes synced from another tab', 'info');
+        }
+      } catch (err) {
+        console.error('Broadcast sync error', err);
+      }
+    };
+    return () => channel.close();
+  }, [currentResumeId, previewMode, resumeState, dispatch]);
 
   // Load existing resume if ID is present
   useEffect(() => {
@@ -102,6 +125,23 @@ function BuilderInner() {
 
         dispatch({ type: 'LOAD_RESUME', payload: loadedState });
         setLastSavedState(JSON.stringify(loadedState));
+
+        // Offline Resilience Check
+        try {
+          const offlineBackup = localStorage.getItem(`resume_backup_${idParam}`);
+          if (offlineBackup && offlineBackup !== JSON.stringify(loadedState)) {
+            if (window.confirm('We found unsaved offline changes in your browser. Do you want to restore them?')) {
+              dispatch({ type: 'LOAD_RESUME', payload: JSON.parse(offlineBackup) });
+              setLastSavedState(offlineBackup);
+              addToast('Offline backup restored. Save to sync to cloud.', 'info');
+              setIsInitialLoading(false);
+              return; // skip default load setup
+            }
+          }
+        } catch (err) {
+          console.error('Failed to parse offline backup', err);
+        }
+
       } else {
         addToast('Error loading resume: ' + (error?.message || 'Not found'), 'error');
       }
@@ -122,37 +162,45 @@ function BuilderInner() {
     }
   }, [downloadMode, isInitialLoading]);
 
-  // Auto-save logic
+  // Auto-save logic & Offline Caching
   useEffect(() => {
-    if (!session || !currentResumeId || previewMode) return;
+    if (!session || !currentResumeId || previewMode || isSaving) return;
 
     const currentState = JSON.stringify(resumeState);
     if (lastSavedState && currentState === lastSavedState) return;
 
+    // 1. Immediately cache offline and broadcast to other tabs
+    localStorage.setItem(`resume_backup_${currentResumeId}`, currentState);
+    try {
+      const channel = new BroadcastChannel(`resume_sync_${currentResumeId}`);
+      channel.postMessage(currentState);
+      channel.close();
+    } catch (e) { /* ignore in non-supporting browsers */ }
+
     const timer = setTimeout(async () => {
-      const result = await ResumeDB.saveResume(
-        session.user.id,
-        activeTemplate,
-        track,
-        dataState,
-        currentResumeId
-      );
-      if (result.success) {
-        setLastSavedState(currentState);
-        addToast('Changes saved automatically', 'info');
+      setIsSaving(true);
+      try {
+        const result = await ResumeDB.saveResume(
+          session.user.id,
+          activeTemplate,
+          track,
+          dataState,
+          currentResumeId
+        );
+        if (result.success) {
+          setLastSavedState(currentState);
+          addToast('Changes saved automatically', 'info');
+        }
+      } finally {
+        setIsSaving(false);
       }
     }, 30000); // 30 seconds debounce
 
     return () => clearTimeout(timer);
-  }, [resumeState, session, currentResumeId, lastSavedState, activeTemplate, track, dataState, previewMode]);
+  }, [resumeState, session, currentResumeId, lastSavedState, activeTemplate, track, dataState, previewMode, isSaving]);
 
-  useEffect(() => {
-    if (currentResumeId && session) {
-      loadVersions();
-    }
-  }, [currentResumeId, session]);
-
-  const loadVersions = async () => {
+  const loadVersions = useCallback(async () => {
+    if (!currentResumeId) return;
     setIsLoadingVersions(true);
     try {
       const data = await ResumeDB.getResumeVersions(currentResumeId);
@@ -160,32 +208,47 @@ function BuilderInner() {
         setVersions(data);
       }
     } catch (err) {
-      console.error('Error loading versions:', err);
+      addToast('Error loading versions', 'error');
     } finally {
       setIsLoadingVersions(false);
     }
-  };
+  }, [currentResumeId]);
+
+  useEffect(() => {
+    if (currentResumeId && session) {
+      loadVersions();
+    }
+  }, [currentResumeId, session, loadVersions]);
 
   const handleSave = async () => {
     if (!session) {
       setIsAuthOpen(true);
       return;
     }
+    // Prevent double-submission
+    if (isSaving) return;
 
-    const result = await ResumeDB.saveResume(
-      session.user.id,
-      activeTemplate,
-      track,
-      dataState,
-      currentResumeId
-    );
+    setIsSaving(true);
+    try {
+      const result = await ResumeDB.saveResume(
+        session.user.id,
+        activeTemplate,
+        track,
+        dataState,
+        currentResumeId
+      );
 
-    if (result.success) {
-      setCurrentResumeId(result.id);
-      setLastSavedState(JSON.stringify(resumeState));
-      addToast('Resume saved successfully!');
-    } else {
-      addToast('Error saving resume: ' + result.error, 'error');
+      if (result.success) {
+        setCurrentResumeId(result.id);
+        const savedStr = JSON.stringify(resumeState);
+        setLastSavedState(savedStr);
+        localStorage.setItem(`resume_backup_${result.id}`, savedStr);
+        addToast('Resume saved successfully!');
+      } else {
+        addToast('Error saving resume: ' + result.error, 'error');
+      }
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -239,10 +302,20 @@ function BuilderInner() {
           {!previewMode && (
             <>
               <div className={styles.saveIndicator}>
-                 {lastSavedState === JSON.stringify(resumeState) ? '✓ Auto-saved' : '● Saving...'}
+                 {isSaving ? '⏳ Saving...' : lastSavedState === JSON.stringify(resumeState) ? '✓ Auto-saved' : '● Unsaved'}
               </div>
-              <button className="cr-btn cr-btn-primary" onClick={handleSave} style={{ borderRadius: 'var(--cr-radius-full)', padding: '0 1.5rem' }}>
-                Save & Sync
+              <button 
+                className="cr-btn cr-btn-primary" 
+                onClick={handleSave}
+                disabled={isSaving}
+                style={{ 
+                  borderRadius: 'var(--cr-radius-full)', 
+                  padding: '0 1.5rem',
+                  opacity: isSaving ? 0.65 : 1,
+                  cursor: isSaving ? 'not-allowed' : 'pointer',
+                }}
+              >
+                {isSaving ? '⏳ Saving...' : 'Save & Sync'}
               </button>
             </>
           )}
@@ -311,10 +384,36 @@ function BuilderInner() {
   );
 }
 
+function BuilderFallback({ error, resetErrorBoundary }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', padding: '2rem', textAlign: 'center', background: 'var(--cr-bg-main)' }}>
+      <div className="cr-card cr-glass" style={{ maxWidth: '500px' }}>
+        <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--cr-danger)' }}>Something went wrong.</h2>
+        <p style={{ color: 'var(--cr-text-muted)', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
+          Unfortunately, the builder encountered an unexpected error. Don&apos;t worry—your recent progress may be safely cached in your browser.
+        </p>
+        <pre style={{ background: 'var(--cr-bg-alt)', padding: '1rem', borderRadius: 'var(--cr-radius)', fontSize: '0.75rem', overflowX: 'auto', marginBottom: '1.5rem', textAlign: 'left', color: 'var(--cr-text-main)' }}>
+          {error.message}
+        </pre>
+        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+          <button className="cr-btn cr-btn-primary" onClick={resetErrorBoundary}>
+            Try Again
+          </button>
+          <Link href="/dashboard" className="cr-btn cr-btn-secondary">
+            Return to Dashboard
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function BuilderPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <BuilderInner />
-    </Suspense>
+    <ErrorBoundary FallbackComponent={BuilderFallback}>
+      <Suspense fallback={<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: 'var(--cr-bg-main)' }}><p>Loading...</p></div>}>
+        <BuilderInner />
+      </Suspense>
+    </ErrorBoundary>
   );
 }

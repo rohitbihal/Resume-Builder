@@ -1,0 +1,134 @@
+.uploadContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--cr-text);
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.uploadPlaceholder {
+  width: 120px;
+  height: 120px;
+  border: 1px dashed var(--cr-border);
+  border-radius: 50%;
+  padding: 1.5rem;
+  background-color: var(--cr-background);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  color: var(--cr-text-muted);
+}
+
+.uploadPlaceholder:hover {
+  border-color: var(--cr-primary);
+  background-color: rgba(var(--cr-primary-rgb), 0.05);
+  transform: translateY(-2px);
+}
+
+.previewContainer {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid var(--cr-border);
+}
+
+.preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.previewContainer:hover .overlay {
+  opacity: 1;
+}
+
+.changeBtn,
+.removeBtn {
+  background: white;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.removeBtn {
+  color: #ef4444;
+}
+
+.removeBtn:hover {
+  background: #ef4444;
+  color: white;
+}
+
+.changeBtn:hover {
+  background: var(--cr-primary);
+  color: white;
+}
+
+.hint {
+  font-size: 0.75rem;
+  color: var(--cr-text-muted);
+  font-weight: 400;
+  margin-top: 0.25rem;
+  display: inline-block;
+  padding: 2px 8px;
+  background: var(--cr-background-subtle);
+  border-radius: 4px;
+}
+
+.error {
+  font-size: 0.75rem;
+  color: #ef4444;
+  margin-top: 0.25rem;
+}
+
+.spinner {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s linear infinite;
+  margin-bottom: 0.5rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

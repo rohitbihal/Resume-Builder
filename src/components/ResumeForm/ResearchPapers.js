@@ -43,7 +43,7 @@ export default function ResearchPapers() {
         <div key={paper.id} className={styles.entryCard}>
           <div className={styles.entryHeader}>
             <span className={styles.entryTitle}>Paper #{index + 1}</span>
-            <button className={styles.removeBtn} onClick={() => removeItem(paper.id)} title="Remove">✕</button>
+            <button className={styles.removeBtn} onClick={() => removeItem(paper.id)} title="Remove" aria-label="Remove entry">✕</button>
           </div>
 
           <div className={styles.fieldGrid}>

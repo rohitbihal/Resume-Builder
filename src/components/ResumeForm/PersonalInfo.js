@@ -1,6 +1,7 @@
 'use client';
 
 import { useResume, useResumeDispatch } from '@/context/ResumeContext';
+import ImageUpload from './ImageUpload';
 import styles from './FormSection.module.css';
 import { translations } from '@/lib/i18n';
 
@@ -21,6 +22,13 @@ export default function PersonalInfo() {
           <h3 className={styles.sectionName}>{t.builder.personalInfo}</h3>
           <p className={styles.sectionDesc}>Your contact details and online presence</p>
         </div>
+      </div>
+
+      <div style={{ marginBottom: '2rem' }}>
+        <ImageUpload 
+          value={personalInfo.profilePhoto} 
+          onChange={(url) => update('profilePhoto', url)} 
+        />
       </div>
 
       <div className={styles.fieldGrid}>

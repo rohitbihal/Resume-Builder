@@ -12,10 +12,12 @@ function AuthContent() {
   const searchParams = useSearchParams();
   const mode = searchParams.get('mode') || 'login';
   const [view, setView] = useState(mode === 'signup' ? 'sign_up' : 'sign_in');
+  const [prevMode, setPrevMode] = useState(mode);
 
-  useEffect(() => {
+  if (mode !== prevMode) {
+    setPrevMode(mode);
     setView(mode === 'signup' ? 'sign_up' : 'sign_in');
-  }, [mode]);
+  }
 
   useEffect(() => {
     const checkUser = async () => {

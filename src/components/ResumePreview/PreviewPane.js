@@ -36,7 +36,7 @@ export default function PreviewPane({ resumeId }) {
   const pdfRef = useRef(null);
 
   useEffect(() => {
-    setIsClient(true);
+    Promise.resolve().then(() => setIsClient(true));
     
     const handleAutoFit = () => {
       if (containerRef.current) {
@@ -49,7 +49,7 @@ export default function PreviewPane({ resumeId }) {
       }
     };
 
-    handleAutoFit();
+    Promise.resolve().then(handleAutoFit);
     window.addEventListener('resize', handleAutoFit);
 
     let profileSubscription = null;

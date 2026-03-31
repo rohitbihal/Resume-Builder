@@ -44,7 +44,7 @@ export default function AcademicProjects() {
         <div key={proj.id} className={styles.entryCard}>
           <div className={styles.entryHeader}>
             <span className={styles.entryTitle}>Project #{index + 1}</span>
-            <button className={styles.removeBtn} onClick={() => removeItem(proj.id)} title="Remove">✕</button>
+            <button className={styles.removeBtn} onClick={() => removeItem(proj.id)} title="Remove" aria-label="Remove entry">✕</button>
           </div>
 
           <div className={styles.fieldGrid}>

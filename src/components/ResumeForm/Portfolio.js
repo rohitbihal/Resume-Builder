@@ -43,7 +43,7 @@ export default function Portfolio() {
         <div key={item.id} className={styles.entryCard}>
           <div className={styles.entryHeader}>
             <span className={styles.entryTitle}>Portfolio Piece #{index + 1}</span>
-            <button className={styles.removeBtn} onClick={() => removeItem(item.id)} title="Remove">✕</button>
+            <button className={styles.removeBtn} onClick={() => removeItem(item.id)} title="Remove" aria-label="Remove entry">✕</button>
           </div>
 
           <div className={styles.fieldGrid}>

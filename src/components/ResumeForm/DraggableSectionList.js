@@ -102,7 +102,13 @@ function SortableItem({ id, children, label, isSortable, index, progress }) {
       </div>
       {isSortable && (
         <div className={styles.dragHandleContainer}>
-          <button {...attributes} {...listeners} className={styles.dragHandle}>
+          <button 
+            {...attributes} 
+            {...listeners} 
+            className={styles.dragHandle}
+            aria-label={`Drag to reorder ${label} section`}
+            title={`Drag to reorder ${label}`}
+          >
             ⋮⋮
           </button>
         </div>
@@ -133,7 +139,7 @@ export default function DraggableSectionList({ filteredSection }) {
       currentDefaults.forEach(id => {
         if (!merged.includes(id)) merged.push(id);
       });
-      setActiveItems(merged);
+      Promise.resolve().then(() => setActiveItems(merged));
     }
   }, [layoutOrder, track]);
 

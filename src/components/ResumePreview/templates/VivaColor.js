@@ -2,6 +2,7 @@
 
 import { useResume } from '@/context/ResumeContext';
 import styles from '../templates.module.css';
+import Image from 'next/image';
 
 export default function VivaColor() {
   const resume = useResume();
@@ -49,10 +50,13 @@ export default function VivaColor() {
 
         {resume.is_public && resume.id && typeof window !== 'undefined' && (
           <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-            <img 
+            <Image 
               src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${encodeURIComponent(window.location.origin + '/share/' + resume.id)}`} 
               alt="Resume QR Code"
-              style={{ width: '60px', height: '60px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.2)' }}
+              width={60}
+              height={60}
+              style={{ borderRadius: '4px', border: '1px solid rgba(255,255,255,0.2)' }}
+              unoptimized
             />
             <p style={{ fontSize: '6pt', opacity: 0.6, marginTop: '4px' }}>Scan to view profile</p>
           </div>

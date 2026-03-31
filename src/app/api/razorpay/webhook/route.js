@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { createClient } from '@supabase/supabase-js';
+import { logger, getRequestId } from '@/lib/logger';
+
+const log = logger('api/razorpay/webhook');
 
 // Initialize Supabase Admin outside the handler to check for keys once
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -10,12 +13,19 @@ const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
 export const maxDuration = 60;
 
 export async function POST(req) {
+  const requestId = getRequestId(req);
   try {
     const body = await req.text();
     const signature = req.headers.get('x-razorpay-signature');
 
+    // Guard: reject immediately if signature header is missing
+    if (!signature) {
+      log.warn('Webhook rejected: missing x-razorpay-signature header', { requestId });
+      return NextResponse.json({ error: 'Missing signature' }, { status: 401 });
+    }
+
     if (!webhookSecret) {
-      console.error('RAZORPAY_WEBHOOK_SECRET is not defined');
+      log.error('RAZORPAY_WEBHOOK_SECRET is not defined', { requestId });
       return NextResponse.json({ error: 'Webhook secret missing' }, { status: 500 });
     }
 
@@ -31,12 +41,12 @@ export async function POST(req) {
     );
 
     if (!signatureMatch) {
-      console.warn('Invalid Razorpay Webhook Signature');
-      return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
+      log.warn('Invalid Razorpay webhook signature', { requestId });
+      return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
     }
 
     const event = JSON.parse(body);
-    console.log('Razorpay Webhook Event:', event.event);
+    log.info('Webhook event received', { requestId, event: event.event });
 
     // Handle payment.captured or order.paid
     if (event.event === 'payment.captured' || event.event === 'order.paid') {
@@ -46,39 +56,63 @@ export async function POST(req) {
       const planId = notes.planId;
 
       if (!userId || userId === 'anonymous') {
-        console.warn('Webhook received for anonymous user or missing userId');
+        log.warn('Webhook ignored: no userId in payment notes', { requestId, event: event.event });
         return NextResponse.json({ status: 'ignored_no_user' });
       }
 
       if (!supabaseUrl || !supabaseServiceKey) {
-        console.error('Supabase keys missing in webhook handler');
+        log.error('Supabase keys missing in webhook handler', { requestId });
         return NextResponse.json({ error: 'Database config missing' }, { status: 500 });
       }
 
       const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-      // Update user profile to pro
+      let expiresAt = null;
+      let downloadsUsed = undefined;
+
+      if (planId === 'single_download') {
+        downloadsUsed = 0; // Reset downloads
+      } else if (planId === 'monthly_subscription') {
+        const d = new Date(); d.setMonth(d.getMonth() + 1);
+        expiresAt = d.toISOString();
+      } else if (planId === 'quarterly_subscription') {
+        const d = new Date(); d.setMonth(d.getMonth() + 3);
+        expiresAt = d.toISOString();
+      } else if (planId === 'annual_subscription') {
+        const d = new Date(); d.setFullYear(d.getFullYear() + 1);
+        expiresAt = d.toISOString();
+      }
+
+      // Default to pro for legacy plans that don't match the new enums
+      const validTiers = ['single_download', 'monthly_subscription', 'quarterly_subscription', 'annual_subscription', 'pro'];
+      const tierId = validTiers.includes(planId) ? planId : 'pro';
+
+      const updatePayload = {
+        id: userId,
+        subscription_tier: tierId,
+        last_payment_id: payment.id,
+        last_payment_amount: payment.amount / 100,
+        updated_at: new Date().toISOString()
+      };
+      
+      if (expiresAt) updatePayload.plan_expires_at = expiresAt;
+      if (downloadsUsed !== undefined) updatePayload.downloads_used = downloadsUsed;
+
       const { error } = await supabase
         .from('profiles')
-        .upsert({ 
-          id: userId,
-          subscription_tier: 'pro',
-          last_payment_id: payment.id,
-          last_payment_amount: payment.amount / 100,
-          updated_at: new Date().toISOString()
-        }, { onConflict: 'id' });
+        .upsert(updatePayload, { onConflict: 'id' });
 
       if (error) {
-        console.error('Webhook: Failed to update profile:', error);
+        log.error('Webhook: failed to update profile', { requestId, userId, error: error.message });
         return NextResponse.json({ error: 'Profile update failed' }, { status: 500 });
       }
 
-      console.log(`Successfully upgraded user ${userId} to Pro plan via webhook.`);
+      log.info(`User upgraded to Pro via webhook`, { requestId, userId, planId: notes.planId });
     }
 
-    return NextResponse.json({ status: 'ok' });
+    return NextResponse.json({ status: 'ok', requestId });
   } catch (error) {
-    console.error('Razorpay Webhook Error:', error);
+    log.error('Webhook handler error', { requestId, error: error.message });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

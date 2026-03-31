@@ -8,6 +8,7 @@ import TypeForge from '@/components/ResumePreview/templates/TypeForge';
 import VivaColor from '@/components/ResumePreview/templates/VivaColor';
 import { translations } from '@/lib/i18n';
 import styles from './SharePage.module.css';
+import Link from 'next/link';
 import { useState, useEffect, useRef } from 'react';
 
 const TEMPLATE_COMPONENTS = {
@@ -42,7 +43,7 @@ export default function ShareClient({ resumeData }) {
       }
     };
 
-    handleResize();
+    Promise.resolve().then(handleResize);
     const timer = setTimeout(handleResize, 500); // Small delay to let template render
     window.addEventListener('resize', handleResize);
     return () => {
@@ -56,7 +57,7 @@ export default function ShareClient({ resumeData }) {
       <nav className={styles.shareNav}>
         <div className={styles.navContent}>
           <span className={styles.logo}>Creative<span>Resume</span></span>
-          <a href="/" className="cr-btn cr-btn-primary cr-btn-sm">{t.share.createOwn}</a>
+          <Link href="/" className="cr-btn cr-btn-primary cr-btn-sm">{t.share.createOwn}</Link>
         </div>
       </nav>
 

@@ -4,17 +4,46 @@ import chromium from '@sparticuz/chromium-min';
 import { createServerClient } from '@supabase/ssr';
 import { createClient } from '@supabase/supabase-js';
 import { getUserPlanContext, canDownloadPdf, hasNoWatermark, logAccessAttempt } from '@/lib/planAccess';
+import { rateLimiter } from '@/lib/rateLimit';
+import { logger, getRequestId, logRequest } from '@/lib/logger';
+import { errorResponse } from '@/lib/validate';
+
+const log = logger('api/generate-pdf');
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
 
 export async function POST(req) {
+  const requestId = getRequestId(req);
+  const startTime = Date.now();
+  logRequest(log, req, { requestId });
+
+  // ─── 0. Rate Limiting (IP + User) ─────────────────────────────────────
+  let userId = null;
+  const authHeader = req.headers.get('authorization') || '';
+  if (authHeader.startsWith('Bearer ')) {
+    try {
+      const payloadBase64 = authHeader.split('.')[1];
+      if (payloadBase64) userId = JSON.parse(Buffer.from(payloadBase64, 'base64').toString('utf8')).sub || null;
+    } catch {}
+  }
+  
+  const { success: rateLimitOk, headers: rateLimitHeaders } = rateLimiter(req, 'general', userId);
+  if (!rateLimitOk) {
+    log.warn('Rate limit exceeded for PDF generation', { requestId });
+    return NextResponse.json(
+      errorResponse('Too many requests. Please wait before generating another PDF.', requestId),
+      { status: 429, headers: rateLimitHeaders }
+    );
+  }
+
   let browser = null;
   try {
     const { html, css, multiPage = false } = await req.json();
 
     if (!html) {
-      return NextResponse.json({ error: 'HTML content is required' }, { status: 400 });
+      log.warn('Missing HTML content', { requestId });
+      return NextResponse.json(errorResponse('HTML content is required', requestId), { status: 400, headers: rateLimitHeaders });
     }
 
     // --- RBAC & Plan Verification ---
@@ -46,10 +75,11 @@ export async function POST(req) {
     
     if (!canDownloadPdf(planContext)) {
       if (user) await logAccessAttempt(adminSupabase, user.id, 'download_pdf', 'blocked', 'Single download exhausted');
-      return NextResponse.json({ 
-        error: 'Access Denied', 
-        details: 'You have used your single download. Upgrade to Monthly for unlimited downloads.' 
-      }, { status: 403 });
+      log.warn('PDF download blocked due to plan limits', { requestId, userId: user?.id, tier: planContext.tier });
+      return NextResponse.json(
+        errorResponse('Access Denied. You have used your single download. Upgrade to Monthly for unlimited downloads.', requestId), 
+        { status: 403, headers: rateLimitHeaders }
+      );
     }
 
     const injectWatermark = !hasNoWatermark(planContext);
@@ -69,8 +99,8 @@ export async function POST(req) {
         .eq('id', user.id);
       
       if (updateError) {
-        console.error('Failed to increment download counter:', updateError);
-        return NextResponse.json({ error: 'Failed to process plan tracking' }, { status: 500 });
+        log.error('Failed to increment download counter', { requestId, error: updateError.message });
+        return NextResponse.json(errorResponse('Failed to process plan tracking', requestId), { status: 500, headers: rateLimitHeaders });
       }
     }
 
@@ -177,11 +207,13 @@ export async function POST(req) {
         margin: { top: '20mm', right: '20mm', bottom: '20mm', left: '20mm' },
       });
 
+      log.info('PDF generated successfully', { requestId, durationMs: Date.now() - startTime });
       return new Response(pdfBuffer, {
         status: 200,
         headers: {
           'Content-Type': 'application/pdf',
           'Content-Disposition': 'attachment; filename="resume.pdf"',
+          ...rateLimitHeaders // include limit headers on success
         },
       });
     } finally {
@@ -192,12 +224,11 @@ export async function POST(req) {
     }
 
   } catch (error) {
-    console.error('PDF Generation Error:', error);
-    return NextResponse.json({ 
-      error: 'PDF generation failed', 
-      details: error.message,
-      suggestion: 'Ensure your Vercel Function memory is set to at least 1024MB (already updated in vercel.json).'
-    }, { status: 500 });
+    log.error('PDF Generation Error', { requestId, error: error.message });
+    return NextResponse.json(
+      errorResponse('PDF generation failed.', requestId, { details: error.message }), 
+      { status: 500, headers: typeof rateLimitHeaders !== 'undefined' ? rateLimitHeaders : {} }
+    );
   }
 }
 

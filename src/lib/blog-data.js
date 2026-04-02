@@ -24,7 +24,7 @@ export const blogPosts = {
       Mix hard skills (like "JavaScript" or "Financial Analysis") with soft skills (like "Team Leadership").
 
       ### Conclusion
-      A great resume is clear, concise, and tailored to the job. Use our [Free Resume Builder](https://creativeresume.vercel.app/builder) to create yours in minutes.
+      A great resume is clear, concise, and tailored to the job. Use our [Free Resume Builder](https://resume-builder-gilt-theta-32.vercel.app/builder) to create yours in minutes.
     `
   },
   'best-resume-templates': {
@@ -51,7 +51,7 @@ export const blogPosts = {
       ### 5. The Modern Classic (Viva Color)
       A vibrant sidebar layout that works for almost any industry, from finance to healthcare.
 
-      Ready to choose? [Browse our templates](https://creativeresume.vercel.app/templates).
+      Ready to choose? [Browse our templates](https://resume-builder-gilt-theta-32.vercel.app/templates).
     `
   },
   'resume-tips': {
@@ -70,7 +70,7 @@ export const blogPosts = {
       7. **Use a professional font**: Inter, Roboto, or Lato are great choices.
       8. **Include a LinkedIn link**: 90% of recruiters use LinkedIn.
       9. **Avoid photos**: Unless you are in a specific industry (like acting), skip the photo.
-      10. **Use an ATS-friendly builder**: Like [CreativeResume](https://creativeresume.vercel.app).
+      10. **Use an ATS-friendly builder**: Like [CreativeResume](https://resume-builder-gilt-theta-32.vercel.app).
     `
   },
   'ats-friendly-resume': {
@@ -90,7 +90,7 @@ export const blogPosts = {
       - **Avoid complex graphics**: Don't put core info inside images or non-standard tables.
       - **Use keywords**: Match the exact phrasing from the job posting.
       - **Simple fonts**: Stick to standard web fonts.
-      - **Consistent formatting**: Use our [Professional Builder](https://creativeresume.vercel.app/builder) which is pre-optimized for ATS.
+      - **Consistent formatting**: Use our [Professional Builder](https://resume-builder-gilt-theta-32.vercel.app/builder) which is pre-optimized for ATS.
     `
   },
   'college-student-resume': {
@@ -112,7 +112,7 @@ export const blogPosts = {
       Being a club president or a part-time barista teaches you leadership and customer service.
 
       ### 4. Use a Modern Template
-      A fresh, creative template can help make up for a shorter resume. Try [Bold Neo](https://creativeresume.vercel.app) for a stand-out look.
+      A fresh, creative template can help make up for a shorter resume. Try [Bold Neo](https://resume-builder-gilt-theta-32.vercel.app) for a stand-out look.
     `
   }
 };

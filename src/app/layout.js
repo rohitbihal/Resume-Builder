@@ -19,7 +19,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://creativeresume.vercel.app'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://resume-builder-gilt-theta-32.vercel.app'),
   title: {
     default: "Free Resume Builder - Create Professional Resumes Online | CreativeResume",
     template: "%s | CreativeResume"

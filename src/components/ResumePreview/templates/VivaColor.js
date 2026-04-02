@@ -34,8 +34,12 @@ export default function VivaColor() {
     <div className={`${styles.resumePage} ${styles.vivaColor}`}>
       {/* Sidebar */}
       <div className={styles.vcSidebar}>
-        <div className={styles.vcAvatar}>
-          {personalInfo.fullName ? personalInfo.fullName.charAt(0).toUpperCase() : '?'}
+        <div className={styles.vcAvatar} style={personalInfo.profilePhoto ? { padding: 0, overflow: 'hidden', backgroundColor: 'transparent' } : {}}>
+          {personalInfo.profilePhoto ? (
+            <img src={personalInfo.profilePhoto} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          ) : (
+            personalInfo.fullName ? personalInfo.fullName.charAt(0).toUpperCase() : '?'
+          )}
         </div>
         <div className={styles.vcSideName}>{personalInfo.fullName || 'Your Name'}</div>
 

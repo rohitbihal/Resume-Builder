@@ -37,6 +37,18 @@ export const ResumeDB = {
         resumeDataToSave.id = resumeId;
       }
 
+      if (resumeDataToSave.slug) {
+        const { data: existingSlugRow } = await supabase
+          .from('resumes')
+          .select('id')
+          .eq('slug', resumeDataToSave.slug)
+          .maybeSingle();
+          
+        if (existingSlugRow && existingSlugRow.id !== resumeId) {
+          throw new Error('This custom link is already taken. Please choose another one.');
+        }
+      }
+
       const { data: resumeData, error: resumeError } = await supabase
         .from('resumes')
         .upsert(resumeDataToSave)

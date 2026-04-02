@@ -30,14 +30,21 @@ export default function InkSplash() {
     <div className={`${styles.resumePage} ${styles.inkSplash}`}>
       <div className={styles.isContent}>
         <header className={styles.isHeader}>
-          <h1 className={styles.isName}>{personalInfo.fullName || 'Your Name'}</h1>
-          <div className={styles.isNameUnderline} />
-          <div className={styles.isContact}>
-            {personalInfo.email && <span>{personalInfo.email}</span>}
-            {personalInfo.phone && <span>• {personalInfo.phone}</span>}
-            {personalInfo.location && <span>• {personalInfo.location}</span>}
-            {personalInfo.linkedin && <span>• {personalInfo.linkedin}</span>}
-            {personalInfo.portfolio && <span>• {personalInfo.portfolio}</span>}
+          {personalInfo.profilePhoto && (
+            <div style={{ float: 'right', marginLeft: '20px', width: '85px', height: '85px', borderRadius: '8px', overflow: 'hidden' }}>
+              <img src={personalInfo.profilePhoto} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            </div>
+          )}
+          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: personalInfo.profilePhoto ? '85px' : 'auto' }}>
+            <h1 className={styles.isName}>{personalInfo.fullName || 'Your Name'}</h1>
+            <div className={styles.isNameUnderline} />
+            <div className={styles.isContact}>
+              {personalInfo.email && <span>{personalInfo.email}</span>}
+              {personalInfo.phone && <span>• {personalInfo.phone}</span>}
+              {personalInfo.location && <span>• {personalInfo.location}</span>}
+              {personalInfo.linkedin && <span>• {personalInfo.linkedin}</span>}
+              {personalInfo.portfolio && <span>• {personalInfo.portfolio}</span>}
+            </div>
           </div>
         </header>
 

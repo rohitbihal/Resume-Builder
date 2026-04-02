@@ -30,6 +30,15 @@ export default function GridMaster() {
     <div className={`${styles.resumePage} ${styles.gridMaster}`}>
       {/* Sidebar */}
       <div className={styles.gmSidebar}>
+        {personalInfo.profilePhoto && (
+          <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+            <img 
+              src={personalInfo.profilePhoto} 
+              alt="Profile" 
+              style={{ width: '120px', height: '120px', borderRadius: '50%', objectFit: 'cover', border: '3px solid #fff', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }} 
+            />
+          </div>
+        )}
         <div className={styles.gmSideSection}>
           <h3 className={styles.gmSideTitle}>Contact</h3>
           {personalInfo.email && <div className={styles.gmContactItem}>✉ {personalInfo.email}</div>}

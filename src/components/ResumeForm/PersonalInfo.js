@@ -41,6 +41,8 @@ export default function PersonalInfo() {
             placeholder="e.g. Jane Doe"
             value={personalInfo.fullName}
             onChange={(e) => update('fullName', e.target.value)}
+            required
+            maxLength={100}
           />
         </div>
 
@@ -53,6 +55,8 @@ export default function PersonalInfo() {
             placeholder="e.g. jane.doe@example.com"
             value={personalInfo.email}
             onChange={(e) => update('email', e.target.value)}
+            required
+            maxLength={100}
           />
         </div>
 
@@ -65,6 +69,7 @@ export default function PersonalInfo() {
             placeholder="e.g. +1 (555) 000-0000"
             value={personalInfo.phone}
             onChange={(e) => update('phone', e.target.value)}
+            maxLength={30}
           />
         </div>
 
@@ -77,6 +82,7 @@ export default function PersonalInfo() {
             placeholder="e.g. San Francisco, CA"
             value={personalInfo.location}
             onChange={(e) => update('location', e.target.value)}
+            maxLength={100}
           />
         </div>
 
@@ -89,6 +95,7 @@ export default function PersonalInfo() {
             placeholder="linkedin.com/in/username"
             value={personalInfo.linkedin}
             onChange={(e) => update('linkedin', e.target.value)}
+            maxLength={200}
           />
         </div>
 
@@ -101,6 +108,7 @@ export default function PersonalInfo() {
             placeholder="github.com/username or yoursite.com"
             value={personalInfo.portfolio}
             onChange={(e) => update('portfolio', e.target.value)}
+            maxLength={200}
           />
         </div>
       </div>

@@ -9,6 +9,17 @@ export default function ImageUpload({ value, onChange }) {
   const [error, setError] = useState(null);
   const fileInputRef = useRef(null);
 
+  const extractFilePathFromUrl = (url) => {
+    if (!url) return null;
+    const parts = url.split('/');
+    // Extract the portion after 'public/avatars/' if it exists
+    const avatarsIndex = parts.indexOf('avatars');
+    if (avatarsIndex !== -1 && parts.length > avatarsIndex + 1) {
+      return parts.slice(avatarsIndex + 1).join('/');
+    }
+    return null;
+  };
+
   const handleUpload = async (event) => {
     try {
       setUploading(true);
@@ -19,6 +30,18 @@ export default function ImageUpload({ value, onChange }) {
       }
 
       const file = event.target.files[0];
+      
+      // Validation: 2MB limit
+      if (file.size > 2 * 1024 * 1024) {
+        throw new Error('File size exceeds the 2MB limit. Please choose a smaller image.');
+      }
+
+      // Cleanup: Remove existing photo if any
+      const oldPath = extractFilePathFromUrl(value);
+      if (oldPath) {
+        await supabase.storage.from('avatars').remove([oldPath]).catch(e => console.warn('Orphan cleanup failed:', e));
+      }
+
       const fileExt = file.name.split('.').pop();
       const fileName = `${Math.random()}.${fileExt}`;
       const filePath = `avatars/${fileName}`;
@@ -42,13 +65,23 @@ export default function ImageUpload({ value, onChange }) {
       setError(err.message);
     } finally {
       setUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
-  const removePhoto = () => {
-    onChange(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+  const removePhoto = async () => {
+    try {
+      const oldPath = extractFilePathFromUrl(value);
+      if (oldPath) {
+        await supabase.storage.from('avatars').remove([oldPath]).catch(e => console.warn('Orphan cleanup failed:', e));
+      }
+    } finally {
+      onChange(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 

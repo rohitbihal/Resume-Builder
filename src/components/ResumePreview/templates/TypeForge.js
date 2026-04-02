@@ -29,7 +29,12 @@ export default function TypeForge() {
   return (
     <div className={`${styles.resumePage} ${styles.typeForge}`}>
       <div className={styles.tfContent}>
-        <div className={styles.tfHero}>
+        <div className={styles.tfHero} style={{ display: 'flex', alignItems: 'center' }}>
+          {personalInfo.profilePhoto && (
+            <div style={{ marginRight: '24px', width: '90px', height: '90px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
+              <img src={personalInfo.profilePhoto} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(100%)' }} />
+            </div>
+          )}
           <h1 className={styles.tfName}>{personalInfo.fullName || 'Your Name'}</h1>
         </div>
 

@@ -192,7 +192,7 @@ function BuilderInner() {
           addToast('Changes saved automatically', 'info');
         }
       } finally {
-        setIsSaving(false);
+        setTimeout(() => setIsSaving(false), 1000);
       }
     }, 30000); // 30 seconds debounce
 
@@ -248,7 +248,7 @@ function BuilderInner() {
         addToast('Error saving resume: ' + result.error, 'error');
       }
     } finally {
-      setIsSaving(false);
+      setTimeout(() => setIsSaving(false), 800);
     }
   };
 

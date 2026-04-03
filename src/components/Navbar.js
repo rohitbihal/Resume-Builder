@@ -78,6 +78,7 @@ export default function Navbar() {
           ) : user ? (
             <div className={styles.userSection}>
               <select 
+                aria-label="Select Language"
                 value={resume.language || 'en'} 
                 onChange={(e) => dispatch({ type: 'SET_LANGUAGE', payload: e.target.value })}
                 className={styles.langSelect}
@@ -97,6 +98,7 @@ export default function Navbar() {
           ) : (
             <div className={styles.guestSection}>
               <select 
+                aria-label="Select Language"
                 value={resume.language || 'en'} 
                 onChange={(e) => dispatch({ type: 'SET_LANGUAGE', payload: e.target.value })}
                 className={styles.langSelect}

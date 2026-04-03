@@ -1,6 +1,6 @@
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
-import GoogleAnalytics from "@/components/Analytics/GoogleAnalytics";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { ResumeProvider } from "@/context/ResumeContext";
 import CookieConsent from "@/components/CookieConsent";
 import { Analytics } from "@vercel/analytics/react";
@@ -60,7 +60,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={`${inter.variable} ${spaceGrotesk.variable}`}>
         <ResumeProvider>
-          <GoogleAnalytics ga_id="G-7M6E4NRTX7" />
+          <GoogleAnalytics gaId="G-7M6E4NRTX7" />
           {children}
           <CookieConsent />
           <Analytics />

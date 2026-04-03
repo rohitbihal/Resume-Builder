@@ -1,9 +1,18 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import styles from './page.module.css';
 import Navbar from '@/components/Navbar';
 import Logo from '@/components/Branding/Logo';
 
 export default function Home() {
+  const templates = [
+    { name: 'Bold Neo', image: '/templates/bold-neo.png', desc: 'High-contrast B&W with neon accent' },
+    { name: 'Grid Master', image: '/templates/grid-master.png', desc: 'Magazine-style grid layout' },
+    { name: 'Viva Color', image: '/templates/viva-color.png', desc: 'Warm gradient sidebar' },
+    { name: 'TypeForge', image: '/templates/typeforge.png', desc: 'Typography-first minimal' },
+    { name: 'Ink Splash', image: '/templates/ink-splash.png', desc: 'Artistic watercolor feel' },
+  ];
+
   return (
     <main className={styles.landing}>
       <Navbar />
@@ -75,18 +84,18 @@ export default function Home() {
           <h2 className={styles.sectionTitle}>Stunning Templates</h2>
           <p className={styles.sectionDesc}>Each template is carefully crafted for maximum visual impact.</p>
           <div className={styles.templateCards}>
-            {[
-              { name: 'Bold Neo', color: '#00FFE0', desc: 'High-contrast B&W with neon accent' },
-              { name: 'Grid Master', color: '#B39DDB', desc: 'Magazine-style grid layout' },
-              { name: 'Viva Color', color: '#FF6B6B', desc: 'Warm gradient sidebar' },
-              { name: 'TypeForge', color: '#2D2D2D', desc: 'Typography-first minimal', light: true },
-              { name: 'Ink Splash', color: '#5BBFB5', desc: 'Artistic watercolor feel' },
-            ].map((t) => (
+            {templates.map((t) => (
               <div key={t.name} className={styles.templateCard}>
-                <div className={styles.templatePreview} style={{ background: t.color }}>
-                  <span style={{ color: t.light ? '#fff' : '#1a1a1a', fontWeight: 700, fontSize: '1.2rem' }}>{t.name}</span>
+                <div className={styles.templatePreview}>
+                  <Image 
+                    src={t.image} 
+                    alt={`${t.name} Template Preview`} 
+                    fill 
+                    style={{ objectFit: 'cover' }}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 20vw"
+                  />
                 </div>
-                <h4 className={styles.templateName}>{t.name}</h4>
+                <h3 className={styles.templateName}>{t.name}</h3>
                 <p className={styles.templateDesc}>{t.desc}</p>
               </div>
             ))}

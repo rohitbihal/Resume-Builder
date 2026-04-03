@@ -238,19 +238,26 @@
 
 .templatePreview {
   width: 100%;
-  height: 180px;
+  height: 240px;
   border-radius: var(--cr-radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: relative;
+  overflow: hidden;
   margin-bottom: var(--cr-space-sm);
-  background: white;
+  background: var(--cr-bg-tertiary);
   border: 1px solid var(--cr-border);
   transition: all var(--cr-transition-normal);
 }
 
+.templatePreview img {
+  transition: transform var(--cr-transition-slow);
+}
+
+.templateCard:hover .templatePreview img {
+  transform: scale(1.05);
+}
+
 .templateCard:hover .templatePreview {
-  box-shadow: var(--cr-shadow-md);
+  box-shadow: var(--cr-shadow-lg);
   border-color: var(--cr-accent-primary);
 }
 

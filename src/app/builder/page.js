@@ -1,10 +1,10 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { useState, useEffect, useCallback, Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useResume, useResumeDispatch } from '@/context/ResumeContext';
 import TrackSwitcher from '@/components/TrackSwitcher';
-import LinkedInImport from '@/components/ResumeForm/LinkedInImport';
 import RoleSelection from '@/components/Onboarding/RoleSelection';
 import DraggableSectionList from '@/components/ResumeForm/DraggableSectionList';
 import PreviewPane from '@/components/ResumePreview/PreviewPane';
@@ -13,11 +13,14 @@ import styles from './builder.module.css';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import BackButton from '@/components/BackButton';
-import AuthModal from '@/components/AuthModal';
 import { supabase } from '@/lib/supabase';
 import { ResumeDB } from '@/lib/db';
-import { ToastContainer } from '@/components/Notifications/Toast';
 import { useSearchParams } from 'next/navigation';
+
+// Lazy load heavy or conditional components
+const LinkedInImport = dynamic(() => import('@/components/ResumeForm/LinkedInImport'), { ssr: false });
+const AuthModal = dynamic(() => import('@/components/AuthModal'), { ssr: false });
+const ToastContainer = dynamic(() => import('@/components/Notifications/Toast').then(mod => mod.ToastContainer), { ssr: false });
 
 function BuilderInner() {
   const resumeState = useResume();

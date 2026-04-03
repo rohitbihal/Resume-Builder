@@ -14,6 +14,7 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@google/generative-ai": "^0.24.1",
+    "@next/third-parties": "^16.2.2",
     "@react-email/components": "^1.0.10",
     "@react-pdf/renderer": "^4.3.2",
     "@sparticuz/chromium-min": "^143.0.4",
@@ -40,5 +41,11 @@
     "@playwright/test": "^1.58.2",
     "eslint": "^9",
     "eslint-config-next": "16.1.6"
-  }
+  },
+  "browserslist": [
+    "defaults",
+    "not ie 11",
+    "not ie_mob 11",
+    "maintained node versions"
+  ]
 }

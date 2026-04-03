@@ -45,6 +45,10 @@ const nextConfig = {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()',
           },
+          {
+            key: 'X-Robots-Tag',
+            value: 'index, follow',
+          },
         ],
       },
       // ─── Static Assets: Cache aggressively ───────────────────────────────

@@ -26,6 +26,10 @@ export const metadata = {
   },
   description: "Build a professional resume in minutes with our free online resume builder. Choose from stunning creative templates, customize every section, and download ATS-friendly PDFs.",
   keywords: "resume builder, free resume builder, online resume maker, resume templates, creative resume, ATS-friendly resume, professional CV maker",
+  robots: {
+    index: true,
+    follow: true,
+  },
   openGraph: {
     type: 'website',
     url: '/',
